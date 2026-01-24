@@ -28,3 +28,8 @@ const Department = require('./backend/models/Department');
 sequelize.sync({ alter: true })
     .then(() => console.log(' Database & Tables synced!'))
     .catch(err => console.error(' Sync error:', err));
+
+const authRoutes = require('./backend/routes/authRoutes');
+
+app.use(express.json());
+app.use('/api/auth', authRoutes);

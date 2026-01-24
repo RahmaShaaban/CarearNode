@@ -20,19 +20,6 @@ const User = sequelize.define('User', {
     password: {
         type: DataTypes.STRING,
         allowNull: false
-    },
-    age: {
-        type: DataTypes.INTEGER
-    },
-    cv_url: {
-        type: DataTypes.STRING
-    },
-    department_id: {
-        type: DataTypes.INTEGER,
-        references: {
-            model: 'departments',
-            key: 'id'
-        }
     }
 }, {
     tableName: 'users',
