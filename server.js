@@ -33,3 +33,6 @@ const authRoutes = require('./backend/routes/authRoutes');
 
 app.use(express.json());
 app.use('/api/auth', authRoutes);
+
+const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
