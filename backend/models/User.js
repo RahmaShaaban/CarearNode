@@ -20,7 +20,11 @@ const User = sequelize.define('User', {
     password: {
         type: DataTypes.STRING,
         allowNull: false
-    }
+    },
+    profile_image: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
 }, {
     tableName: 'users',
     timestamps: true
