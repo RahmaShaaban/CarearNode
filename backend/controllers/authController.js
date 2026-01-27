@@ -31,61 +31,91 @@ const upload = multer({
     fileFilter: fileFilter
 }).single('profile_image');
 
+// 1. شيلنا إعدادات Multer من هنا خالص (لأنها بقت في Routes)
+
 exports.signup = async (req, res) => {
-    upload(req, res, async (err) => {
-        if (err) {
-            return res.status(400).json({ error: err });
+    // 2. شيلنا دالة upload(req, res) لأن البيانات بتوصل هنا جاهزة خلاص
+    try {
+        // البيانات النصية موجودة في req.body
+        const { full_name, email, password, about_me } = req.body;
+
+        // التحقق من وجود اليوزر
+        const existingUser = await User.findOne({ where: { email } });
+        if (existingUser) {
+            return res.status(400).json({ message: "Email already exists" });
         }
 
-        try {
-            const { full_name, email, password } = req.body;
-            const hashedPassword = await bcrypt.hash(password, 10);
-            
-            const profile_image = req.file ? `/uploads/${req.file.filename}` : null;
+        // تشفير الباسورد
+        const hashedPassword = await bcrypt.hash(password, 10);
+        
+        // 3. استقبال الصورة (لو موجودة) من req.file مباشرة
+        // لاحظي: التخزين تم بالفعل في الراوت، هنا بس بناخد الاسم للداتابيز
+        const profile_image = req.file ? `/uploads/${req.file.filename}` : null;
 
-            const user = await User.create({
-                full_name,
-                email,
-                password: hashedPassword,
-                profile_image
-            });
+        // إنشاء اليوزر
+        const user = await User.create({
+            full_name,
+            email,
+            password: hashedPassword,
+            about_me,      // الـ Bio
+            profile_image  // رابط الصورة
+        });
 
-            res.status(201).json({ 
-                message: 'User created successfully', 
-                userId: user.id,
-                imageUrl: profile_image 
-            });
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
-    });
+        res.status(201).json({ 
+            message: 'User created successfully', 
+            userId: user.id 
+        });
+
+    } catch (error) {
+        console.error("Signup Error:", error);
+        res.status(500).json({ error: error.message });
+    }
 };
 
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
+
         const user = await User.findOne({ where: { email } });
-        
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: "User not found" });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(401).json({ message: 'Invalid credentials' });
+            return res.status(400).json({ message: "Invalid credentials" });
         }
 
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
-
-        res.status(200).json({ 
-            token, 
-            user: { 
-                id: user.id, 
-                name: user.full_name,
-                image: user.profile_image 
-            } 
+        res.status(200).json({
+            message: "Login successful",
+            userId: user.id,
+            email: user.email,
+            full_name: user.full_name,
+            profile_image: user.profile_image, // نبعت الصورة كمان عشان الفرونت يستفيد بيها
+            about_me: user.about_me
         });
+
     } catch (error) {
+        console.error("Login Error:", error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.getUserProfile = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const user = await User.findByPk(userId, {
+            attributes: { exclude: ['password'] }
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json(user);
+
+    } catch (error) {
+        console.error("Profile Error:", error);
         res.status(500).json({ error: error.message });
     }
 };

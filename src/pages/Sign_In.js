@@ -14,7 +14,7 @@ function SignIn() {
         setShowPassword(!showPassword);
     };
 
-    // 3. backenddddddddd
+    // 3. backend logic
     const handleSubmit = async (e) => {
         e.preventDefault(); // No Refresh
 
@@ -31,20 +31,27 @@ function SignIn() {
             const data = await response.json();
 
             if (response.ok) {
-                // if data right and the respose of server is OK
-                alert("logged in successfully");
-
+                // if data right and the response of server is OK
                 
-                // localStorage.setItem('user', JSON.stringify(data));
+                // 1. حفظ الايدي في المتصفح (مهم جداً عشان البروفايل يشتغل)
+                if (data.userId) {
+                    localStorage.setItem('userId', data.userId);
+                }
+                
+                // (اختياري) لو عندك توكن ممكن تحفظيه هنا كمان
+                // localStorage.setItem('token', data.token);
 
-                navigate('/'); // go to home
+                alert("Logged in successfully!");
+
+                // 2. التوجيه لصفحة البروفايل بدل الهوم
+                navigate('/profile'); 
             } else {
-                // if there is any problem like wrong email or password)
-                alert(data.message || "failed to login ,ensure your data");
+                // if there is any problem like wrong email or password
+                alert(data.message || "Failed to login, please check your data");
             }
         } catch (error) {
             console.error("Error:", error);
-            alert("failed to connect server");
+            alert("Failed to connect to server");
         }
     };
 

@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Sign_up.css'; 
 import logo from '../photos/logo.png'; 
 
@@ -8,14 +8,14 @@ function SignUp() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [fullName, setFullName] = useState(""); 
-    const [role, setRole] = useState("");
-    
+    const [role, setRole] = useState(""); 
     const [confirmPassword, setConfirmPassword] = useState(""); 
     const [bio, setBio] = useState(""); 
 
-    // 2. Profile Image State & Ref
     const fileInputRef = useRef(null);
     const [profileImage, setProfileImage] = useState(null);
+
+    const navigate = useNavigate(); 
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -25,6 +25,54 @@ function SignUp() {
         const file = e.target.files[0];
         if (file) {
             setProfileImage(URL.createObjectURL(file));
+        }
+    };
+
+    // --- دالة الربط المعدلة (لدعم الصور) ---
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        // 1. التحقق من تطابق الباسورد
+        if (password !== confirmPassword) {
+            alert("كلمة المرور غير متطابقة!");
+            return;
+        }
+
+        // 2. تجهيز "صندوق الشحن" (FormData) بدل JSON
+        const formData = new FormData();
+        
+        formData.append('full_name', fullName);
+        formData.append('email', email);
+        formData.append('password', password);
+        formData.append('about_me', bio); // ربطنا bio بـ about_me
+
+        // 3. إضافة الصورة للصندوق (لو اليوزر اختار صورة)
+        if (fileInputRef.current.files[0]) {
+            // 'profileImage' لازم يكون نفس الاسم اللي في ملف authRoutes.js في الباك إند
+            formData.append('profileImage', fileInputRef.current.files[0]); 
+        }
+
+        try {
+            const response = await fetch('http://localhost:5000/api/auth/signup', {
+                method: 'POST',
+                // ملحوظة: شيلنا الـ headers عشان الـ FormData بيظبطها لوحده
+                body: formData, 
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert("تم التسجيل بنجاح! جربي تعملي Sign In دلوقتي.");
+                navigate('/Sign_In'); 
+            } else {
+                // بدلي السطر القديم بتاع الـ alert بالسطر ده:
+                alert("تفاصيل الخطأ: " + JSON.stringify(data));
+                console.log("Error details:", data);
+            }
+
+        } catch (error) {
+            console.error("Error:", error);
+            alert("فشل الاتصال بالسيرفر. تأكدي إن الباك إند شغال.");
         }
     };
 
@@ -82,7 +130,7 @@ function SignUp() {
                     <p className="tap-text">Tap to upload picture</p>
                 </div>
 
-                <form className="signup-form-fields" onSubmit={(e) => e.preventDefault()}>
+                <form className="signup-form-fields" onSubmit={handleSubmit}>
 
                     <div className="input-group"> 
                         <label className="input-label">Full Name</label>
@@ -92,6 +140,7 @@ function SignUp() {
                             placeholder="Enter your Name"
                             value={fullName}
                             onChange={(e) => setFullName(e.target.value)}
+                            required 
                         />
                     </div>
 
@@ -117,6 +166,7 @@ function SignUp() {
                             placeholder="Enter your email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            required
                         />
                     </div>
 
@@ -129,6 +179,7 @@ function SignUp() {
                                 placeholder="Create a password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                                required
                             />
                             <span className="eye-icon" onClick={togglePasswordVisibility}>
                                 {showPassword ? (
@@ -149,6 +200,7 @@ function SignUp() {
                                 placeholder="Confirm your password"
                                 value={confirmPassword} 
                                 onChange={(e) => setConfirmPassword(e.target.value)}
+                                required
                             />
                         </div>
                     </div>
