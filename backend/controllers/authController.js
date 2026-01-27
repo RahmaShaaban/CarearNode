@@ -1,69 +1,40 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const multer = require('multer');
-const path = require('path');
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/');
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
-    }
-});
-
-const fileFilter = (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png/;
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = allowedTypes.test(file.mimetype);
-
-    if (extname && mimetype) {
-        return cb(null, true);
-    } else {
-        cb('Error: Images Only!');
-    }
-};
-
-const upload = multer({
-    storage: storage,
-    limits: { fileSize: 2000000 },
-    fileFilter: fileFilter
-}).single('profile_image');
-
-// 1. شيلنا إعدادات Multer من هنا خالص (لأنها بقت في Routes)
-
+// --- 1. Signup ---
 exports.signup = async (req, res) => {
-    // 2. شيلنا دالة upload(req, res) لأن البيانات بتوصل هنا جاهزة خلاص
     try {
-        // البيانات النصية موجودة في req.body
         const { full_name, email, password, about_me } = req.body;
 
-        // التحقق من وجود اليوزر
+        // التحقق من وجود اليوزر مسبقاً
         const existingUser = await User.findOne({ where: { email } });
         if (existingUser) {
             return res.status(400).json({ message: "Email already exists" });
         }
 
-        // تشفير الباسورد
+        // تشفير كلمة المرور
         const hashedPassword = await bcrypt.hash(password, 10);
-        
-        // 3. استقبال الصورة (لو موجودة) من req.file مباشرة
-        // لاحظي: التخزين تم بالفعل في الراوت، هنا بس بناخد الاسم للداتابيز
+
+        // استقبال مسار الصورة من req.file (الذي تم معالجته في الـ Route)
         const profile_image = req.file ? `/uploads/${req.file.filename}` : null;
 
-        // إنشاء اليوزر
+        // إنشاء المستخدم الجديد في قاعدة البيانات
         const user = await User.create({
             full_name,
             email,
             password: hashedPassword,
-            about_me,      // الـ Bio
-            profile_image  // رابط الصورة
+            about_me,
+            profile_image
         });
 
-        res.status(201).json({ 
-            message: 'User created successfully', 
-            userId: user.id 
+        // إرجاع بيانات اليوزر كاملة للفرونت إند
+        res.status(201).json({
+            message: 'User created successfully',
+            userId: user.id,
+            email: user.email,
+            full_name: user.full_name,
+            role: user.role,
+            profile_image: user.profile_image
         });
 
     } catch (error) {
@@ -72,6 +43,7 @@ exports.signup = async (req, res) => {
     }
 };
 
+// --- 2. Login ---
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -91,8 +63,9 @@ exports.login = async (req, res) => {
             userId: user.id,
             email: user.email,
             full_name: user.full_name,
-            profile_image: user.profile_image, // نبعت الصورة كمان عشان الفرونت يستفيد بيها
-            about_me: user.about_me
+            profile_image: user.profile_image,
+            about_me: user.about_me,
+            role: user.role
         });
 
     } catch (error) {
@@ -101,6 +74,7 @@ exports.login = async (req, res) => {
     }
 };
 
+// --- 3. Get User Profile ---
 exports.getUserProfile = async (req, res) => {
     try {
         const userId = req.params.id;
@@ -116,6 +90,51 @@ exports.getUserProfile = async (req, res) => {
 
     } catch (error) {
         console.error("Profile Error:", error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// --- 4. Update Profile ---
+exports.updateProfile = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const { full_name, email, role, bio } = req.body;
+
+        // التحقق من وجود ملف صورة جديد
+        const newProfileImage = req.file ? `/uploads/${req.file.filename}` : undefined;
+
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // تحديث البيانات النصية
+        user.full_name = full_name || user.full_name;
+        user.email = email || user.email;
+        user.role = role || user.role;
+        user.about_me = bio || user.about_me;
+
+        // تحديث الصورة فقط إذا تم رفع ملف جديد
+        if (newProfileImage) {
+            user.profile_image = newProfileImage;
+        }
+
+        await user.save();
+
+        res.status(200).json({
+            message: "Profile updated successfully",
+            user: {
+                id: user.id,
+                full_name: user.full_name,
+                email: user.email,
+                role: user.role,
+                about_me: user.about_me,
+                profile_image: user.profile_image
+            }
+        });
+
+    } catch (error) {
+        console.error("Update Error:", error);
         res.status(500).json({ error: error.message });
     }
 };
