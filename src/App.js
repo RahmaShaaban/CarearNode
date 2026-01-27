@@ -9,7 +9,7 @@ import Roadmaps from './pages/Roadmaps';
 import CV from './pages/CV';
 import Sign_In from './pages/Sign_In';
 import Profile from './pages/Profile';
-
+import Sign_up from'./pages/Sign_up';
 import Footer from './Footer'; 
 
 function App() {
@@ -29,6 +29,7 @@ function App() {
                         <Route path="/Roadmaps" element={<Roadmaps />} />
                         <Route path="/cv" element={<CV />} />
                         <Route path="/Sign_In" element={<Sign_In />} />
+                        <Route path="/signup" element={<Sign_up />} />
                         <Route path="/Profile" element={<Profile />} />
                     </Routes>
                 </div>

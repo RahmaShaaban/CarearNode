@@ -1,0 +1,212 @@
+
+.signup-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #F0F7F5; 
+    padding: 40px 20px;
+    box-sizing: border-box;
+}
+
+.back-link-container {
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.back-link {
+    color: #2F5D54;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.signup-card {
+    background: #FFFFFF;
+    width: 100%;
+    max-width: 500px;
+    padding: 40px;
+    border-radius: 24px;
+    box-shadow: 0 10px 40px rgba(47, 93, 84, 0.08);
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.signup-logo {
+    height: 70px;
+    width: auto;
+    margin: auto;
+    margin-bottom: 20px;
+}
+
+.signup-title {
+    color: #2F5D54; 
+    font-size: 28px;
+    margin: 0 0 8px 0;
+}
+
+.signup-subtitle {
+    color: #58A492; 
+    margin-bottom: 30px;
+    font-size: 15px;
+}
+
+.profile-upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.profile-circle {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    border: 2px dashed #58A492; 
+    background-color: #F0F7F5;  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.camera-svg {
+    width: 40px;
+    height: 40px;
+    transition: opacity 0.3s ease;
+    stroke: #58A492;
+}
+
+.camera-svg path {
+    stroke: inherit; 
+}
+
+.hover-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(47, 93, 84, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.upload-text {
+    color: #FFFFFF;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Hover */
+.profile-circle:hover .hover-overlay {
+    opacity: 1; 
+}
+
+.profile-circle:hover {
+    border-color: #2F5D54; 
+    background-color: #e2efeb; /* تغيير بسيط في لون الخلفية */
+    transform: scale(1.02);
+}
+
+.preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tap-text {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #64748b;
+}
+/* لالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالا */
+.signup-form-fields {
+    width: 100%;
+    text-align: left;
+}
+
+.input-group {
+    margin-bottom: 20px; 
+}
+
+.input-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #2F5D54;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 12px;
+    font-size: 15px;
+    outline: none;
+    box-sizing: border-box;
+    transition: 0.3s;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: #58A492;
+    box-shadow: 0 0 0 4px rgba(88, 164, 146, 0.1);
+}
+
+.password-field-container {
+    position: relative;
+}
+
+.password-toggle-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #58A492;
+}
+
+.signup-submit-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: #58A492;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.signup-submit-btn:hover {
+    background-color: #2F5D54;
+}
+
+.auth-footer-text {
+    margin-top: 25px;
+    font-size: 14px;
+    color: #64748b;
+    text-align: center;
+}
+
+.auth-link {
+    color: #58A492;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.auth-link:hover{
+    color: #2F5D54;
+}

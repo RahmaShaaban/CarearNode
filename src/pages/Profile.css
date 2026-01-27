@@ -1,0 +1,59 @@
+.profile-page-container {
+    background-color: #F0F7F5; /* الأوف وايت */
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.profile-banner {
+    height: 180px;
+    background: linear-gradient(90deg, #2F5D54 0%, #58A492 100%); /* دمج ألوانك في الكفر */
+    border-radius: 16px 16px 0 0;
+}
+
+.profile-info-card {
+    background: #FFFFFF;
+    padding: 20px 40px;
+    border-radius: 0 0 16px 16px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin-top: -50px; /* لرفع الكارت فوق البانر */
+    box-shadow: 0 4px 20px rgba(47, 93, 84, 0.1);
+}
+
+.profile-main-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 5px solid white;
+    object-fit: cover;
+}
+
+.online-status-dot {
+    width: 15px;
+    height: 15px;
+    background-color: #10b981; /* أخضر Status */
+    border-radius: 50%;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    border: 3px solid white;
+}
+
+.btn-edit {
+    background-color: #58A492;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.stat-card {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    text-align: center;
+    border-bottom: 4px solid #58A492; /* حركة شيك بباليت ألوانك */
+}
