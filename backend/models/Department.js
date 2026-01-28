@@ -7,12 +7,21 @@ const Department = sequelize.define('Department', {
         primaryKey: true,
         autoIncrement: true
     },
-    name: {
+    department: { 
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true 
     },
-    description: {
-        type: DataTypes.TEXT
+    course_name: {
+        type: DataTypes.STRING,
+        allowNull: true 
+    },
+    brief_description: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
+    technical_skills: {
+        type: DataTypes.TEXT,
+        allowNull: true
     }
 }, {
     tableName: 'departments',
