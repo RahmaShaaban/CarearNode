@@ -18,6 +18,7 @@ function Profile() {
         bio: ""
     });
 
+    // إضافة resumeUploaded و resumeName و resumeDate للداتا
     const [userData, setUserData] = useState({
         fullName: "Loading...",
         email: "...",
@@ -26,6 +27,9 @@ function Profile() {
         role: "Student",
         averageScore: 85,
         interviewsDone: 12,
+        resumeUploaded: false, // حالة الملف
+        resumeName: "",        // اسم الملف
+        resumeDate: "",        // تاريخ الرفع
         courses: [
             { id: 1, name: "Frontend Development", completed: 8, total: 12, percentage: 65 },
             { id: 2, name: "React Mastery", completed: 3, total: 10, percentage: 30 }
@@ -37,7 +41,6 @@ function Profile() {
         ]
     });
 
-    // جلب بيانات البروفايل عند فتح الصفحة
     useEffect(() => {
         const fetchProfile = async () => {
             const userId = localStorage.getItem('userId');
@@ -60,6 +63,7 @@ function Profile() {
                         profilePic: data.profile_image
                             ? `http://localhost:5000${data.profile_image}`
                             : "https://via.placeholder.com/150"
+                        // ملحوظة: لو الباك إند بيرجع داتا عن الـ CV ممكن نضيفها هنا
                     }));
                 }
             } catch (error) {
@@ -91,6 +95,33 @@ function Profile() {
             setImageFile(file);
             setPreviewImage(URL.createObjectURL(file));
         }
+    };
+
+    // --- دالة رفع الـ Resume وتحديث الواجهة ---
+    const handleResumeChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // هنا المفروض نبعت للباك إند، بس هنعمل تحديث للواجهة حالياً
+            const today = new Date().toLocaleDateString('en-US');
+            setUserData(prev => ({
+                ...prev,
+                resumeUploaded: true,
+                resumeName: file.name,
+                resumeDate: today
+            }));
+        }
+    };
+
+    // --- دالة حذف الـ Resume ---
+    const handleRemoveResume = () => {
+        setUserData(prev => ({
+            ...prev,
+            resumeUploaded: false,
+            resumeName: "",
+            resumeDate: ""
+        }));
+        // Reset Input value to allow re-uploading same file if needed
+        if(resumeInputRef.current) resumeInputRef.current.value = "";
     };
 
     const handleSaveChanges = async () => {
@@ -254,12 +285,63 @@ function Profile() {
                             ))}
                         </div>
                     </div>
+
+                    {/* Resume Section Modified */}
                     <div className="dashboard-card">
-                        <h4 className="card-title purple-text"><i className="fa-solid fa-file-invoice"></i> Resume</h4>
-                        <div className="resume-upload-zone">
-                            <input type="file" ref={resumeInputRef} style={{ display: 'none' }} accept=".pdf,.doc,.docx" />
-                            <button className="btn-upload-outline" onClick={() => resumeInputRef.current.click()}>Upload PDF</button>
-                        </div>
+                        {/* Input مخفي دايماً موجود */}
+                        <input
+                            type="file"
+                            ref={resumeInputRef}
+                            style={{ display: 'none' }}
+                            accept=".pdf,.doc,.docx"
+                            onChange={handleResumeChange}
+                        />
+
+                        {!userData.resumeUploaded ? (
+                            // الحالة الأولى: مفيش ملف (Upload Zone)
+                            <>
+                                <h4 className="card-title purple-text"><i className="fa-solid fa-file-invoice"></i> Resume</h4>
+                                <div className="resume-upload-zone">
+                                    <div className="upload-icon-wrapper">
+                                        <i className="fa-solid fa-cloud-arrow-up"></i>
+                                    </div>
+                                    <p className="upload-text">No resume uploaded</p>
+                                    <p className="upload-subtext">Upload your CV to get AI insights</p>
+                                    <button className="btn-upload-outline" onClick={() => resumeInputRef.current.click()}>Upload PDF</button>
+                                </div>
+                            </>
+                        ) : (
+                            // الحالة الثانية: تم الرفع (Design matches the image with Green Palette)
+                            <div className="resume-active-container">
+                                <div className="resume-header-row">
+                                    <h4 className="card-title purple-text" style={{margin:0}}><i className="fa-solid fa-file-invoice"></i> My Resume</h4>
+                                    <span className="badge-active">Active</span>
+                                </div>
+                                
+                                <div className="resume-file-card">
+                                    <div className="file-icon-box">
+                                        <i className="fa-solid fa-file-pdf"></i>
+                                    </div>
+                                    <div className="file-info">
+                                        <span className="file-name">{userData.resumeName}</span>
+                                        <span className="file-date">Uploaded: {userData.resumeDate}</span>
+                                    </div>
+                                </div>
+
+                                <button className="btn-view-resume">
+                                    <i className="fa-regular fa-eye"></i> View
+                                </button>
+
+                                <div className="resume-footer-actions">
+                                    <button className="btn-remove-resume" onClick={handleRemoveResume}>
+                                        <i className="fa-regular fa-trash-can"></i> Remove
+                                    </button>
+                                    <button className="btn-replace-resume" onClick={() => resumeInputRef.current.click()}>
+                                        Replace File
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
