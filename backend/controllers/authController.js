@@ -6,6 +6,17 @@ exports.signup = async (req, res) => {
     try {
         const { full_name, email, password, about_me } = req.body;
 
+        // >>>>> 1. بداية التعديل: التحقق من قوة الباسورد <<<<<
+        // لازم يحتوي على: حرف صغير، حرف كبير، رقم، علامة خاصة، وطول 8+
+        const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+        if (!strongPasswordRegex.test(password)) {
+            return res.status(400).json({ 
+                message: "Password is too weak! It must contain at least 8 characters, including uppercase, lowercase, numbers, and symbols (@$!%*?&)." 
+            });
+        }
+        // >>>>> نهاية التعديل <<<<<
+
         const existingUser = await User.findOne({ where: { email } });
         if (existingUser) {
             return res.status(400).json({ message: "Email already exists" });

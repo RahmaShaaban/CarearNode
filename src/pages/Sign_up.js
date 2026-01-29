@@ -11,6 +11,9 @@ function SignUp() {
     const [role, setRole] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [bio, setBio] = useState("");
+    
+    // 1. State جديد لتخزين أخطاء الباسورد
+    const [passwordError, setPasswordError] = useState("");
 
     const fileInputRef = useRef(null);
     const [profileImage, setProfileImage] = useState(null);
@@ -28,8 +31,24 @@ function SignUp() {
         }
     };
 
+    // 2. دالة التحقق من قوة الباسورد (Regex)
+    const validatePassword = (pass) => {
+        // الشرح: حرف صغير + حرف كبير + رقم + علامة خاصة + طول 8 على الأقل
+        const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        return strongPasswordRegex.test(pass);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // تصفير الأخطاء قبل البدء
+        setPasswordError("");
+
+        // 3. التحقق من قوة الباسورد قبل الإرسال
+        if (!validatePassword(password)) {
+            setPasswordError("Weak Password! Must contain 8+ chars, Uppercase, Lowercase, Number & Symbol (@$!%*?&).");
+            return; // وقف الكود هنا ومتبعتش للسيرفر
+        }
 
         if (password !== confirmPassword) {
             alert("كلمة المرور غير متطابقة!");
@@ -40,7 +59,7 @@ function SignUp() {
         formData.append('full_name', fullName);
         formData.append('email', email);
         formData.append('password', password);
-        formData.append('role', role); // ضفنا الـ role عشان تتبعت للباك إند
+        formData.append('role', role);
         formData.append('about_me', bio);
 
         if (fileInputRef.current.files[0]) {
@@ -56,7 +75,6 @@ function SignUp() {
             const data = await response.json();
 
             if (response.ok) {
-                // حفظ الـ userId عشان صفحة البروفايل تعرف اليوزر
                 localStorage.setItem('userId', data.userId);
                 alert("تم إنشاء الحساب بنجاح! مرحباً بك في CareerNode.");
                 navigate('/Profile');
@@ -89,7 +107,7 @@ function SignUp() {
                 <h2 className="signup-title">Create Account</h2>
                 <p className="signup-subtitle">Join CareerNode to start your journey</p>
 
-                {/* Profile Photo Section - رجعنا الـ Hover والـ Placeholder */}
+                {/* Profile Photo Section */}
                 <div className="profile-upload-section">
                     <div className="profile-circle" onClick={() => fileInputRef.current.click()}>
                         {!profileImage ? (
@@ -141,7 +159,20 @@ function SignUp() {
                     <div className="input-group">
                         <label className="input-label">Password</label>
                         <div className="password-field-container">
-                            <input type={showPassword ? "text" : "password"} className="form-input" placeholder="Create a password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                            <input 
+                                type={showPassword ? "text" : "password"} 
+                                className="form-input" 
+                                placeholder="Create a password" 
+                                value={password} 
+                                onChange={(e) => {
+                                    setPassword(e.target.value);
+                                    // (اختياري) مسح رسالة الخطأ لو اليوزر كتب صح وهو بيكتب
+                                    if(passwordError && validatePassword(e.target.value)) {
+                                        setPasswordError("");
+                                    }
+                                }} 
+                                required 
+                            />
                             <span className="eye-icon" onClick={togglePasswordVisibility}>
                                 {showPassword ? (
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
@@ -150,6 +181,17 @@ function SignUp() {
                                 )}
                             </span>
                         </div>
+                        
+                        {/* 4. عرض رسائل الخطأ والتلميح تحت الباسورد */}
+                        {passwordError ? (
+                            <p style={{ color: '#ef4444', fontSize: '12px', marginTop: '5px', fontWeight: 'bold' }}>
+                                <i className="fa-solid fa-circle-exclamation"></i> {passwordError}
+                            </p>
+                        ) : (
+                            <p style={{ color: '#64748b', fontSize: '11px', marginTop: '5px' }}>
+                                Hint: Use 8+ chars, mix of UPPER, lower, numbers & symbols (@$!%*?&).
+                            </p>
+                        )}
                     </div>
 
                     <div className="input-group">
@@ -157,7 +199,6 @@ function SignUp() {
                         <input type={showPassword ? "text" : "password"} className="form-input" placeholder="Confirm your password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
                     </div>
 
-                    {/* Bio Section - رجعنا الـ Bio سيكشن */}
                     <div className="input-group bio-field">
                         <label className="input-label">About Me (Bio)</label>
                         <textarea
