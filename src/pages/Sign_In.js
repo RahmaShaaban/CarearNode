@@ -58,8 +58,10 @@ function SignIn() {
     return (
         <div className="signin-page">
             <div className="back-link-container">
-                <Link to="/" className="back-link">
-                    Back to Home
+                <Link to="/" className="back-btn">
+                    <button className="btn-back">
+                        <i className="fa-solid fa-arrow-left"></i> Back to Home
+                    </button>
                 </Link>
             </div>
 

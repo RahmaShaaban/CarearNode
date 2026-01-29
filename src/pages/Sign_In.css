@@ -14,20 +14,34 @@
     margin-bottom: 20px;
 }
 
-.back-link {
-    color: #4b5563;
-    font-weight: 600;
-    text-decoration: none;
-    font-size: 14px;
-    display: flex;
+.btn-back {
+    background: transparent;
+    border: 1px solid #d1dbd9; /* Border خفيف يماشي الأعمدة */
+    font-size: 0.85rem;
+    color: #475569;
+    display: inline-flex; /* عشان ياخد مساحة المحتوى بس */
     align-items: center;
-    gap: 5px;
-    transition: color 0.2s;
+    gap: 10px;
+    font-weight: 600;
+    padding: 7px 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
 }
 
-    .back-link:hover {
-        color: var(--primary-medium);
-    }
+.btn-back i {
+    font-size: 0.85rem;
+    transition: transform 0.3s ease;
+}
+
+.btn-back:hover {
+    background-color: #f1f6f5; /* نفس لون الأعمدة في الـ hover */
+    color: #355d55;
+    border-color: #355d55;
+}
+
+.btn-back:hover i {
+    transform: translateX(-5px); /* حركة سهم الرجوع لورا بتدي UX هايل */
+}
 
 .signin-card {
     background:white;
