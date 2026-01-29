@@ -1,15 +1,16 @@
-
+/* Container الأساسي لضمان توسط الكارت في الصفحة */
 .signup-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #F0F7F5; 
+    background-color: #F0F7F5; /* الأوف وايت المائل للخضار */
     padding: 40px 20px;
     box-sizing: border-box;
 }
 
+/* ستايل لينك الرجوع */
 .back-link-container {
     width: 100%;
     max-width: 500px;
@@ -17,43 +18,66 @@
     text-align: left;
 }
 
-.back-link {
-    color: #2F5D54;
-    text-decoration: none;
-    font-size: 14px;
+.btn-back { 
+    background: transparent;
+    border: 1px solid #d1dbd9; /* Border خفيف يماشي الأعمدة */
+    font-size: 0.85rem;
+    color: #475569;
+    display: inline-flex; /* عشان ياخد مساحة المحتوى بس */
+    align-items: center;
+    gap: 10px;
     font-weight: 600;
+    padding: 7px 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
 }
 
+.btn-back i {
+    font-size: 0.85rem;
+    transition: transform 0.3s ease;
+}
+
+.btn-back:hover {
+    background-color: #f1f6f5; /* نفس لون الأعمدة في الـ hover */
+    color: #355d55;
+    border-color: #355d55;
+}
+
+.btn-back:hover i {
+    transform: translateX(-5px); /* حركة سهم الرجوع لورا بتدي UX هايل */
+}
+
+/* تصميم الكارت الرئيسي */
 .signup-card {
-    background: #FFFFFF;
+    background:white;
     width: 100%;
-    max-width: 500px;
+    max-width: 450px;
     padding: 40px;
-    border-radius: 24px;
-    box-shadow: 0 10px 40px rgba(47, 93, 84, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.03);
     text-align: center;
-    box-sizing: border-box;
+    border: 1px solid #e5e7eb;
 }
 
 .signup-logo {
     height: 70px;
     width: auto;
-    margin: auto;
     margin-bottom: 20px;
 }
 
 .signup-title {
-    color: #2F5D54; 
+    color: #2F5D54;
     font-size: 28px;
     margin: 0 0 8px 0;
 }
 
 .signup-subtitle {
-    color: #58A492; 
+    color: #58A492;
     margin-bottom: 30px;
     font-size: 15px;
 }
 
+/* --- سكشن رفع الصورة --- */
 .profile-upload-section {
     display: flex;
     flex-direction: column;
@@ -65,8 +89,8 @@
     width: 110px;
     height: 110px;
     border-radius: 50%;
-    border: 2px dashed #58A492; 
-    background-color: #F0F7F5;  
+    border: 2px dashed #58A492;
+    background-color: #F0F7F5;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -79,20 +103,11 @@
 .camera-svg {
     width: 40px;
     height: 40px;
-    transition: opacity 0.3s ease;
-    stroke: #58A492;
-}
-
-.camera-svg path {
-    stroke: inherit; 
 }
 
 .hover-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     background-color: rgba(47, 93, 84, 0.85);
     display: flex;
     justify-content: center;
@@ -107,14 +122,12 @@
     font-size: 14px;
 }
 
-/* Hover */
 .profile-circle:hover .hover-overlay {
-    opacity: 1; 
+    opacity: 1;
 }
 
 .profile-circle:hover {
-    border-color: #2F5D54; 
-    background-color: #e2efeb; /* تغيير بسيط في لون الخلفية */
+    border-color: #2F5D54;
     transform: scale(1.02);
 }
 
@@ -129,14 +142,15 @@
     font-size: 14px;
     color: #64748b;
 }
-/* لالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالالا */
+
+/* --- حقول الإدخال والفورم --- */
 .signup-form-fields {
     width: 100%;
     text-align: left;
 }
 
 .input-group {
-    margin-bottom: 20px; 
+    margin-bottom: 20px;
 }
 
 .input-label {
@@ -163,19 +177,23 @@
     box-shadow: 0 0 0 4px rgba(88, 164, 146, 0.1);
 }
 
+/* حاوية الباسورد عشان أيقونة العين */
 .password-field-container {
     position: relative;
 }
 
-.password-toggle-icon {
+.eye-icon {
     position: absolute;
     right: 15px;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
     color: #58A492;
+    display: flex;
+    align-items: center;
 }
 
+/* زر التسجيل */
 .signup-submit-btn {
     width: 100%;
     padding: 15px;
@@ -194,6 +212,7 @@
     background-color: #2F5D54;
 }
 
+/* تذييل الصفحة */
 .auth-footer-text {
     margin-top: 25px;
     font-size: 14px;
@@ -207,6 +226,7 @@
     text-decoration: none;
 }
 
-.auth-link:hover{
+.auth-link:hover {
     color: #2F5D54;
+    text-decoration: underline;
 }
