@@ -1,0 +1,330 @@
+/* 1. ??????? ?????? (Inter) ????? ??? ????? ??????? */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* --- ????? ?????? (Layout) --- */
+.checklist-wrapper {
+    background-color: #f8fafc; /* ????? ?????? ????? ???? */
+    min-height: 100vh;
+    padding: 60px 20px;
+    font-family: 'Inter', sans-serif;
+    color: #334155;
+}
+
+.checklist-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* --- ?????? (???????) --- */
+.header-section {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.main-title {
+    font-size: 2.2rem;
+    color: #0f172a;
+    font-weight: 800;
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+}
+
+.sub-title {
+    font-size: 1.1rem;
+    color: #64748b;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+/* --- ???? ?????? (Selection Grid) --- */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+/* --- ???? ?????? (Course Card) --- */
+.course-card {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+    .course-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        border-color: #cbd5e0;
+    }
+
+/* ???? ???????? (Selected) */
+.card-selected {
+    border-color: #3b82f6;
+    background-color: #eff6ff; /* ???? ???? ???? */
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+}
+
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.course-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+    padding-right: 10px;
+}
+
+.card-selected .course-title {
+    color: #1d4ed8;
+}
+
+/* ????? ????? ???? */
+.circle-check {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid #cbd5e0;
+    background: white;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+    .circle-check.checked {
+        background-color: #3b82f6;
+        border-color: #3b82f6;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' width='16px' height='16px'%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z'/%3E%3C/svg%3E");
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+.skills-text {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* --- ?? ??????? (Recommend Button) --- */
+.button-container {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.btn-recommend {
+    background: #2563eb;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 14px 40px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+    transition: background 0.2s;
+}
+
+    .btn-recommend:hover {
+        background: #1d4ed8;
+    }
+
+    .btn-recommend:disabled {
+        background: #94a3b8;
+        cursor: wait;
+    }
+
+/* --- ????? ??????? (Results List) - ????? ????? --- */
+.results-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* ????? ??? ?????? */
+    max-width: 900px;
+    margin: 0 auto;
+    animation: slideUp 0.5s ease;
+}
+
+/* ????? ???? ?????? (??? ???) */
+.result-card-row {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 25px;
+    display: flex;
+    align-items: center; /* ???? ????? */
+    gap: 20px;
+    transition: transform 0.2s;
+}
+
+/* ????? ??? ?????? (????? ???) */
+.top-choice {
+    border: 2px solid #3b82f6; /* ???? ???? */
+    background-color: #f8fafc; /* ????? ?????? ??? */
+    position: relative;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+}
+
+/* ???????? (????? ?? ?????) */
+.result-icon {
+    width: 50px;
+    height: 50px;
+    background: #f1f5f9;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #64748b;
+    flex-shrink: 0;
+}
+
+/* ?????? ?????? ???? ????? */
+.top-choice .result-icon {
+    background: #3b82f6;
+    color: white;
+    font-size: 1.4rem;
+}
+
+/* ?????? ????? (????) */
+.result-info {
+    flex: 1; /* ???? ??????? ??????? ???? ?????? ?????? */
+    text-align: left;
+}
+
+.result-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+    .result-header h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        color: #0f172a;
+        font-weight: 700;
+    }
+
+/* ???? Best Fit */
+.badge-best-fit {
+    background: #dbeafe;
+    color: #1e40af;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+}
+
+.result-desc {
+    margin: 5px 0 10px 0;
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* ?? Read More */
+.btn-read-more {
+    background: white;
+    border: 1px solid #cbd5e0;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #475569;
+    transition: all 0.2s;
+}
+
+.top-choice .btn-read-more {
+    background: #3b82f6;
+    color: white;
+    border: none;
+}
+
+/* --- ?????? (Score) ??? ?????? --- */
+.result-score {
+    text-align: center;
+    min-width: 60px;
+}
+
+.score-num {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #1e293b;
+    line-height: 1;
+}
+
+.score-label {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+.top-choice .score-num {
+    color: #3b82f6;
+}
+
+/* ????? ?????? ?? ???? ??????? */
+.result-header-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-restart {
+    background: transparent;
+    border: 1px solid #cbd5e0;
+    padding: 6px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+    .btn-restart:hover {
+        background: #fff;
+        color: #334155;
+    }
+
+/* ??????? */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ???????? */
+@media (max-width: 600px) {
+    .result-card-row {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .result-info {
+        text-align: center;
+    }
+
+    .result-header {
+        justify-content: center;
+    }
+}
