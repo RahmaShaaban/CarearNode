@@ -1,25 +1,25 @@
 import React, { useState } from 'react';
 import './Department.css';
 
-const coursesData = [
-    { name: "Compiler Theory", skills: "Parsing, Lexical Analysis" },
-    { name: "Artificial Intelligence", skills: "Search Algorithms, Heuristics" },
-    { name: "Machine Learning", skills: "Neural Networks, Regression" },
-    { name: "Data Mining", skills: "Pattern Recognition, Big Data" },
-    { name: "Business Intelligence", skills: "Analytics, Reporting" },
-    { name: "E-Commerce", skills: "Business Models, Payment" },
-    { name: "Computer Vision", skills: "Image Processing, Recognition" },
-    { name: "Game Design", skills: "Unity, Unreal Engine, Physics" },
-    { name: "Digital Signal Processing", skills: "Signals, Systems, transform" },
-    { name: "Embedded Systems", skills: "Microcontrollers, RTOS" },
-    { name: "Robotics & Control", skills: "Sensors, Actuators, Kinematics" },
-    { name: "Computer Architecture", skills: "CPU Design, Assembly" }
-];
+// بيانات تجريبية لمحاكاة ما يجب أن يرسله الباك-إند لكل قسم
+// (Subjects, Skills, Jobs)
+// في الوضع الحقيقي، هذه البيانات تأتي مع الـ response
+const getDetailsMock = (deptName) => {
+    // هذه مجرد بيانات افتراضية، يجب أن تأتي من الباك إند الخاص بك لاحقاً
+    return {
+        subjects: ["Machine Learning", "Deep Learning", "Big Data Analytics", "NLP", "Computer Vision"],
+        techSkills: ["Python/R Programming", "TensorFlow & PyTorch", "Statistical Modeling", "Data Visualization", "Model Deployment"],
+        jobs: ["Data Scientist", "Machine Learning Engineer", "AI Researcher", "Data Analyst", "BI Developer"]
+    };
+};
 
 function Department() {
     const [selectedCourses, setSelectedCourses] = useState([]);
-    const [results, setResults] = useState(null); // ????? ????? ?? results ???
+    const [results, setResults] = useState(null);
     const [loading, setLoading] = useState(false);
+    
+    // State جديد للتحكم في عرض صفحة التفاصيل
+    const [viewingDept, setViewingDept] = useState(null);
 
     const toggleCourse = (courseName) => {
         if (selectedCourses.includes(courseName)) {
@@ -46,7 +46,7 @@ function Department() {
             const data = await response.json();
 
             if (response.ok) {
-                setResults(data.results); // ????? ??????? ????
+                setResults(data.results);
                 setTimeout(() => {
                     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
                 }, 100);
@@ -64,83 +64,172 @@ function Department() {
     const handleRestart = () => {
         setResults(null);
         setSelectedCourses([]);
+        setViewingDept(null); // إعادة تعيين صفحة التفاصيل
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    // دالة فتح صفحة التفاصيل
+    const handleReadMore = (dept) => {
+        // هنا ندمج البيانات القادمة من الباك إند مع البيانات التفصيلية
+        // ملاحظة: يفضل أن يرسل الباك إند الـ subjects/skills/jobs جاهزة
+        const extraDetails = getDetailsMock(dept.name); 
+        setViewingDept({ ...dept, ...extraDetails });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    // دالة الرجوع للتوصيات
+    const handleBackToRecommendations = () => {
+        setViewingDept(null);
+    };
+
+    // ---------------------------------------------------------
+    // عرض صفحة التفاصيل (The Details View)
+    // ---------------------------------------------------------
+    if (viewingDept) {
     return (
         <div className="checklist-wrapper">
             <div className="checklist-container">
-                <div className="header-section">
-                    <h1 className="main-title">Academic Interest Checklist</h1>
-                    {!results ? (
-                        <p className="sub-title">Select the courses you enjoyed the most.</p>
-                    ) : (
-                        <div className="result-header-actions">
-                            <p className="sub-title">Here represent your top matches ranked by score.</p>
-                            <button className="btn-restart" onClick={handleRestart}>
-                                <i className="fa-solid fa-rotate-left"></i> Start Over
-                            </button>
-                        </div>
-                    )}
-                </div>
+                <button className="btn-back" onClick={handleBackToRecommendations}>
+                    <i className="fa-solid fa-arrow-left"></i> Back to Recommendations
+                </button>
 
-                {!results && (
-                    <>
-                        <div className="grid-container">
-                            {coursesData.map((course, index) => (
-                                <div
-                                    key={index}
-                                    className={`course-card ${selectedCourses.includes(course.name) ? 'card-selected' : ''}`}
-                                    onClick={() => toggleCourse(course.name)}
-                                >
-                                    <div className="card-top">
-                                        <h3 className="course-title">{course.name}</h3>
-                                        <div className={`circle-check ${selectedCourses.includes(course.name) ? 'checked' : ''}`}></div>
-                                    </div>
-                                    <p className="skills-text">{course.skills}</p>
-                                </div>
-                            ))}
+                <div className="department-details-card">
+                    <div className="details-header">
+                        <div className="details-main-icon">
+                            <i className="fa-solid fa-brain"></i>
                         </div>
-                        <div className="button-container">
-                            <button className="btn-recommend" onClick={handleRecommend} disabled={loading}>
-                                {loading ? "Analyzing..." : "Recommend Department"}
-                            </button>
-                        </div>
-                    </>
-                )}
-
-                {/* ??? ????? ???? ????? ??????? ?? ?????? ?????? */}
-                {results && (
-                    <div className="results-list">
-                        {results.map((dept, index) => {
-                            const isTopChoice = index === 0; // ????? ?? ?? ???? ????
-                            return (
-                                <div key={index} className={`result-card-row ${isTopChoice ? 'top-choice' : ''}`}>
-                                    <div className="result-icon">
-                                        {isTopChoice ? <i className="fa-solid fa-trophy"></i> : <span>#{index + 1}</span>}
-                                    </div>
-                                    <div className="result-info">
-                                        <div className="result-header">
-                                            <h3>{dept.name}</h3>
-                                            {isTopChoice && <span className="badge-best-fit">Best Fit</span>}
-                                        </div>
-                                        <p className="result-desc">{dept.desc}</p>
-                                        <button className="btn-read-more">
-                                            Read More <i className="fa-solid fa-arrow-right"></i>
-                                        </button>
-                                    </div>
-                                    <div className="result-score">
-                                        <span className="score-num">{dept.score}</span>
-                                        <span className="score-label">pts</span>
-                                    </div>
-                                </div>
-                            );
-                        })}
+                        <h2>{viewingDept.name}</h2>
+                        <p className="details-description">
+                            {viewingDept.desc || "This field combines computer science and statistics to extract insights from data and build intelligent systems."}
+                        </p>
                     </div>
-                )}
+
+                    <div className="details-info-grid">
+                        {/* Column 1: Subjects */}
+                        <div className="info-column subjects-section">
+                            <h3><i className="fa-solid fa-book-open"></i> Distinct Subjects</h3>
+                            <ul className="details-list">
+                                {viewingDept.subjects?.map((item, i) => <li key={i}>{item}</li>)}
+                            </ul>
+                        </div>
+
+                        {/* Column 2: Skills */}
+                        <div className="info-column skills-section">
+                            <h3><i className="fa-solid fa-code"></i> Technical Skills</h3>
+                            <ul className="details-list">
+                                {viewingDept.techSkills?.map((item, i) => <li key={i}>{item}</li>)}
+                            </ul>
+                        </div>
+
+                        {/* Column 3: Jobs */}
+                        <div className="info-column jobs-section">
+                            <h3><i className="fa-solid fa-briefcase"></i> Common Jobs</h3>
+                            <ul className="details-list">
+                                {viewingDept.jobs?.map((item, i) => <li key={i}>{item}</li>)}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
 }
+
+    // ---------------------------------------------------------
+    // العرض الأصلي (The Main List View)
+    // ---------------------------------------------------------
+    return (
+    <div className="checklist-wrapper">
+        <div className="checklist-container">
+            <div className="header-section">
+                <h1 className="main-title">Academic Interest Checklist</h1>
+                {!results ? (
+                    <p className="sub-title">Select the courses you enjoyed the most.</p>
+                ) : (
+                    <div className="result-header-actions">
+                        <p className="sub-title">Here represent your top matches ranked by score.</p>
+                        <button className="btn-restart" onClick={handleRestart}>
+                            <i className="fa-solid fa-rotate-left"></i> Change Selection
+                        </button>
+                    </div>
+                )}
+            </div>
+
+            {!results && (
+                <>
+                    {/* الـ Grid فقط للكورسات */}
+                    <div className="grid-container">
+                        {coursesData.map((course, index) => (
+                            <div
+                                key={index}
+                                className={`course-card ${selectedCourses.includes(course.name) ? 'card-selected' : ''}`}
+                                onClick={() => toggleCourse(course.name)}
+                            >
+                                <div className="card-top">
+                                    <h3 className="course-title">{course.name}</h3>
+                                    <div className={`circle-check ${selectedCourses.includes(course.name) ? 'checked' : ''}`}></div>
+                                </div>
+                                <p className="skills-text">{course.skills}</p>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* الزرار هنا بره الـ Grid عشان الـ justify-content: center تشتغل صح */}
+                    <div className="button-container">
+                        <button className="btn-recommend" onClick={handleRecommend} disabled={loading}>
+                            {loading ? "Analyzing..." : "Recommend Department"}
+                        </button>
+                    </div>
+                </>
+            )}
+
+            {results && (
+                <div className="results-list">
+                    {results.map((dept, index) => {
+                        const isTopChoice = index === 0;
+                        return (
+                            <div key={index} className={`result-card-row ${isTopChoice ? 'top-choice' : ''}`}>
+                                <div className="result-icon">
+                                    {isTopChoice ? <i className="fa-solid fa-trophy"></i> : <span>#{index + 1}</span>}
+                                </div>
+                                <div className="result-info">
+                                    <div className="result-header">
+                                        <h3>{dept.name}</h3>
+                                        {isTopChoice && <span className="badge-best-fit">Best Fit</span>}
+                                    </div>
+                                    <p className="result-desc">{dept.desc}</p>
+                                    
+                                    <button className="btn-read-more" onClick={() => handleReadMore(dept)}>
+                                        Read More <i className="fa-solid fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                                <div className="result-score">
+                                    <span className="score-num">{dept.score}</span>
+                                    <span className="score-label">pts</span>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
+        </div>
+    </div>
+);
+}
+
+const coursesData = [
+    { name: "Compiler Theory", skills: "Parsing, Lexical Analysis" },
+    { name: "Artificial Intelligence", skills: "Search Algorithms, Heuristics" },
+    { name: "Machine Learning", skills: "Neural Networks, Regression" },
+    { name: "Data Mining", skills: "Pattern Recognition, Big Data" },
+    { name: "Business Intelligence", skills: "Analytics, Reporting" },
+    { name: "E-Commerce", skills: "Business Models, Payment" },
+    { name: "Computer Vision", skills: "Image Processing, Recognition" },
+    { name: "Game Design", skills: "Unity, Unreal Engine, Physics" },
+    { name: "Digital Signal Processing", skills: "Signals, Systems, transform" },
+    { name: "Embedded Systems", skills: "Microcontrollers, RTOS" },
+    { name: "Robotics & Control", skills: "Sensors, Actuators, Kinematics" },
+    { name: "Computer Architecture", skills: "CPU Design, Assembly" }
+];
 
 export default Department;

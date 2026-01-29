@@ -1,9 +1,9 @@
-/* 1. ??????? ?????? (Inter) ????? ??? ????? ??????? */
+/* 1. استيراد الخط ونفس الألوان الأساسية للموقع */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-/* --- ????? ?????? (Layout) --- */
+/* --- تقسيم الصفحة (Layout) --- */
 .checklist-wrapper {
-    background-color: #f8fafc; /* ????? ?????? ????? ???? */
+    background-color: #F0F7F5; /* تم تغيير الخلفية للون المطلوب */
     min-height: 100vh;
     padding: 60px 20px;
     font-family: 'Inter', sans-serif;
@@ -15,7 +15,7 @@
     margin: 0 auto;
 }
 
-/* --- ?????? (???????) --- */
+/* --- الهيدر (العناوين) --- */
 .header-section {
     text-align: center;
     margin-bottom: 50px;
@@ -37,7 +37,7 @@
     line-height: 1.5;
 }
 
-/* --- ???? ?????? (Selection Grid) --- */
+/* --- شبكة الاختيار (Selection Grid) --- */
 .grid-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -45,7 +45,7 @@
     margin-bottom: 40px;
 }
 
-/* --- ???? ?????? (Course Card) --- */
+/* --- كارد الكورس (Course Card) --- */
 .course-card {
     background: white;
     border: 2px solid #e2e8f0;
@@ -58,17 +58,17 @@
     justify-content: flex-start;
 }
 
-    .course-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-        border-color: #cbd5e0;
-    }
+.course-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    border-color: #43766C; 
+}
 
-/* ???? ???????? (Selected) */
+/* حالة الكارد المختار (Selected) */
 .card-selected {
-    border-color: #3b82f6;
-    background-color: #eff6ff; /* ???? ???? ???? */
-    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+    border-color: #43766C; 
+    background-color: #ffffff; /* خليناها أبيض عشان تظهر فوق الخلفية الملونة الجديدة */
+    box-shadow: 0 4px 10px rgba(67, 118, 108, 0.15);
 }
 
 .card-top {
@@ -83,14 +83,13 @@
     font-weight: 700;
     color: #1e293b;
     margin: 0;
-    padding-right: 10px;
 }
 
 .card-selected .course-title {
-    color: #1d4ed8;
+    color: #355d55; 
 }
 
-/* ????? ????? ???? */
+/* دائرة الاختيار (Checkbox) */
 .circle-check {
     width: 24px;
     height: 24px;
@@ -101,13 +100,13 @@
     transition: all 0.2s ease;
 }
 
-    .circle-check.checked {
-        background-color: #3b82f6;
-        border-color: #3b82f6;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' width='16px' height='16px'%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z'/%3E%3C/svg%3E");
-        background-position: center;
-        background-repeat: no-repeat;
-    }
+.circle-check.checked {
+    background-color: #43766C; 
+    border-color: #43766C;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' width='16px' height='16px'%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z'/%3E%3C/svg%3E");
+    background-position: center;
+    background-repeat: no-repeat;
+}
 
 .skills-text {
     font-size: 0.85rem;
@@ -116,65 +115,115 @@
     line-height: 1.4;
 }
 
-/* --- ?? ??????? (Recommend Button) --- */
+/* --- زر التوصية (Recommend Button) --- */
 .button-container {
-    text-align: center;
+    display: flex;      /* لضمان التوسيط */
+    justify-content: center; 
+    width: 100%;
     margin-top: 30px;
 }
 
 .btn-recommend {
-    background: #2563eb;
+    background: #43766C; 
     color: white;
     font-size: 1rem;
     font-weight: 600;
-    padding: 14px 40px;
+    padding: 14px 50px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
-    transition: background 0.2s;
+    box-shadow: 0 4px 12px rgba(67, 118, 108, 0.25);
+    transition: all 0.3s ease;
 }
 
-    .btn-recommend:hover {
-        background: #1d4ed8;
-    }
+.btn-recommend:hover {
+    background: #355d55; 
+    transform: translateY(-2px);
+}
 
-    .btn-recommend:disabled {
-        background: #94a3b8;
-        cursor: wait;
-    }
+/* --- أزرار Read More & Back & Restart (الاستايل الموحد) --- */
 
-/* --- ????? ??????? (Results List) - ????? ????? --- */
+.btn-restart{
+    background: #cfe2de;
+    
+    border: 1px solid #d9e3e1
+}
+
+.btn-read-more{
+    background: white;
+    
+    border: 1px solid #cbd5e0
+
+}
+
+.btn-read-more, .btn-restart {
+    
+    background: white;
+    padding: 8px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #475569;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-restart:hover{
+    color: #355d55;
+    border-color: #43766C;
+    box-shadow: 0 2px 5px rgba(67, 118, 108, 0.1);
+}
+
+.btn-read-more:hover{
+    background-color: #f1f6f5;
+    color: #355d55;
+    border-color: #43766C;
+    box-shadow: 0 2px 5px rgba(67, 118, 108, 0.1);
+}
+
+/* تمييز خاص للـ Read More في الكارد الأول (اختياري لو حابة يفضل Solid) */
+.top-choice .btn-read-more {
+    /* لو عايزاه يفضل أخضر سادة سيبي الكود القديم، لو عايزاه Hover زي الباقي سيبي ده */
+    background-color: #43766C;
+    color: #f1f6f5;
+}
+
+.top-choice .btn-read-more:hover {
+    /* لو عايزاه يفضل أخضر سادة سيبي الكود القديم، لو عايزاه Hover زي الباقي سيبي ده */
+    background-color: #355d55;
+    border-color: #f1f6f5;
+    box-shadow: 0 2px 5px rgba(67, 118, 108, 0.1);
+}
+/* --- قائمة النتائج (Results List) --- */
 .results-list {
     display: flex;
     flex-direction: column;
-    gap: 15px; /* ????? ??? ?????? */
+    gap: 15px;
     max-width: 900px;
     margin: 0 auto;
     animation: slideUp 0.5s ease;
 }
 
-/* ????? ???? ?????? (??? ???) */
 .result-card-row {
     background: white;
     border: 1px solid #e2e8f0;
     border-radius: 12px;
     padding: 25px;
     display: flex;
-    align-items: center; /* ???? ????? */
+    align-items: center;
     gap: 20px;
     transition: transform 0.2s;
 }
 
-/* ????? ??? ?????? (????? ???) */
 .top-choice {
-    border: 2px solid #3b82f6; /* ???? ???? */
-    background-color: #f8fafc; /* ????? ?????? ??? */
-    position: relative;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+    border: 2px solid #43766C; 
+    background-color: #ffffff; 
+    box-shadow: 0 4px 15px rgba(67, 118, 108, 0.1);
 }
 
-/* ???????? (????? ?? ?????) */
 .result-icon {
     width: 50px;
     height: 50px;
@@ -189,16 +238,13 @@
     flex-shrink: 0;
 }
 
-/* ?????? ?????? ???? ????? */
 .top-choice .result-icon {
-    background: #3b82f6;
+    background: #43766C; 
     color: white;
-    font-size: 1.4rem;
 }
 
-/* ?????? ????? (????) */
 .result-info {
-    flex: 1; /* ???? ??????? ??????? ???? ?????? ?????? */
+    flex: 1;
     text-align: left;
 }
 
@@ -209,22 +255,20 @@
     margin-bottom: 5px;
 }
 
-    .result-header h3 {
-        margin: 0;
-        font-size: 1.2rem;
-        color: #0f172a;
-        font-weight: 700;
-    }
+.result-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #0f172a;
+    font-weight: 700;
+}
 
-/* ???? Best Fit */
 .badge-best-fit {
-    background: #dbeafe;
-    color: #1e40af;
+    background: #eef5f4; 
+    color: #355d55; 
     font-size: 0.75rem;
     font-weight: 700;
     padding: 3px 10px;
     border-radius: 20px;
-    text-transform: uppercase;
 }
 
 .result-desc {
@@ -234,26 +278,6 @@
     line-height: 1.5;
 }
 
-/* ?? Read More */
-.btn-read-more {
-    background: white;
-    border: 1px solid #cbd5e0;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #475569;
-    transition: all 0.2s;
-}
-
-.top-choice .btn-read-more {
-    background: #3b82f6;
-    color: white;
-    border: none;
-}
-
-/* --- ?????? (Score) ??? ?????? --- */
 .result-score {
     text-align: center;
     min-width: 60px;
@@ -267,64 +291,129 @@
     line-height: 1;
 }
 
-.score-label {
-    font-size: 0.8rem;
-    color: #94a3b8;
-    font-weight: 600;
-}
-
 .top-choice .score-num {
-    color: #3b82f6;
+    color: #43766C; 
 }
 
-/* ????? ?????? ?? ???? ??????? */
-.result-header-actions {
+/* الأنيماشين */
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* الريسبونسيف */
+@media (max-width: 600px) {
+    .result-card-row { flex-direction: column; text-align: center; }
+    .result-info { text-align: center; }
+    .result-header { justify-content: center; }
+}
+
+/* ---- Refactored Details View Styles ---- */
+
+.department-details-card {
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+.details-main-icon {
+    width: 60px;
+    height: 60px;
+    background-color: #f1f6f5; /* خلفية خضراء هادية موحدة */
+    color: #355d55;           /* لون الأيقونة */
+    border-radius: 50%;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin: 0 auto 20px;
+}
+
+.details-description {
+    color: #555;
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin: 0 auto 30px;
+    line-height: 1.6;
+}
+
+.details-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    text-align: left;
+}
+
+/* الكلاس الموحد للأعمدة الثلاثة */
+.info-column {
+    padding: 25px;
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+    background-color: #f1f6f5; /* لون العمود الأوسط سابقاً */
+    border: 1px solid #d1dbd9;  /* Border خفيف ومتناسق */
+}
+
+
+.info-column h3 {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    display: flex;
     align-items: center;
     gap: 10px;
+    color: #355d55; /* لون موحد للعناوين */
 }
 
-.btn-restart {
+.details-list {
+    list-style: none;
+    padding: 0;
+}
+
+.details-list li {
+    margin-bottom: 10px;
+    padding-left: 15px;
+    position: relative;
+    font-size: 0.95rem;
+    color: #444;
+}
+
+.details-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+    color: #355d55; /* لون النقطة موحد */
+}
+/* ---- Back Button Style ---- */
+
+.btn-back {
     background: transparent;
-    border: 1px solid #cbd5e0;
-    padding: 6px 15px;
-    border-radius: 6px;
+    border: 1px solid #d1dbd9; /* Border خفيف يماشي الأعمدة */
     cursor: pointer;
-    color: #64748b;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    color: #475569;
+    margin-bottom: 25px;
+    display: inline-flex; /* عشان ياخد مساحة المحتوى بس */
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
 }
 
-    .btn-restart:hover {
-        background: #fff;
-        color: #334155;
-    }
-
-/* ??????? */
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.btn-back i {
+    font-size: 0.85rem;
+    transition: transform 0.3s ease;
 }
 
-/* ???????? */
-@media (max-width: 600px) {
-    .result-card-row {
-        flex-direction: column;
-        text-align: center;
-    }
+.btn-back:hover {
+    background-color: #f1f6f5; /* نفس لون الأعمدة في الـ hover */
+    color: #355d55;
+    border-color: #355d55;
+}
 
-    .result-info {
-        text-align: center;
-    }
-
-    .result-header {
-        justify-content: center;
-    }
+.btn-back:hover i {
+    transform: translateX(-5px); /* حركة سهم الرجوع لورا بتدي UX هايل */
 }
