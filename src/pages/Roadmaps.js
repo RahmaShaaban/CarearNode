@@ -94,8 +94,8 @@ const Roadmaps = () => {
 
                   {/* زرار التفاصيل */}
                   <Link to={`/roadmap/${roadmap.id}`} className="view-roadmap-btn">
-                    View Roadmap <i className="fa-solid fa-arrow-right"></i>
-                  </Link>
+                        View Roadmap <i className="fa-solid fa-arrow-right"></i>
+                   </Link>
                 </div>
               </div>
             );
