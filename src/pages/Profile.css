@@ -2,7 +2,7 @@
 .profile-container {
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* عشان يبدأ من فوق شوية */
+    align-items: flex-start;
     min-height: 100vh;
     background-color: #f0f2f5;
     padding: 40px 20px;
@@ -12,7 +12,7 @@
 /* الكارد نفسه */
 .profile-card {
     width: 100%;
-    max-width: 900px; /* العرض المثالي عشان ميفردش أوي */
+    max-width: 900px;
     background: white;
     border-radius: 15px;
     overflow: hidden;
@@ -20,37 +20,36 @@
     position: relative;
 }
 
-/* الهيدر الأخضر - حددنا الـ height عشان ميمطش */
+/* الهيدر الأخضر */
 .profile-header {
-    height: 160px; 
-    background-color: #43766C; /* الأخضر بتاعك */
+    height: 160px;
+    background-color: #43766C;
     display: flex;
     justify-content: flex-end;
     align-items: flex-start;
     padding: 20px;
 }
 
-/* Profile.css */
 .logout-btn {
     background: transparent;
     border: 1px solid rgba(255, 255, 255, 0.6);
     color: white;
-     padding: 8px 16px;
+    padding: 8px 16px;
     border-radius: 20px;
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
-    transition: all 0.3s ease; 
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     gap: 6px;
 }
 
-.logout-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: white;
-    transform: translateY(-2px); /* حركة خفيفة للفوق */
-}
+    .logout-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: white;
+        transform: translateY(-2px);
+    }
 
 /* منطقة الصورة الشخصية والأزرار */
 .avatar-section {
@@ -58,7 +57,7 @@
     justify-content: space-between;
     align-items: flex-end;
     padding: 0 30px;
-    margin-top: -60px; /* الحركة اللي بتطلع الصورة لفوق */
+    margin-top: -60px;
 }
 
 /* الدائرة المقطعة اللي في الصورة */
@@ -66,7 +65,7 @@
     width: 130px;
     height: 130px;
     border-radius: 50%;
-    border: 3px dashed #43766C; /* الدائرة الـ dashed */
+    border: 3px dashed #43766C;
     padding: 5px;
     background: white;
     display: flex;
@@ -81,33 +80,59 @@
     object-fit: cover;
 }
 
-/* منطقة الأزرار (Settings & Edit) */
+/* الجزء السفلي من الداتا */
+.profile-info {
+    padding: 20px 30px 40px;
+}
+
+/* الاسم */
+.user-name {
+    font-size: 28px;
+    font-weight: 800;
+    color: #1f2937;
+    margin: 10px 0 5px;
+}
+
+/* المسمى الوظيفي والايميل */
+.user-meta {
+    color: #43766C;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 15px; /* (تعديل 1) قللنا المسافة اللي تحت الاسم عشان About Me تقرب شوية */
+}
+
+/* --- (تعديل 2) تظبيط مسافات About Me --- */
 .about-section {
-    background: #fdfdfd;
-    padding: 15px 20px; /* قللنا الـ padding */
-    border-radius: 10px;
-    border: 1px solid #edf2f0;
-    margin-top: 15px;
+    background: #ffffff;
+    /* هنا خلينا البادينج اللي فوق 15 بس بدل 25 */
+    padding: 15px 25px 25px 25px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    margin-top: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
 .about-title {
     color: #43766C;
-    font-size: 15px; /* صغرنا الخط */
-    margin-bottom: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 0; /* ضمان ان مفيش مسافة خفية فوق العنوان */
+    margin-bottom: 12px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    border-bottom: 1px solid #eee; /* خط خفيف تحت العنوان */
-    padding-bottom: 5px;
+    gap: 10px;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 8px;
 }
 
 .bio-text {
-    font-size: 14px; /* خط أصغر وأريح للعين */
-    color: #555;
-    line-height: 1.5;
+    font-size: 15px;
+    color: #4b5563;
+    line-height: 1.6;
     margin: 0;
 }
 
+/* زرار التعديل اللي بيظهر جنب الصورة */
 .action-buttons {
     display: flex;
     flex-direction: row;
@@ -116,7 +141,7 @@
     margin-bottom: 10px;
 }
 
-.btn-settings, .btn-edit {
+.btn-edit {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -128,75 +153,92 @@
     cursor: pointer;
     white-space: nowrap;
     transition: all 0.3s ease;
-}
-
-.btn-settings {
-    background: white;
-    border: 1px solid #ccc;
-    color: #333;
-}
-
-.btn-settings:hover {
-    background: #f0f0f0;
-    border-color: #999;
-}
-
-.btn-edit {
     background: #43766C;
     color: white;
     border: none;
     box-shadow: 0 2px 5px rgba(67, 118, 108, 0.2);
 }
 
-.btn-edit:hover {
-    background: #355d55; 
-    box-shadow: 0 4px 10px rgba(67, 118, 108, 0.3);
-    transform: scale(1.02); 
-}
+    .btn-edit:hover {
+        background: #355d55;
+        box-shadow: 0 4px 10px rgba(67, 118, 108, 0.3);
+        transform: scale(1.02);
+    }
 
-/* الجزء السفلي من الداتا */
-.profile-info {
-    padding: 20px 30px 40px;
-}
-
-.user-name {
-    font-size: 28px;
-    font-weight: bold;
-    color: #1a1a1a;
-    margin: 10px 0 5px;
-}
-
-.user-meta {
-    color: #65676b;
-    font-size: 16px;
-    margin-bottom: 25px;
-}
-
-.about-section {
-    background: #f8faf9;
-    padding: 20px;
-    border-radius: 12px;
-}
-
-.about-title {
-    color: #43766C;
-    font-size: 18px;
-    margin-bottom: 10px;
+/* أزرار Save و Cancel */
+/* --- تعديل أماكن وألوان أزرار الحفظ والإلغاء --- */
+/* الحاوية اللي ماسكة الزراير */
+.edit-actions {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    justify-content: flex-end; /* دي اللي بتودي الزراير يمين */
+    gap: 15px; /* مسافة بين الزرارين */
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #f0f0f0;
+    /* >>> التعديل هنا <<< */
+    padding-right: 30px; /* مسافة 30 بيكسل من اليمين */
+    padding-bottom: 20px;
 }
 
-/* cards */
+/* ستايل أساسي للزرارين (حجم ومقاس) */
+.edit-btn {
+    min-width: 130px; /* عرض ثابت عشان شكلهم يبقى شيك */
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    text-align: center;
+    border: 1px solid transparent;
+}
+
+/* زر الحفظ (Save) - لونه أخضر */
+.btn-save {
+    background-color: #43766C; /* الأخضر بتاعك */
+    color: white;
+}
+
+    .btn-save:hover {
+        background-color: #355d55; /* أخضر أغمق عند اللمس */
+        box-shadow: 0 4px 8px rgba(67, 118, 108, 0.2);
+    }
+
+/* زر الإلغاء (Cancel) - لونه أبيض */
+.btn-cancel {
+    background-color: white;
+    color: #555;
+    border-color: #ddd;
+}
+
+    .btn-cancel:hover {
+        background-color: #f9f9f9;
+        color: #333;
+        border-color: #bbb;
+    }
+
+/* للموبايل: نخليهم تحت بعض */
+@media (max-width: 600px) {
+    .edit-actions {
+        flex-direction: column-reverse; /* الـ Cancel ينزل تحت */
+    }
+
+    .edit-btn {
+        width: 70%;
+    }
+
+}
+
+/* بقية الكود (الإحصائيات والداشبورد) كما هو */
 .stats-container {
     display: flex;
     gap: 20px;
     margin-top: 25px;
-    padding: 0 30px 30px; /* لضمان المحاذاة مع باقي الداتا */
+    padding: 0 30px 30px;
 }
 
 .stat-card {
-    flex: 1; /* عشان الكاردين ياخدوا نفس المساحة بالضبط */
+    flex: 1;
     background: white;
     border-radius: 12px;
     padding: 20px;
@@ -205,19 +247,21 @@
     align-items: center;
     text-align: center;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    border-top: 4px solid transparent; /* هنلون الخط اللي فوق بالـ CSS */
+    border-top: 4px solid transparent;
     transition: transform 0.3s ease;
 }
 
-.stat-card:hover {
-    transform: translateY(-5px);
-}
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
 
-/* تمييز كل كارد باللون الخاص بيه فوق */
 .score-card {
     border-top-color: #377d8f;
- } /* أزرق */
-.completed-card { border-top-color: #73d3bc; } /* أخضر */
+}
+
+.completed-card {
+    border-top-color: #73d3bc;
+}
 
 .stat-icon-wrapper {
     width: 45px;
@@ -230,8 +274,15 @@
     font-size: 20px;
 }
 
-.blue-bg { background-color: #eff6ff; color: #377d8f; }
-.green-bg { background-color: #f0fdf4; color: #73d3bc; }
+.blue-bg {
+    background-color: #eff6ff;
+    color: #377d8f;
+}
+
+.green-bg {
+    background-color: #f0fdf4;
+    color: #73d3bc;
+}
 
 .stat-value {
     display: block;
@@ -269,13 +320,14 @@
     color: #1a1a1a;
 }
 
-/* Updated to Green Palette */
-.card-title i {
-    color: #43766C; 
-}
+    .card-title i {
+        color: #43766C;
+    }
 
 /* Progress Styles */
-.course-item { margin-bottom: 20px; }
+.course-item {
+    margin-bottom: 20px;
+}
 
 .course-info {
     display: flex;
@@ -284,12 +336,18 @@
     margin-bottom: 8px;
 }
 
-.course-name { font-weight: 600; color: #333; }
-.course-count { color: #666; }
+.course-name {
+    font-weight: 600;
+    color: #333;
+}
+
+.course-count {
+    color: #666;
+}
 
 .progress-bar-container {
     height: 8px;
-    background: #eef2f1; /* Light greenish grey */
+    background: #eef2f1;
     border-radius: 10px;
     overflow: hidden;
     margin-bottom: 5px;
@@ -297,16 +355,9 @@
 
 .progress-bar-fill {
     height: 100%;
-    background: #43766C; /* Main Green */
+    background: #43766C;
     border-radius: 10px;
     transition: width 1s ease-in-out;
-}
-
-.progress-percentage {
-    display: block;
-    text-align: right;
-    font-size: 12px;
-    color: #999;
 }
 
 /* Resume Upload Styles */
@@ -318,26 +369,15 @@
     transition: all 0.3s ease;
 }
 
-/* Hover effects with light green background */
-.resume-upload-zone:hover { 
-    border-color: #43766C; 
-    background: #f4f8f7; 
-}
-
-.upload-icon-wrapper {
-    font-size: 40px;
-    color: #43766C; /* Green Icon */
-    opacity: 0.6;
-    margin-bottom: 15px;
-}
-
-.upload-text { font-weight: 600; color: #1f2937; margin: 5px 0; }
-.upload-subtext { font-size: 13px; color: #6b7280; margin-bottom: 20px; }
+    .resume-upload-zone:hover {
+        border-color: #43766C;
+        background: #f4f8f7;
+    }
 
 .btn-upload-outline {
     width: 100%;
     background: white;
-    border: 1px solid #43766C; /* Green border */
+    border: 1px solid #43766C;
     color: #43766C;
     padding: 10px;
     border-radius: 8px;
@@ -346,77 +386,22 @@
     transition: 0.3s;
 }
 
-.btn-upload-outline:hover { 
-    background: #43766C; 
-    color: white; 
-}
+    .btn-upload-outline:hover {
+        background: #43766C;
+        color: white;
+    }
 
 /* Responsive Grid */
 @media (max-width: 768px) {
     .dashboard-grid {
         flex-direction: column;
     }
-}
 
-.milestones-card {
-    background: white;
-    margin: 0 30px 30px;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-}
+    .edit-actions {
+        flex-direction: column-reverse;
+    }
 
-.milestones-grid {
-    display: flex;
-    gap: 20px;
-}
-
-.milestone-item {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 15px;
-    background: #fdfdfd;
-    border: 1px solid #f0f0f0;
-    border-radius: 12px;
-    transition: transform 0.3s ease;
-}
-
-.milestone-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.milestone-icon {
-    width: 45px;
-    height: 45px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-}
-
-.milestone-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.milestone-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
-}
-
-.milestone-date {
-    font-size: 12px;
-    color: #999;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .milestones-grid {
-        flex-direction: column;
+    .edit-btn {
+        width: 100%;
     }
 }

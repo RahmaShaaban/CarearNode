@@ -1,0 +1,243 @@
+.checklist-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    font-family: 'Segoe UI', sans-serif;
+    color: #2d3748;
+}
+
+.header-section {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.main-title {
+    font-size: 2.2rem;
+    color: #1a202c;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.sub-title {
+    color: #718096;
+    font-size: 1.1rem;
+}
+
+.result-header-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+/* --- ???? ?????? (Grid) --- */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+    .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+
+.card-selected {
+    border: 2px solid #3b82f6;
+    background-color: #eff6ff;
+}
+
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.course-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.circle-check {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #cbd5e0;
+}
+
+    .circle-check.checked {
+        background-color: #3b82f6;
+        border-color: #3b82f6;
+    }
+
+.skills-text {
+    font-size: 0.85rem;
+    color: #718096;
+}
+
+/* --- ???? ??????? --- */
+.button-container {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.btn-recommend {
+    background-color: #667eea;
+    color: white;
+    padding: 15px 50px;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+    .btn-recommend:hover {
+        background-color: #5a67d8;
+    }
+
+    .btn-recommend:disabled {
+        background-color: #cbd5e0;
+        cursor: wait;
+    }
+
+/* --- ????? ??????? (Ranked List) --- */
+.results-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    animation: fadeIn 0.6s ease;
+}
+
+.result-card-row {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* ????? ?????? ????? */
+.top-choice {
+    border: 2px solid #3b82f6;
+    background-color: #f8fafc;
+    transform: scale(1.02); /* ????? ???? */
+}
+
+.result-icon {
+    width: 50px;
+    height: 50px;
+    background: #edf2f7;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #4a5568;
+    font-weight: bold;
+}
+
+.top-choice .result-icon {
+    background: #3b82f6;
+    color: white;
+}
+
+.result-info {
+    flex: 1;
+    text-align: left;
+}
+
+.result-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+    .result-header h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        color: #2d3748;
+    }
+
+.badge-best-fit {
+    background: #dbeafe;
+    color: #1e40af;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.result-info p {
+    margin: 5px 0 10px;
+    color: #718096;
+    font-size: 0.95rem;
+}
+
+.btn-read-more {
+    background: transparent;
+    border: 1px solid #cbd5e0;
+    padding: 6px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #4a5568;
+    font-size: 0.9rem;
+}
+
+.top-choice .btn-read-more {
+    background: #3b82f6;
+    color: white;
+    border: none;
+}
+
+.result-score {
+    text-align: center;
+}
+
+    .result-score span {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #2d3748;
+    }
+
+.btn-restart {
+    background: white;
+    border: 1px solid #e53e3e;
+    color: #e53e3e;
+    padding: 8px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+    .btn-restart:hover {
+        background: #fff5f5;
+    }
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

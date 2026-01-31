@@ -12,6 +12,9 @@ import Profile from './pages/Profile';
 import Sign_up from'./pages/Sign_up';
 import Footer from './Footer'; 
 
+
+
+
 function App() {
     return (
         <BrowserRouter>
@@ -26,6 +29,7 @@ function App() {
                         <Route path="/" element={<Home />} />
                         <Route path="/interview" element={<Interview />} />
                         <Route path="/department" element={<Department />} />
+                        
                         <Route path="/Roadmaps" element={<Roadmaps />} />
                         <Route path="/cv" element={<CV />} />
                         <Route path="/Sign_In" element={<Sign_In />} />

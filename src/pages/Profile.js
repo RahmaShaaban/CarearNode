@@ -216,10 +216,15 @@ function Profile() {
                             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Bio</label>
                             <textarea name="bio" value={editForm.bio} onChange={handleInputChange} rows="4" className="form-textarea" style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }} />
                         </div>
-                        <div className="edit-actions" style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-                            <button onClick={() => setIsEditing(false)} style={{ padding: '8px 16px', borderRadius: '6px', border: '1px solid #ddd', background: '#fff', cursor: 'pointer' }}>Cancel</button>
-                            <button onClick={handleSaveChanges} style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', background: '#2563eb', color: '#fff', cursor: 'pointer', fontWeight: '500' }}>Save Changes</button>
-                        </div>
+                            {/* ده الكود الجديد، شيلنا منه الـ style وحطينا className */}
+                            <div className="edit-actions">
+                                <button className="edit-btn btn-cancel" onClick={() => setIsEditing(false)}>
+                                    Cancel
+                                </button>
+                                <button className="edit-btn btn-save" onClick={handleSaveChanges}>
+                                    Save Changes
+                                </button>
+                            </div>
                     </div>
                 )}
 

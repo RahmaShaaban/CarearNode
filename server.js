@@ -24,8 +24,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // --- 4. Routes (المسارات) ---
 app.use('/api/auth', authRoutes);
-app.use('/api/departments', deptRoutes);
-
+//app.use('/api/departments', deptRoutes);
+app.use('/api/dept', deptRoutes);
 app.get('/', (req, res) => {
     res.send('CarearNode Server is Running!');
 });
@@ -58,5 +58,5 @@ sequelize.sync({ alter: true })
         });
     })
     .catch(err => {
-        console.error('❌ Sync error:', err.message);
+        console.error('❌ Sync error:', err);
     });

@@ -8,7 +8,7 @@ function SignUp() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [fullName, setFullName] = useState("");
-    const [role, setRole] = useState("");
+    const [role, setRole] = useState(""); // State موجودة بس مش مستخدمة في الفورم حالياً
     const [confirmPassword, setConfirmPassword] = useState("");
     const [bio, setBio] = useState("");
 
@@ -55,11 +55,20 @@ function SignUp() {
             const data = await response.json();
 
             if (response.ok) {
-                // حفظ الـ userId لتسهيل جلب بيانات البروفايل لاحقاً
+                // 1. حفظ الايدي
                 localStorage.setItem('userId', data.userId);
+
+                // 2. (تعديل جديد) حفظ الصورة عشان تظهر في الهوم فوراً
+                if (data.profile_image) {
+                    localStorage.setItem('userImage', data.profile_image);
+                } else {
+                    localStorage.setItem('userImage', '');
+                }
+
                 alert("تم إنشاء الحساب بنجاح! مرحباً بك في CareerNode.");
-                // التوجيه المباشر للبروفايل
-                navigate('/Profile');
+
+                // 3. (تعديل جديد) التوجيه للهوم بدلاً من البروفايل
+                navigate('/');
             } else {
                 console.log("Server Error Details:", data);
                 alert("فشل التسجيل: " + (data.message || "تأكدي من البيانات المدخلة"));

@@ -40,11 +40,16 @@ function SignIn() {
                 
                 // (اختياري) لو عندك توكن ممكن تحفظيه هنا كمان
                 // localStorage.setItem('token', data.token);
-
+                if (data.profile_image) {
+                    localStorage.setItem('userImage', data.profile_image);
+                } else {
+                    localStorage.setItem('userImage', ''); // لو مفيش صورة، نحط قيمة فاضية
+                }
                 alert("Logged in successfully!");
-
+              //  localStorage.setItem('userImage', data.profile_image || '');
                 // 2. التوجيه لصفحة البروفايل بدل الهوم
-                navigate('/profile'); 
+                navigate('/');
+                
             } else {
                 // if there is any problem like wrong email or password
                 alert(data.message || "Failed to login, please check your data");
