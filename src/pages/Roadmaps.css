@@ -24,7 +24,7 @@
   color: #64748b;
   font-size: 1.1rem;
 }
-.loading-spinner {
+.loading-spinner , .error-message{
   display: flex;
   flex-direction: column; /* عشان الأيقونة تبقى فوق والكلمة تحت */
   justify-content: center; /* يسنتر بالطول */
