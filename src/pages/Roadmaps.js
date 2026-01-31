@@ -32,15 +32,23 @@ const Roadmaps = () => {
 
   // 2. دالة مساعدة لتحديد الأيقونة واللون (جزء الكارت سابقاً)
   const getIcon = (title) => {
-    if (!title) return { icon: "fa-solid fa-road", color: "#64748b" };
+    // 1. ده اللون الأخضر الأساسي للموقع (Emerald Green)
+    const mainColor = "#58A492"; 
+
+    if (!title) return { icon: "fa-solid fa-road", color: mainColor };
+
     const t = title.toLowerCase();
-    if (t.includes('front')) return { icon: "fa-solid fa-code", color: "#3b82f6" }; 
-    if (t.includes('back')) return { icon: "fa-solid fa-server", color: "#8b5cf6" }; 
-    if (t.includes('full')) return { icon: "fa-solid fa-layer-group", color: "#10b981" };
-    if (t.includes('android') || t.includes('mobile')) return { icon: "fa-brands fa-android", color: "#3ddc84" };
-    if (t.includes('data')) return { icon: "fa-solid fa-database", color: "#f59e0b" };
-    return { icon: "fa-solid fa-road", color: "#64748b" }; 
-  };
+
+    // 2. هنا بنغير الأيقونة بس، لكن اللون (color) ثابت للكل
+    if (t.includes('front')) return { icon: "fa-solid fa-code", color: mainColor }; 
+    if (t.includes('back')) return { icon: "fa-solid fa-server", color: mainColor }; 
+    if (t.includes('full')) return { icon: "fa-solid fa-layer-group", color: mainColor };
+    if (t.includes('android') || t.includes('mobile')) return { icon: "fa-brands fa-android", color: mainColor };
+    if (t.includes('data') || t.includes('machine')) return { icon: "fa-solid fa-brain", color: mainColor };
+    
+    // الافتراضي
+    return { icon: "fa-solid fa-road", color: mainColor }; 
+};
 
   // 3. تصميم الصفحة
   return (

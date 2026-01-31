@@ -15,7 +15,7 @@
 
 .page-header h2 {
   font-size: 2.5rem;
-  color: #064e3b; /* أخضر غامق جداً للعنوان */
+  color: #2F5D54; /* أخضر غامق جداً للعنوان */
   margin-bottom: 10px;
   font-weight: 700;
 }
@@ -24,7 +24,21 @@
   color: #64748b;
   font-size: 1.1rem;
 }
+.loading-spinner {
+  display: flex;
+  flex-direction: column; /* عشان الأيقونة تبقى فوق والكلمة تحت */
+  justify-content: center; /* يسنتر بالطول */
+  align-items: center;     /* يسنتر بالعرض */
+  min-height: 60vh;        /* ياخد مساحة كبيرة من الشاشة عشان يظهر في النص */
+  color: #58A492;          /* اللون الأخضر بتاعنا */
+  font-size: 1.5rem;       /* حجم الخط */
+  font-weight: 600;
+  gap: 15px;               /* مسافة بين الأيقونة والكلمة */
+}
 
+.loading-spinner .fa-spin {
+  font-size: 3rem; 
+}
 /* الشبكة (Grid) */
 .roadmaps-grid {
   display: grid;
@@ -51,7 +65,7 @@
 .roadmap-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.15); /* ظل أخضر خفيف */
-  border-color: #10b981; /* حدود خضراء عند الوقوف عليها */
+  border-color: #58A492; /* حدود خضراء عند الوقوف عليها */
 }
 
 /* الخط الجانبي الملون */
@@ -139,8 +153,8 @@
 
 /* تأثير الـ Hover للزرار (يتحول لأخضر) */
 .view-roadmap-btn:hover {
-  background-color: #10b981; /* أخضر CareerNode */
-  border-color: #10b981;
+  background-color: #58A492; /* أخضر CareerNode */
+  border-color: #58A492;
   color: white;
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
 }
