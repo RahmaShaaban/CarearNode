@@ -25,7 +25,6 @@ exports.recommendDepartment = async (req, res) => {
             });
         }
 
-        // تعديل أوبجيكت الـ descriptions في الباكاند
         const descriptions = {
             "Computer Science (CS)": {
                 desc: "Focuses on the theoretical foundations of computation and programming...",
