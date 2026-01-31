@@ -25,19 +25,44 @@ exports.recommendDepartment = async (req, res) => {
             });
         }
 
+        // تعديل أوبجيكت الـ descriptions في الباكاند
         const descriptions = {
-            "Computer Science (CS)": "Focuses on the theoretical foundations of computation and programming. This department prepares students to develop complex algorithms, build intelligent systems through Artificial Intelligence and Machine Learning, and master software engineering principles.",
-            "Information Systems (IS)": "Bridges the gap between technology and business management. Students learn to analyze big data, manage complex database systems, and develop technical solutions like Data Mining and E-Commerce to support organizational decision-making.",
-            "Scientific Computing (SC)": "A specialized technical path focusing on mathematical modeling and computer simulations to solve complex scientific problems. It emphasizes areas like Computer Vision, Digital Signal Processing, and high-performance computing.",
-            "Computer Systems": "Centers on the interaction between software and hardware. Students explore Embedded Systems, Robotics, and Computer Architecture, learning how to design and control the physical machines that power our world."
+            "Computer Science (CS)": {
+                desc: "Focuses on the theoretical foundations of computation and programming...",
+                subjects: ["Compiler Theory", "Artificial Intelligence", "Machine Learning", "Algorithms", "Theory of Computation"],
+                skills: ["Problem Solving", "Algorithm Design", "C++/Java", "AI/ML Development"],
+                jobs: ["Software Engineer", "AI Developer", "System Architect"]
+            },
+            "Information Systems (IS)": {
+                desc: "Bridges the gap between technology and business management...",
+                subjects: ["Database Management", "System Analysis", "E-Commerce", "Data Mining", "Enterprise Systems"],
+                skills: ["Business Analysis", "Database Design", "SQL", "Project Management"],
+                jobs: ["Business Analyst", "Database Administrator", "ERP Specialist"]
+            },
+            "Scientific Computing (SC)": {
+                desc: "A specialized technical path focusing on mathematical modeling...",
+                subjects: ["Numerical Analysis", "Simulation", "Computer Vision", "Signal Processing"],
+                skills: ["Mathematical Modeling", "MATLAB/Python", "Data Visualization", "Parallel Computing"],
+                jobs: ["Data Scientist", "Simulation Engineer", "Research Scientist"]
+            },
+            "Computer Systems": {
+                desc: "Centers on the interaction between software and hardware...",
+                subjects: ["Embedded Systems", "Robotics", "Computer Architecture", "Real-time Systems"],
+                skills: ["Hardware Interfacing", "C/Assembly", "Microcontrollers", "Control Systems"],
+                jobs: ["Embedded Systems Engineer", "Robotics Engineer", "Hardware Developer"]
+            }
         };
 
-
+        
         const sortedResults = Object.keys(scores).map(key => ({
             name: key,
             score: scores[key],
-            desc: descriptions[key]
+            desc: descriptions[key].desc,
+            subjects: descriptions[key].subjects, 
+            techSkills: descriptions[key].skills,  
+            jobs: descriptions[key].jobs          
         })).sort((a, b) => b.score - a.score);
+
 
         res.status(200).json({ results: sortedResults });
     } catch (error) {
