@@ -12,6 +12,7 @@ import Profile from './pages/Profile';
 import Sign_up from'./pages/Sign_up';
 import Footer from './Footer'; 
 import RoadmapDetails from './pages/RoadmapDetails';
+import ScrollToTop from './ScrollToTop';
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
             <div className="app-container">
 
                 <Navbar />
+                <ScrollToTop />
 
                
                 <div className="main-content">
