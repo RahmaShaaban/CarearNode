@@ -6,29 +6,34 @@ import './Navbar.css';
 const Navbar = () => {
     const navigate = useNavigate();
 
-    // 1. بنجيب التوكن والصورة
-    const token = localStorage.getItem('userId'); // استخدمت userId عشان انتي بتعتمدي عليه في اللوجين
+    // 1. جلب البيانات من الذاكرة
+    const userId = localStorage.getItem('userId');
     const storedImage = localStorage.getItem('userImage');
 
-    // 2. تكوين رابط الصورة الصحيح
-    let profilePicUrl = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'; // الافتراضي
+    // 2. شرط ذكي للتأكد من أن المستخدم مسجل دخول فعلاً
+    // (يمنع ظهور الصورة لو القيمة "undefined" أو "null" بالخطأ)
+    const isLoggedIn = userId && userId !== 'null' && userId !== 'undefined' && userId !== '';
+
+    // 3. تجهيز رابط الصورة
+    let profilePicUrl = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'; // الصورة الافتراضية
 
     if (storedImage && storedImage !== 'null' && storedImage !== 'undefined' && storedImage !== '') {
-        // لو الصورة بادئة بـ http (رابط خارجي)
+        // لو الرابط كامل (جاي من جوجل أو فيسبوك)
         if (storedImage.startsWith('http')) {
             profilePicUrl = storedImage;
         }
-        // لو الصورة جاية من الباك إند (بادئة بـ /uploads/)
+        // لو الرابط من السيرفر بتاعنا (بيبدأ بـ /uploads)
         else {
-            // بنشيل أي / زيادة في الأول عشان نضمن الرابط صح
+            // تنظيف المسار لضمان عدم تكرار السلاش
             const cleanPath = storedImage.startsWith('/') ? storedImage : `/${storedImage}`;
             profilePicUrl = `http://localhost:5000${cleanPath}`;
         }
     }
 
     const handleLogout = () => {
-        localStorage.clear();
-        navigate('/sign_in');
+        localStorage.clear(); // مسح كل البيانات
+        navigate('/sign_in'); // الرجوع لصفحة الدخول
+        window.location.reload(); // ريفريش للصفحة عشان النافبار يحس بالتغيير
     };
 
     return (
@@ -44,7 +49,8 @@ const Navbar = () => {
                 <li><Link to="/cv">CV Builder</Link></li>
                 <li><Link to="/interview">Interview</Link></li>
 
-                {token ? (
+                {/* استخدام الشرط الجديد isLoggedIn */}
+                {isLoggedIn ? (
                     <li style={{ display: 'flex', alignItems: 'center', gap: '15px', marginLeft: '10px' }}>
                         <Link to="/profile" title="My Profile">
                             <img
@@ -55,12 +61,15 @@ const Navbar = () => {
                                     height: '40px',
                                     borderRadius: '50%',
                                     objectFit: 'cover',
-                                    border: '2px solid #007bff',
+                                    border: '2px solid #43766C', // استخدمت اللون الأخضر بتاعك
                                     cursor: 'pointer'
                                 }}
-                                onError={(e) => { e.target.src = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' }} // لو الصورة باظت يحط الافتراضية
+                                // لو الصورة باظت، ارجع للصورة الافتراضية
+                                onError={(e) => { e.target.src = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' }}
                             />
                         </Link>
+
+                        {/* زرار خروج عشان تقدري ترجعي لـ Sign In */}
                        
                     </li>
                 ) : (

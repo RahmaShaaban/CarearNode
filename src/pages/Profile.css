@@ -1,10 +1,10 @@
-/* Container الأساسي عشان يوسطن كل حاجة في نص الشاشة */
+/* Container الأساسي */
 .profile-container {
     display: flex;
     justify-content: center;
     align-items: flex-start;
     min-height: 100vh;
-    background-color: #f0f2f5;
+    background-color: #f0f5f5;
     padding: 40px 20px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -98,13 +98,12 @@
     color: #43766C;
     font-size: 16px;
     font-weight: 500;
-    margin-bottom: 15px; /* (تعديل 1) قللنا المسافة اللي تحت الاسم عشان About Me تقرب شوية */
+    margin-bottom: 15px;
 }
 
-/* --- (تعديل 2) تظبيط مسافات About Me --- */
+/* --- About Me (التصميم الجديد المحسن) --- */
 .about-section {
     background: #ffffff;
-    /* هنا خلينا البادينج اللي فوق 15 بس بدل 25 */
     padding: 15px 25px 25px 25px;
     border-radius: 12px;
     border: 1px solid #e5e7eb;
@@ -116,7 +115,7 @@
     color: #43766C;
     font-size: 18px;
     font-weight: 700;
-    margin-top: 0; /* ضمان ان مفيش مسافة خفية فوق العنوان */
+    margin-top: 0;
     margin-bottom: 12px;
     display: flex;
     align-items: center;
@@ -165,24 +164,20 @@
         transform: scale(1.02);
     }
 
-/* أزرار Save و Cancel */
-/* --- تعديل أماكن وألوان أزرار الحفظ والإلغاء --- */
-/* الحاوية اللي ماسكة الزراير */
+/* --- أزرار Save و Cancel --- */
 .edit-actions {
     display: flex;
-    justify-content: flex-end; /* دي اللي بتودي الزراير يمين */
-    gap: 15px; /* مسافة بين الزرارين */
+    justify-content: flex-end; /* المحاذاة لليمين */
+    gap: 15px;
     margin-top: 20px;
     padding-top: 15px;
     border-top: 1px solid #f0f0f0;
-    /* >>> التعديل هنا <<< */
-    padding-right: 30px; /* مسافة 30 بيكسل من اليمين */
+    padding-right: 30px;
     padding-bottom: 20px;
 }
 
-/* ستايل أساسي للزرارين (حجم ومقاس) */
 .edit-btn {
-    min-width: 130px; /* عرض ثابت عشان شكلهم يبقى شيك */
+    min-width: 130px;
     padding: 12px 20px;
     border-radius: 8px;
     font-weight: 600;
@@ -193,18 +188,16 @@
     border: 1px solid transparent;
 }
 
-/* زر الحفظ (Save) - لونه أخضر */
 .btn-save {
-    background-color: #43766C; /* الأخضر بتاعك */
+    background-color: #43766C;
     color: white;
 }
 
     .btn-save:hover {
-        background-color: #355d55; /* أخضر أغمق عند اللمس */
+        background-color: #355d55;
         box-shadow: 0 4px 8px rgba(67, 118, 108, 0.2);
     }
 
-/* زر الإلغاء (Cancel) - لونه أبيض */
 .btn-cancel {
     background-color: white;
     color: #555;
@@ -217,19 +210,7 @@
         border-color: #bbb;
     }
 
-/* للموبايل: نخليهم تحت بعض */
-@media (max-width: 600px) {
-    .edit-actions {
-        flex-direction: column-reverse; /* الـ Cancel ينزل تحت */
-    }
-
-    .edit-btn {
-        width: 70%;
-    }
-
-}
-
-/* بقية الكود (الإحصائيات والداشبورد) كما هو */
+/* --- الإحصائيات (Stats) --- */
 .stats-container {
     display: flex;
     gap: 20px;
@@ -256,7 +237,7 @@
     }
 
 .score-card {
-    border-top-color: #377d8f;
+    border-top-color: #43766C;
 }
 
 .completed-card {
@@ -276,7 +257,7 @@
 
 .blue-bg {
     background-color: #eff6ff;
-    color: #377d8f;
+    color: #43766C;
 }
 
 .green-bg {
@@ -297,10 +278,12 @@
     margin-top: 4px;
 }
 
+/* --- Dashboard Grid --- */
 .dashboard-grid {
     display: flex;
     gap: 20px;
     padding: 0 30px 30px;
+    align-items: stretch;
 }
 
 .dashboard-card {
@@ -309,9 +292,13 @@
     border-radius: 15px;
     padding: 25px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    height: auto;
 }
 
 .card-title {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -360,19 +347,44 @@
     transition: width 1s ease-in-out;
 }
 
-/* Resume Upload Styles */
+/* --- Resume Styles (Enhanced) --- */
 .resume-upload-zone {
     border: 2px dashed #d1dbd9;
     border-radius: 12px;
-    padding: 30px;
+    padding: 15px;
     text-align: center;
     transition: all 0.3s ease;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 180px;
 }
 
     .resume-upload-zone:hover {
         border-color: #43766C;
         background: #f4f8f7;
     }
+
+.upload-icon-wrapper {
+    font-size: 32px;
+    color: #43766C;
+    opacity: 0.6;
+    margin-bottom: 10px;
+}
+
+.upload-text {
+    font-weight: 600;
+    color: #1f3735 !important;
+    margin: 5px 0;
+}
+
+.upload-subtext {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 15px;
+}
 
 .btn-upload-outline {
     width: 100%;
@@ -389,6 +401,130 @@
     .btn-upload-outline:hover {
         background: #43766C;
         color: white;
+    }
+
+/* Active Resume Card */
+.resume-active-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex: 1;
+    justify-content: center;
+}
+
+.resume-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.badge-active {
+    background-color: #e1f5f1;
+    color: #43766C;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid #b2f5ea;
+}
+
+.resume-file-card {
+    display: flex;
+    align-items: center;
+    background-color: #f6fcfb;
+    border: 1px solid #e2e8f0;
+    padding: 20px;
+    border-radius: 10px;
+    gap: 15px;
+    margin-top: 40px;
+}
+
+.file-icon-box {
+    width: 40px;
+    height: 40px;
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #43766C;
+    font-size: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.file-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.file-name {
+    font-weight: 600;
+    color: #2d3748;
+    font-size: 14px;
+}
+
+.file-date {
+    font-size: 12px;
+    color: #718096;
+    margin-top: 2px;
+}
+
+.btn-view-resume {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    color: #2d3748;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+    .btn-view-resume:hover {
+        background-color: #f6fcfb;
+        border-color: #43766C;
+    }
+
+.resume-footer-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.btn-remove-resume {
+    background: none;
+    border: none;
+    color: #a0aec0;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+}
+
+    .btn-remove-resume:hover {
+        color: #e53e3e;
+    }
+
+.btn-replace-resume {
+    background: none;
+    border: none;
+    color: #43766C;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+    .btn-replace-resume:hover {
+        color: #68b6a6;
     }
 
 /* Responsive Grid */

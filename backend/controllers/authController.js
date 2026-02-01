@@ -6,19 +6,23 @@ exports.signup = async (req, res) => {
     try {
         const { full_name, email, password, about_me } = req.body;
 
-        // التحقق من وجود اليوزر مسبقاً
+        // التحقق من قوة الباسورد
+        const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+        if (!strongPasswordRegex.test(password)) {
+            return res.status(400).json({
+                message: "Password is too weak! It must contain at least 8 characters, including uppercase, lowercase, numbers, and symbols (@$!%*?&)."
+            });
+        }
+
         const existingUser = await User.findOne({ where: { email } });
         if (existingUser) {
             return res.status(400).json({ message: "Email already exists" });
         }
 
-        // تشفير كلمة المرور
         const hashedPassword = await bcrypt.hash(password, 10);
-
-        // استقبال مسار الصورة من req.file (الذي تم معالجته في الـ Route)
         const profile_image = req.file ? `/uploads/${req.file.filename}` : null;
 
-        // إنشاء المستخدم الجديد في قاعدة البيانات
         const user = await User.create({
             full_name,
             email,
@@ -27,13 +31,11 @@ exports.signup = async (req, res) => {
             profile_image
         });
 
-        // إرجاع بيانات اليوزر كاملة للفرونت إند
         res.status(201).json({
             message: 'User created successfully',
             userId: user.id,
             email: user.email,
             full_name: user.full_name,
-            role: user.role,
             profile_image: user.profile_image
         });
 
@@ -64,8 +66,9 @@ exports.login = async (req, res) => {
             email: user.email,
             full_name: user.full_name,
             profile_image: user.profile_image,
-            about_me: user.about_me,
-            role: user.role
+            department_name: user.department_name,
+            role: user.role,        // يفضل إرجاعها هنا أيضاً
+            about_me: user.about_me // يفضل إرجاعها هنا أيضاً
         });
 
     } catch (error) {
@@ -98,9 +101,8 @@ exports.getUserProfile = async (req, res) => {
 exports.updateProfile = async (req, res) => {
     try {
         const userId = req.params.id;
-        const { full_name, email, role, bio } = req.body;
+        const { full_name, email, role, bio, department_name } = req.body;
 
-        // التحقق من وجود ملف صورة جديد
         const newProfileImage = req.file ? `/uploads/${req.file.filename}` : undefined;
 
         const user = await User.findByPk(userId);
@@ -108,28 +110,44 @@ exports.updateProfile = async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        // تحديث البيانات النصية
+
+        if (bio !== undefined) {
+            user.about_me = bio;
+        }
+
+
+        // تحديث البيانات
         user.full_name = full_name || user.full_name;
         user.email = email || user.email;
         user.role = role || user.role;
+        // هنا بنربط الـ bio اللي جاي من الفرونت بالـ about_me في الداتابيز
         user.about_me = bio || user.about_me;
 
-        // تحديث الصورة فقط إذا تم رفع ملف جديد
+        if (department_name) {
+            user.department_name = department_name;
+        }
+
         if (newProfileImage) {
             user.profile_image = newProfileImage;
         }
 
-        await user.save();
 
+
+        await user.save(); // الحفظ النهائي في الداتابيز
+
+        // الرد المعدل (تم إضافة role و about_me)
         res.status(200).json({
             message: "Profile updated successfully",
             user: {
                 id: user.id,
                 full_name: user.full_name,
                 email: user.email,
+                department_name: user.department_name,
+                profile_image: user.profile_image,
+
+                // >>>>> الإضافات المهمة جداً <<<<<
                 role: user.role,
-                about_me: user.about_me,
-                profile_image: user.profile_image
+                about_me: user.about_me
             }
         });
 

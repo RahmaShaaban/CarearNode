@@ -2,6 +2,11 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
 const User = sequelize.define('User', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
     full_name: {
         type: DataTypes.STRING,
         allowNull: false
@@ -15,20 +20,33 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    about_me: {
-        type: DataTypes.TEXT,
-        allowNull: true
-    },
     profile_image: {
         type: DataTypes.STRING,
         allowNull: true
     },
+    department_name: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+
+
+    about_me: {
+        type: DataTypes.TEXT, // ?????? TEXT ???? ?????? ???? ????
+        allowNull: true
+    },
+    // >>>>> 2. ????? ??? Role <<<<<
     role: {
         type: DataTypes.STRING,
         allowNull: true,
-        defaultValue: "Student"
+        defaultValue: "Student" // ???? ????????
     }
+
+
+
+
+
 }, {
+    tableName: 'users',
     timestamps: true
 });
 

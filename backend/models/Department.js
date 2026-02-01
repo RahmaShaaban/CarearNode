@@ -9,11 +9,11 @@ const Department = sequelize.define('Department', {
     },
     department: { 
         type: DataTypes.STRING,
-        allowNull: true 
+        allowNull: false
     },
     course_name: {
         type: DataTypes.STRING,
-        allowNull: true 
+        allowNull: true
     },
     brief_description: {
         type: DataTypes.TEXT,

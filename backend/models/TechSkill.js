@@ -1,10 +1,10 @@
 ﻿const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Roadmap = sequelize.define('Roadmap', {
+const TechSkill = sequelize.define('TechSkill', {
     id: { type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true },
-    title: { type: DataTypes.STRING, allowNull: false },
+    name: { type: DataTypes.STRING, allowNull: false },
     description: { type: DataTypes.TEXT }
-}, { tableName: 'road_maps', timestamps: false });
+}, { tableName: 'tech_skills', timestamps: false });
 
-module.exports = Roadmap;
+module.exports = TechSkill;

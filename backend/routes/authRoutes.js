@@ -25,5 +25,8 @@ router.get('/profile/:id', authController.getUserProfile);
 
 // راوت تحديث البروفايل مع دعم رفع الصورة
 router.put('/profile/:id', upload.single('profileImage'), authController.updateProfile);
+// routes/authRoutes.js
 
+// لازم تضيفي upload.single('profileImage') هنا
+//router.put('/profile/:id', upload.single('profileImage'), authController.updateProfile);
 module.exports = router;

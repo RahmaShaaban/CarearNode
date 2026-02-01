@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; 
+import { Link, useNavigate } from 'react-router-dom';
 import './Sign_In.css';
 import logo from '../photos/logo.png';
 
@@ -14,44 +14,40 @@ function SignIn() {
         setShowPassword(!showPassword);
     };
 
-    // 3. backend logic
     const handleSubmit = async (e) => {
-        e.preventDefault(); // No Refresh
+        e.preventDefault();
 
         try {
-            // send data to backend
+            // إرسال البيانات للباك إند
             const response = await fetch('http://localhost:5000/api/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, password }), // data sent
+                body: JSON.stringify({ email, password }),
             });
 
             const data = await response.json();
 
             if (response.ok) {
-                // if data right and the response of server is OK
-                
-                // 1. حفظ الايدي في المتصفح (مهم جداً عشان البروفايل يشتغل)
+                // 1. حفظ الايدي
                 if (data.userId) {
                     localStorage.setItem('userId', data.userId);
                 }
-                
-                // (اختياري) لو عندك توكن ممكن تحفظيه هنا كمان
-                // localStorage.setItem('token', data.token);
+
+                // 2. حفظ الصورة (عشان تظهر في النافبار)
                 if (data.profile_image) {
                     localStorage.setItem('userImage', data.profile_image);
                 } else {
                     localStorage.setItem('userImage', ''); // لو مفيش صورة، نحط قيمة فاضية
                 }
+
+                // 3. رسالة نجاح وتوجيه
                 alert("Logged in successfully!");
-              //  localStorage.setItem('userImage', data.profile_image || '');
-                // 2. التوجيه لصفحة البروفايل بدل الهوم
-                navigate('/');
-                
+                navigate('/'); // التوجيه للصفحة الرئيسية
+                window.location.reload(); // تحديث الصفحة عشان النافبار يلقط الصورة
+
             } else {
-                // if there is any problem like wrong email or password
                 alert(data.message || "Failed to login, please check your data");
             }
         } catch (error) {
@@ -63,8 +59,10 @@ function SignIn() {
     return (
         <div className="signin-page">
             <div className="back-link-container">
-                <Link to="/" className="back-link">
-                    Back to Home
+                <Link to="/" className="back-btn">
+                    <button className="btn-back">
+                        <i className="fa-solid fa-arrow-left"></i> Back to Home
+                    </button>
                 </Link>
             </div>
 
@@ -76,7 +74,6 @@ function SignIn() {
                 <h2>Welcome Back</h2>
                 <p className="subtitle">Enter your credentials to access your account</p>
 
-                {/* 4.link betwwen function and Form */}
                 <form className="signin-form" onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label>Email</label>
@@ -85,7 +82,7 @@ function SignIn() {
                             placeholder="Enter your email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            required 
+                            required
                         />
                     </div>
 
@@ -99,7 +96,6 @@ function SignIn() {
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
-
                             <span className="eye-icon" onClick={togglePasswordVisibility}>
                                 {showPassword ? (
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>

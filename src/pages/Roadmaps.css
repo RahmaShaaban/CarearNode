@@ -1,0 +1,169 @@
+/* Roadmaps.css */
+
+/* خلفية الصفحة */
+.roadmaps-page {
+  padding: 50px 20px;
+  background-color: #F0F7F5; /* خلفية بيضاء مخضرة خفيفة جداً */
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.page-header h2 {
+  font-size: 2.5rem;
+  color: #2F5D54; /* أخضر غامق جداً للعنوان */
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.page-header p {
+  color: #64748b;
+  font-size: 1.1rem;
+}
+.loading-spinner {
+  display: flex;
+  flex-direction: column; /* عشان الأيقونة تبقى فوق والكلمة تحت */
+  justify-content: center; /* يسنتر بالطول */
+  align-items: center;     /* يسنتر بالعرض */
+  min-height: 60vh;        /* ياخد مساحة كبيرة من الشاشة عشان يظهر في النص */
+  color: #58A492;          /* اللون الأخضر بتاعنا */
+  font-size: 1.5rem;       /* حجم الخط */
+  font-weight: 600;
+  gap: 15px;               /* مسافة بين الأيقونة والكلمة */
+}
+
+.loading-spinner .fa-spin {
+  font-size: 3rem; 
+}
+/* الشبكة (Grid) */
+.roadmaps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 25px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* الكارت نفسه */
+.roadmap-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  border: 1px solid #e2e8f0;
+  height: 100%; /* عشان الكروت تبقى قد بعض */
+}
+
+.roadmap-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.15); /* ظل أخضر خفيف */
+  border-color: #58A492; /* حدود خضراء عند الوقوف عليها */
+}
+
+/* الخط الجانبي الملون */
+.card-accent {
+  width: 5px;
+  height: 100%;
+  flex-shrink: 0;
+}
+
+.card-content {
+  padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* الهيدر (الأيقونة والعنوان) */
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.header-text h3 {
+  margin: 0 0 6px 0;
+  color: #1e293b;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.header-text p {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* الميتا داتا (الوقت والخطوات) */
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: auto; /* يزق الزرار لتحت */
+  margin-bottom: 25px;
+  color: #64748b;
+  font-size: 0.85rem;
+  padding-top: 15px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.card-meta span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* تعديل الزرار (View Roadmap) */
+.view-roadmap-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 12px 0; /* مساحة فوق وتحت */
+  background-color: transparent;
+  border: 1px solid #e2e8f0; /* حدود رمادي فاتح في العادي */
+  border-radius: 8px;
+  color: #334155;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+/* تأثير الـ Hover للزرار (يتحول لأخضر) */
+.view-roadmap-btn:hover {
+  background-color: #58A492; /* أخضر CareerNode */
+  border-color: #58A492;
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.view-roadmap-btn i {
+  margin-left: 8px;
+  transition: margin-left 0.2s;
+}
+
+.view-roadmap-btn:hover i {
+  margin-left: 12px; /* السهم يتحرك يمين شوية */
+}

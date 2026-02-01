@@ -1,0 +1,198 @@
+/* خلفية الصفحة كاملة */
+.details-page {
+  padding: 40px 20px;
+  background-color: #F0F7F5;
+  min-height: 100vh;
+  max-width: 900px;
+  margin: 0 auto; /* توسيط الصفحة */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* --- الهيدر --- */
+
+.btn-back { 
+    background: transparent;
+    border: 1px solid #d1dbd9; /* Border خفيف يماشي الأعمدة */
+    font-size: 0.85rem;
+    color: #475569;
+    display: inline-flex; /* عشان ياخد مساحة المحتوى بس */
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    padding: 7px 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-back i {
+    font-size: 0.85rem;
+    transition: transform 0.3s ease;
+}
+
+.btn-back:hover {
+    background-color: #f1f6f5; /* نفس لون الأعمدة في الـ hover */
+    color: #355d55;
+    border-color: #355d55;
+}
+
+.btn-back:hover i {
+    transform: translateX(-5px); /* حركة سهم الرجوع لورا بتدي UX هايل */
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.icon-large {
+  width: 60px;
+  height: 60px;
+  background-color: #e0f2fe; /* أزرق فاتح زي الصورة */
+  color: #0284c7;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+}
+
+.header-content h1 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 2rem;
+}
+
+.DescribRoadmapTrack {
+  color: #64748b;
+  margin: 5px 0 0 0;
+}
+
+/* --- الخطوات (Timeline Cards) --- */
+.timeline-step {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+  position: relative;
+}
+
+/* الخط الرأسي اللي بيربط الخطوات (اختياري) */
+.timeline-container {
+  position: relative;
+}
+
+.step-meta {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.step-badge {
+  background-color: #e0e7ff; /* لون أزرق باهت */
+  color: #4338ca;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.step-duration {
+  color: #64748b;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.step-title {
+  margin: 0 0 10px 0;
+  color: #1e293b;
+  font-size: 1.4rem;
+}
+
+.step-desc {
+  color: #475569;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+/* --- قسم المصادر --- */
+.resources-section h4 {
+  color: #334155;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.resources-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* كارت المصدر الواحد */
+.resource-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  text-decoration: none;
+  background-color: #fff;
+  transition: all 0.2s;
+}
+
+.resource-card:hover {
+  border-color: #10b981;
+  background-color: #f0fdf4;
+  transform: translateX(5px);
+}
+
+.res-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #0284c7; /* لون اللينك أزرق */
+  font-weight: 600;
+}
+
+.res-info i {
+  font-size: 0.8rem;
+}
+
+/* بادج (Free / Paid) */
+.res-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.res-badge.free {
+  background-color: #dcfce7; /* أخضر فاتح */
+  color: #15803d;
+}
+
+.res-badge.paid {
+  background-color: #ffedd5; /* برتقالي فاتح */
+  color: #c2410c;
+}
+
+/* Loading & Error Centering */
+.loading-center, .error-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  color: #10b981;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
