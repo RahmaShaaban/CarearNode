@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react'; // 1. استيراد useEffect
 import { Link, useNavigate } from 'react-router-dom';
 import './Sign_up.css';
 import logo from '../photos/logo.png';
@@ -8,12 +8,15 @@ function SignUp() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [fullName, setFullName] = useState("");
-    const [role, setRole] = useState("");
+    const [role, setRole] = useState("student");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [bio, setBio] = useState("");
 
     // State لتخزين أخطاء الباسورد
     const [passwordError, setPasswordError] = useState("");
+
+    // 2. State جديد لتخزين الوظائف القادمة من الداتابيز
+    const [jobOptions, setJobOptions] = useState([]);
 
     const fileInputRef = useRef(null);
     const [profileImage, setProfileImage] = useState(null);
@@ -30,6 +33,26 @@ function SignUp() {
             setProfileImage(URL.createObjectURL(file));
         }
     };
+
+    // 3. دالة جلب الوظائف من الباك إند عند تحميل الصفحة
+    useEffect(() => {
+        const fetchJobs = async () => {
+            try {
+                // تأكدي إن الباك إند شغال والراوت /api/jobs موجود
+                const response = await fetch('http://localhost:5000/api/jobs');
+                if (response.ok) {
+                    const data = await response.json();
+                    setJobOptions(data); // تخزين البيانات في الـ State
+                } else {
+                    console.error("Failed to fetch jobs");
+                }
+            } catch (error) {
+                console.error("Error connecting to jobs API:", error);
+            }
+        };
+
+        fetchJobs();
+    }, []);
 
     // دالة التحقق من قوة الباسورد
     const validatePassword = (pass) => {
@@ -73,10 +96,8 @@ function SignUp() {
             const data = await response.json();
 
             if (response.ok) {
-                // 1. حفظ الايدي
+                // حفظ البيانات وتوجيه المستخدم
                 localStorage.setItem('userId', data.userId);
-
-                // 2. حفظ الصورة (مهم للنافبار)
                 if (data.profile_image) {
                     localStorage.setItem('userImage', data.profile_image);
                 } else {
@@ -84,8 +105,6 @@ function SignUp() {
                 }
 
                 alert("تم إنشاء الحساب بنجاح! مرحباً بك في CareerNode.");
-
-                // 3. التوجيه للهوم وعمل ريفريش
                 navigate('/');
                 window.location.reload();
             } else {
@@ -153,11 +172,24 @@ function SignUp() {
 
                     <div className="input-group">
                         <label className="input-label">Current Role</label>
-                        <select className="form-select" value={role} onChange={(e) => setRole(e.target.value)} required>
-                            <option value="" disabled>Select your current status</option>
+                        <select 
+                            className="form-select" 
+                            value={role} 
+                            onChange={(e) => setRole(e.target.value)} 
+                            required
+                        >
                             <option value="student">Student</option>
-                            <option value="graduated">Graduated</option>
-                            <option value="employed">Employment</option>
+                            
+                            {/* 4. عرض الخيارات ديناميكياً */}
+                            {jobOptions.length > 0 ? (
+                                jobOptions.map((job) => (
+                                    <option key={job.id} value={job.title}>
+                                        {job.title}
+                                    </option>
+                                ))
+                            ) : (
+                                <option disabled>Loading roles...</option>
+                            )}
                         </select>
                     </div>
 
@@ -191,7 +223,6 @@ function SignUp() {
                             </span>
                         </div>
 
-                        {/* رسائل الخطأ */}
                         {passwordError ? (
                             <p style={{ color: '#ef4444', fontSize: '12px', marginTop: '5px', fontWeight: 'bold' }}>
                                 <i className="fa-solid fa-circle-exclamation"></i> {passwordError}

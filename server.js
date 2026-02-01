@@ -17,6 +17,10 @@ const { Roadmap, TechSkill, SkillResource } = require('./backend/models/Roadmap_
 const authRoutes = require('./backend/routes/authRoutes');
 const deptRoutes = require('./backend/routes/deptRoutes');
 const roadmapRoutes = require('./backend/routes/roadmapRoutes');
+// ... الاستدعاءات في الأعلى
+const jobRoutes = require('./backend/routes/jobRoutes');
+
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -41,6 +45,10 @@ app.use('/api/dept', deptRoutes);
 
 // المسار الجديد للرودماب
 app.use('/api/roadmaps', roadmapRoutes);
+
+// ...
+ // الرابط النهائي هيكون: http://localhost:5000/api/jobs
+app.use('/api/jobs', jobRoutes);
 
 // راوت تجريبي
 app.get('/', (req, res) => {

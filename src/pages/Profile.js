@@ -11,6 +11,9 @@ function Profile() {
     const [previewImage, setPreviewImage] = useState(null);
     const [imageFile, setImageFile] = useState(null);
 
+    // State لتخزين الوظائف القادمة من الداتابيز
+    const [jobOptions, setJobOptions] = useState([]);
+
     const [editForm, setEditForm] = useState({
         fullName: "",
         email: "",
@@ -18,7 +21,6 @@ function Profile() {
         bio: ""
     });
 
-    // إضافة resumeUploaded و resumeName و resumeDate للداتا
     const [userData, setUserData] = useState({
         fullName: "Loading...",
         email: "...",
@@ -27,9 +29,9 @@ function Profile() {
         role: "Student",
         averageScore: 85,
         interviewsDone: 12,
-        resumeUploaded: false, // حالة الملف
-        resumeName: "",        // اسم الملف
-        resumeDate: "",        // تاريخ الرفع
+        resumeUploaded: false, 
+        resumeName: "",        
+        resumeDate: "",        
         courses: [
             { id: 1, name: "Frontend Development", completed: 8, total: 12, percentage: 65 },
             { id: 2, name: "React Mastery", completed: 3, total: 10, percentage: 30 }
@@ -41,8 +43,9 @@ function Profile() {
         ]
     });
 
+    // 1. جلب بيانات المستخدم + الوظائف
     useEffect(() => {
-        const fetchProfile = async () => {
+        const fetchData = async () => {
             const userId = localStorage.getItem('userId');
             if (!userId) {
                 navigate('/Sign_In');
@@ -50,46 +53,49 @@ function Profile() {
             }
 
             try {
-                const response = await fetch(`http://localhost:5000/api/auth/profile/${userId}`);
-                const data = await response.json();
+                // أ. جلب بيانات البروفايل
+                const profileRes = await fetch(`http://localhost:5000/api/auth/profile/${userId}`);
+                const profileData = await profileRes.json();
 
-                if (response.ok) {
+                if (profileRes.ok) {
                     setUserData(prevState => ({
                         ...prevState,
-                        fullName: data.full_name,
-                        email: data.email,
-                        bio: data.about_me || "No bio added yet.",
-                        role: data.role || "Student",
-                        profilePic: data.profile_image
-                            ? `http://localhost:5000${data.profile_image}`
+                        fullName: profileData.full_name,
+                        email: profileData.email,
+                        bio: profileData.about_me || "No bio added yet.",
+                        role: profileData.role || "Student",
+                        profilePic: profileData.profile_image
+                            ? `http://localhost:5000${profileData.profile_image}`
                             : "https://via.placeholder.com/150"
-                        // ملحوظة: لو الباك إند بيرجع داتا عن الـ CV ممكن نضيفها هنا
                     }));
                 }
+
+                // ب. جلب قائمة الوظائف
+                const jobsRes = await fetch('http://localhost:5000/api/jobs');
+                if (jobsRes.ok) {
+                    const jobsData = await jobsRes.json();
+                    setJobOptions(jobsData);
+                }
+
             } catch (error) {
                 console.error("Connection Error:", error);
             }
         };
-        fetchProfile();
+
+        fetchData();
     }, [navigate]);
-
-
-
-
-    // src/pages/Profile.js
 
     const handleEditClick = () => {
         setEditForm({
             fullName: userData.fullName,
             email: userData.email,
-            role: userData.role,
-            // التعديل هنا: لو الـ Bio هو الرسالة الافتراضية، خليه فاضي في الفورم
+            // هنا بنخلي القيمة الافتراضية هي الدور الحالي لليوزر
+            role: userData.role || "student", 
             bio: userData.bio === "No bio added yet." ? "" : userData.bio
         });
         setPreviewImage(userData.profilePic);
         setIsEditing(true);
     };
-
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -104,11 +110,9 @@ function Profile() {
         }
     };
 
-    // --- دالة رفع الـ Resume وتحديث الواجهة ---
     const handleResumeChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            // هنا المفروض نبعت للباك إند، بس هنعمل تحديث للواجهة حالياً
             const today = new Date().toLocaleDateString('en-US');
             setUserData(prev => ({
                 ...prev,
@@ -119,7 +123,6 @@ function Profile() {
         }
     };
 
-    // --- دالة حذف الـ Resume ---
     const handleRemoveResume = () => {
         setUserData(prev => ({
             ...prev,
@@ -127,7 +130,6 @@ function Profile() {
             resumeName: "",
             resumeDate: ""
         }));
-        // Reset Input value to allow re-uploading same file if needed
         if(resumeInputRef.current) resumeInputRef.current.value = "";
     };
 
@@ -238,14 +240,29 @@ function Profile() {
                             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Full Name</label>
                             <input type="text" name="fullName" value={editForm.fullName} onChange={handleInputChange} className="form-input" style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }} />
                         </div>
+                        
+                        {/* >>> التعديل هنا: الـ Dropdown الديناميكي <<< */}
                         <div className="form-group" style={{ marginBottom: '15px' }}>
                             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Current Role</label>
-                            <select name="role" value={editForm.role} onChange={handleInputChange} className="form-select" style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }}>
-                                <option value="Student">Student</option>
-                                <option value="Graduated">Graduated</option>
-                                <option value="Employed">Employed</option>
+                            <select 
+                                name="role" 
+                                value={editForm.role} // هنا القيمة هتبقى الدور الحالي لليوزر أول ما يفتح الـ Edit
+                                onChange={handleInputChange} 
+                                className="form-select" 
+                                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }}
+                            >
+                                {/* 1. خيار Student الثابت */}
+                                <option value="student">Student</option>
+
+                                {/* 2. باقي الوظائف من الداتابيز */}
+                                {jobOptions.length > 0 && jobOptions.map((job) => (
+                                    <option key={job.id} value={job.title}>
+                                        {job.title}
+                                    </option>
+                                ))}
                             </select>
                         </div>
+
                         <div className="form-group" style={{ marginBottom: '15px' }}>
                             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Email</label>
                             <input type="email" name="email" value={editForm.email} onChange={handleInputChange} className="form-input" style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }} />
@@ -254,15 +271,14 @@ function Profile() {
                             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Bio</label>
                             <textarea name="bio" value={editForm.bio} onChange={handleInputChange} rows="4" className="form-textarea" style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }} />
                         </div>
-                            {/* ده الكود الجديد، شيلنا منه الـ style وحطينا className */}
-                            <div className="edit-actions">
-                                <button className="edit-btn btn-cancel" onClick={() => setIsEditing(false)}>
-                                    Cancel
-                                </button>
-                                <button className="edit-btn btn-save" onClick={handleSaveChanges}>
-                                    Save Changes
-                                </button>
-                            </div>
+                        <div className="edit-actions">
+                            <button className="edit-btn btn-cancel" onClick={() => setIsEditing(false)}>
+                                Cancel
+                            </button>
+                            <button className="edit-btn btn-save" onClick={handleSaveChanges}>
+                                Save Changes
+                            </button>
+                        </div>
                     </div>
                 )}
 
@@ -298,9 +314,7 @@ function Profile() {
                         </div>
                     </div>
 
-                    {/* Resume Section Modified */}
                     <div className="dashboard-card">
-                        {/* Input مخفي دايماً موجود */}
                         <input
                             type="file"
                             ref={resumeInputRef}
@@ -310,7 +324,6 @@ function Profile() {
                         />
 
                         {!userData.resumeUploaded ? (
-                            // الحالة الأولى: مفيش ملف (Upload Zone)
                             <>
                                 <h4 className="card-title purple-text"><i className="fa-solid fa-file-invoice"></i> Resume</h4>
                                 <div className="resume-upload-zone">
@@ -323,13 +336,12 @@ function Profile() {
                                 </div>
                             </>
                         ) : (
-                            // الحالة الثانية: تم الرفع (Design matches the image with Green Palette)
                             <div className="resume-active-container">
                                 <div className="resume-header-row">
-                                    <h4 className="card-title purple-text" style={{margin:0}}><i className="fa-solid fa-file-invoice"></i> My Resume</h4>
+                                    <h4 className="card-title purple-text" style={{ margin: 0 }}><i className="fa-solid fa-file-invoice"></i> My Resume</h4>
                                     <span className="badge-active">Active</span>
                                 </div>
-                                
+
                                 <div className="resume-file-card">
                                     <div className="file-icon-box">
                                         <i className="fa-solid fa-file-pdf"></i>
