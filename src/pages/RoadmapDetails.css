@@ -49,8 +49,8 @@
 .icon-large {
   width: 60px;
   height: 60px;
-  background-color: #e0f2fe; /* أزرق فاتح زي الصورة */
-  color: #0284c7;
+  background-color: #F0F7F5; 
+  color: #58A492;
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -93,8 +93,8 @@
 }
 
 .step-badge {
-  background-color: #e0e7ff; /* لون أزرق باهت */
-  color: #4338ca;
+  background-color: #ecfff8; /* لون أزرق باهت */
+  color: #58A492;
   padding: 5px 12px;
   border-radius: 20px;
   font-weight: 700;
@@ -188,11 +188,29 @@
 
 /* Loading & Error Centering */
 .loading-center, .error-center {
+   display: flex;
+  flex-direction: column; /* عشان الأيقونة تبقى فوق والكلمة تحت */
+  justify-content: center; /* يسنتر بالطول */
+  align-items: center;     /* يسنتر بالعرض */
+  min-height: 60vh;        /* ياخد مساحة كبيرة من الشاشة عشان يظهر في النص */
+  color: #58A492;          /* اللون الأخضر بتاعنا */
+  font-size: 1.5rem;       /* حجم الخط */
+  font-weight: 600;
+  gap: 15px;     
+}
+
+.loading-spinner {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 80vh;
-  color: #10b981;
-  font-size: 1.2rem;
-  font-weight: bold;
+  flex-direction: column; /* عشان الأيقونة تبقى فوق والكلمة تحت */
+  justify-content: center; /* يسنتر بالطول */
+  align-items: center;     /* يسنتر بالعرض */
+  min-height: 60vh;        /* ياخد مساحة كبيرة من الشاشة عشان يظهر في النص */
+  color: #58A492;          /* اللون الأخضر بتاعنا */
+  font-size: 1.5rem;       /* حجم الخط */
+  font-weight: 600;
+  gap: 15px;               /* مسافة بين الأيقونة والكلمة */
+}
+
+.fa-spin {
+  font-size: 3rem; 
 }
