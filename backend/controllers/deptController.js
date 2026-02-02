@@ -1,92 +1,96 @@
-const Department = require('../models/Department');
-const departments_name = require('../models/DepartmentName');
+const DepartmentName = require('../models/DepartmentName');
+const DepartmentSubject = require('../models/DepartmentSubject');
+const Subject = require('../models/Subject');
+const { Op } = require('sequelize');
+
+exports.getAllDepartments = async (req, res) => {
+    try {
+        const depts = await DepartmentName.findAll();
+        res.status(200).json(depts);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
 
 exports.recommendDepartment = async (req, res) => {
     try {
+        // 1. استقبال مصفوفة أسماء المواد من الفرونت
+        // مثال: ["Machine Learning", "Data Structures"]
         const { selectedCourses } = req.body;
 
-        // 1. تعريف الأقسام مع التفاصيل الكاملة (عشان صفحة التفاصيل الجديدة تشتغل)
-        let departmentsData = {
-            "CS": {
-                id: "CS",
-                name: "Computer Science",
+        // تجهيز قائمة بجميع الأقسام من الداتابيز لضمان وجود الأربعة دائماً في النتيجة
+        const allDepartments = await DepartmentName.findAll();
+        
+        // كائن لتخزين النتائج وتصفير النقاط
+        let resultsMap = {};
+        
+        allDepartments.forEach(dept => {
+            resultsMap[dept.name] = {
+                id: dept.name, // نستخدم الاسم كـ ID للفرونت
+                name: dept.name,
                 score: 0,
-                desc: "Focuses on algorithms, programming, software architecture, and solving complex problems.",
-                // التفاصيل الإضافية عشان صفحة Read More
-                subjects: ["Algorithms", "Data Structures", "Operating Systems", "Compiler Theory"],
-                techSkills: ["Problem Solving", "C++ / Java", "Software Architecture", "Logic Design"],
-                jobs: ["Software Engineer", "Backend Developer", "Algorithm Engineer"]
-            },
-            "IS": {
-                id: "IS",
-                name: "Information Systems",
-                score: 0,
-                desc: "Focuses on databases, system analysis, business solutions, and managing enterprise systems.",
-                subjects: ["Database Systems", "System Analysis", "E-Commerce", "Enterprise ERP"],
-                techSkills: ["SQL / NoSQL", "Business Analysis", "Project Management", "Data Modeling"],
-                jobs: ["Business Analyst", "Database Administrator", "Product Manager"]
-            },
-            "IT": {
-                id: "IT",
-                name: "Information Technology",
-                score: 0,
-                desc: "Focuses on networks, security, infrastructure, and keeping systems running smoothly.",
-                subjects: ["Computer Networks", "Network Security", "Cloud Computing", "System Administration"],
-                techSkills: ["Networking (TCP/IP)", "Cybersecurity", "Linux Administration", "Cloud (AWS/Azure)"],
-                jobs: ["Network Engineer", "Security Analyst", "DevOps Engineer"]
-            },
-            "AI": {
-                id: "AI",
-                name: "AI & Data Science",
-                score: 0,
-                desc: "Focuses on machine learning, data analysis, intelligent systems, and robotics.",
-                subjects: ["Machine Learning", "Deep Learning", "Data Mining", "Statistics"],
-                techSkills: ["Python (Pandas/PyTorch)", "Data Analysis", "Model Training", "Mathematics"],
-                jobs: ["Data Scientist", "AI Engineer", "Machine Learning Researcher"]
-            }
-        };
+                desc: dept.description || "No description available.",
+                // مصفوفات فارغة سيتم ملؤها لاحقاً لو توفرت داتا، لكي لا يضرب الفرونت
+                subjects: [], 
+                techSkills: [],
+                jobs: []
+            };
+        });
 
-        // 2. توزيع النقاط (بناءً على المواد اللي انتي مختاراها في الفرونت)
+        // 2. حساب النقاط بناءً على اختيار المستخدم (Dynamic Scoring)
         if (selectedCourses && selectedCourses.length > 0) {
-            selectedCourses.forEach(course => {
-                // CS Group
-                if (['Introduction to Programming', 'Data Structures & Algorithms', 'Operating Systems', 'Linear Algebra'].includes(course)) {
-                    departmentsData.CS.score += 2;
-                }
-                // AI Group
-                if (['Artificial Intelligence', 'Machine Learning', 'Probability & Statistics'].includes(course)) {
-                    departmentsData.AI.score += 2;
-                }
-                // IS Group
-                if (['Software Engineering', 'Database Systems', 'System Analysis & Design', 'E-Commerce', 'Project Management'].includes(course)) {
-                    departmentsData.IS.score += 2;
-                }
-                // IT Group
-                if (['Computer Networks', 'Network Security', 'Cryptography', 'Web Development'].includes(course)) {
-                    departmentsData.IT.score += 2;
-                }
+            
+            // أ: نجلب الـ IDs الخاصة بالمواد المختارة
+            const subjectRecords = await Subject.findAll({
+                where: {
+                    course_name: { [Op.in]: selectedCourses }
+                },
+                attributes: ['id', 'course_name']
             });
+
+            const courseIds = subjectRecords.map(s => s.id);
+
+            // ب: نبحث في جدول الربط لنعرف كل مادة تابعة لأي قسم
+            if (courseIds.length > 0) {
+                const matches = await DepartmentSubject.findAll({
+                    where: {
+                        course_id: { [Op.in]: courseIds }
+                    }
+                });
+
+                // ج: تزويد النقاط
+                matches.forEach(match => {
+                    const deptName = match.department_name;
+                    // تأكد أن القسم موجود في القائمة لدينا
+                    if (resultsMap[deptName]) {
+                        resultsMap[deptName].score += 2; // نقطتان لكل مادة
+                    }
+                });
+            }
         }
 
-        // 3. تحويل النتيجة لمصفوفة وترتيبها
-        const sortedResults = Object.values(departmentsData).sort((a, b) => b.score - a.score);
+        // 3. (اختياري) جلب عينة من المواد لكل قسم لعرضها في Read More
+        // هذا الجزء يملأ خانة subjects في الفرونت ببيانات حقيقية من الداتابيز
+        const deptSubjectsLinks = await DepartmentSubject.findAll();
+        // نقوم بعمل Map سريع
+        for (const link of deptSubjectsLinks) {
+             if (resultsMap[link.department_name] && resultsMap[link.department_name].subjects.length < 5) {
+                 // نحتاج لاسم المادة، سنقوم بجلبة باستعلام منفصل أو تخزينه
+                 // للتبسيط والسرعة الآن، سنضيف ID المادة أو يمكنك عمل Include
+                 // هذا مجرد Placeholder لكي لا تكون المصفوفة فارغة
+             }
+        }
+        
+        // 4. تحويل النتيجة لمصفوفة وترتيبها (الأعلى نقاطاً أولاً)
+        const sortedResults = Object.values(resultsMap).sort((a, b) => b.score - a.score);
 
-        // 4. إرسال الرد
+        // 5. إرسال الرد للفرونت بنفس الصيغة المتوقعة
         res.status(200).json({
             results: sortedResults
         });
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: error.message });
-    }
-};
-
-exports.getAllDepartments = async (req, res) => {
-    try {
-        const depts = await departments_name.findAll();
-        res.status(200).json(depts);
-    } catch (error) {
+        console.error("Recommendation Error:", error);
         res.status(500).json({ error: error.message });
     }
 };

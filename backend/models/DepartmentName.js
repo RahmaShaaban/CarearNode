@@ -4,7 +4,7 @@ const sequelize = require('../config/database');
 const DepartmentName = sequelize.define('DepartmentName', {
     name: {
         type: DataTypes.STRING,
-        primaryKey: true,
+        primaryKey: true, // الاسم هو المفتاح الأساسي حسب الداتابيز
         allowNull: false
     },
     description: {
@@ -12,7 +12,7 @@ const DepartmentName = sequelize.define('DepartmentName', {
         allowNull: true
     }
 }, {
-    tableName: 'departments_name', 
+    tableName: 'departments_name',
     timestamps: false
 });
 

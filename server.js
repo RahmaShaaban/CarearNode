@@ -8,7 +8,7 @@ const sequelize = require('./backend/config/database');
 
 // 2. استدعاء الموديلات وتفعيل العلاقات
 const User = require('./backend/models/User');
-const Department = require('./backend/models/Department');
+//const Department = require('./backend/models/Department');
 const DepartmentName = require('./backend/models/DepartmentName');
 // استدعاء ملف تجميع موديلات الروود ماب وعلاقاتها
 const { Roadmap, TechSkill, SkillResource } = require('./backend/models/Roadmap_models');
@@ -55,6 +55,8 @@ app.get('/', (req, res) => {
     res.send('CarearNode Server is Running!');
 });
 
+app.use('/api/subjects', require('./backend/routes/subjectRoutes'));
+
 // 6. إعداد العلاقات الإضافية (من التحديث الجديد)
 User.belongsTo(DepartmentName, { foreignKey: 'department_name', targetKey: 'name' });
 
@@ -65,7 +67,7 @@ async function verifySystemHealth() {
         const users = await User.count();
         console.log(`✅ Users Table: Connected. (${users} users)`);
 
-        const courses = await Department.count();
+        const courses = await DepartmentName.count();
         console.log(`✅ Courses Table: Connected. (${courses} courses)`);
 
         // فحص سريع للروود ماب

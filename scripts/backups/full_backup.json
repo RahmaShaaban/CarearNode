@@ -1,0 +1,803 @@
+{
+  "Job": [
+    {
+      "id": "1",
+      "title": "Software Developer"
+    },
+    {
+      "id": "2",
+      "title": "Junior Software Engineer"
+    },
+    {
+      "id": "3",
+      "title": "Backend Developer"
+    },
+    {
+      "id": "4",
+      "title": "Frontend Developer"
+    },
+    {
+      "id": "5",
+      "title": "Full Stack Developer"
+    },
+    {
+      "id": "6",
+      "title": "Desktop Application Developer"
+    },
+    {
+      "id": "7",
+      "title": "Web Developer"
+    },
+    {
+      "id": "8",
+      "title": "Frontend Engineer"
+    },
+    {
+      "id": "9",
+      "title": "Backend Engineer"
+    },
+    {
+      "id": "10",
+      "title": "WordPress Developer"
+    },
+    {
+      "id": "11",
+      "title": "Web Application Developer"
+    },
+    {
+      "id": "12",
+      "title": "Android Developer"
+    },
+    {
+      "id": "13",
+      "title": "iOS Developer"
+    },
+    {
+      "id": "14",
+      "title": "Flutter Developer"
+    },
+    {
+      "id": "15",
+      "title": "React Native Developer"
+    },
+    {
+      "id": "16",
+      "title": "Data Analyst"
+    },
+    {
+      "id": "17",
+      "title": "Junior Data Scientist"
+    },
+    {
+      "id": "18",
+      "title": "Business Intelligence Analyst"
+    },
+    {
+      "id": "19",
+      "title": "Machine Learning Engineer"
+    },
+    {
+      "id": "20",
+      "title": "AI Engineer"
+    },
+    {
+      "id": "21",
+      "title": "Data Engineer"
+    },
+    {
+      "id": "22",
+      "title": "Cyber Security Analyst"
+    },
+    {
+      "id": "23",
+      "title": "SOC Analyst"
+    },
+    {
+      "id": "24",
+      "title": "Penetration Tester"
+    },
+    {
+      "id": "25",
+      "title": "Ethical Hacker"
+    },
+    {
+      "id": "26",
+      "title": "Information Security Engineer"
+    },
+    {
+      "id": "27",
+      "title": "IT Support Specialist"
+    },
+    {
+      "id": "28",
+      "title": "Network Administrator"
+    },
+    {
+      "id": "29",
+      "title": "System Administrator"
+    },
+    {
+      "id": "30",
+      "title": "Cloud Engineer"
+    },
+    {
+      "id": "31",
+      "title": "DevOps Engineer"
+    },
+    {
+      "id": "32",
+      "title": "System Analyst"
+    },
+    {
+      "id": "33",
+      "title": "Business Analyst"
+    },
+    {
+      "id": "34",
+      "title": "Requirements Engineer"
+    },
+    {
+      "id": "35",
+      "title": "ERP Consultant"
+    },
+    {
+      "id": "36",
+      "title": "Software Tester"
+    },
+    {
+      "id": "37",
+      "title": "Manual Tester"
+    },
+    {
+      "id": "38",
+      "title": "Automation Tester"
+    },
+    {
+      "id": "39",
+      "title": "Quality Assurance Engineer"
+    },
+    {
+      "id": "40",
+      "title": "Project Coordinator"
+    },
+    {
+      "id": "41",
+      "title": "Technical Project Manager"
+    },
+    {
+      "id": "42",
+      "title": "Product Owner"
+    },
+    {
+      "id": "43",
+      "title": "Product Manager"
+    },
+    {
+      "id": "44",
+      "title": "Scrum Master"
+    },
+    {
+      "id": "45",
+      "title": "Freelance Developer"
+    },
+    {
+      "id": "46",
+      "title": "Technical Consultant"
+    },
+    {
+      "id": "47",
+      "title": "Technical Support Engineer"
+    },
+    {
+      "id": "48",
+      "title": "Customer Success Engineer"
+    },
+    {
+      "id": "49",
+      "title": "Teaching Assistant"
+    },
+    {
+      "id": "50",
+      "title": "Computer Science Instructor"
+    },
+    {
+      "id": "51",
+      "title": "Programming Trainer"
+    },
+    {
+      "id": "52",
+      "title": "Lab Instructor"
+    }
+  ],
+  "User": [
+    {
+      "id": 1,
+      "full_name": "rokaya",
+      "email": "rokaya@gmail",
+      "password": "$2b$10$NJ96eJMYbP0OSy.zyShOsedfewcpu3./QtoeHYaTzzo5YrWwPt7mO",
+      "profile_image": "/uploads/1769901943765.png",
+      "department_name": "Computer Science (CS)",
+      "about_me": "programmer",
+      "role": "Graduated",
+      "createdAt": "2026-01-31T23:25:16.796Z",
+      "updatedAt": "2026-02-01T00:37:56.892Z"
+    },
+    {
+      "id": 2,
+      "full_name": "bosy",
+      "email": "bosy@gmail",
+      "password": "$2b$10$/GFVTy0t9j2T.lsCpj8aIe4Zj/Hgm0B.fsCL3bIKO9KxKGg7o6SdS",
+      "profile_image": "/uploads/1769902248385.png",
+      "department_name": "Computer Systems",
+      "about_me": null,
+      "role": "Student",
+      "createdAt": "2026-01-31T23:30:03.780Z",
+      "updatedAt": "2026-01-31T23:30:49.430Z"
+    },
+    {
+      "id": 3,
+      "full_name": "ahmed",
+      "email": "ahmed@gmail.com",
+      "password": "$2b$10$eLFutSTmRTj9U0PVyyX.fuM9bYjDLC8bo/fNr2iHWdibc0f1sr1s6",
+      "profile_image": "/uploads/1769971024344.jfif",
+      "department_name": "Scientific Computing (SC)",
+      "about_me": "ahmed",
+      "role": "Student",
+      "createdAt": "2026-02-01T18:37:05.201Z",
+      "updatedAt": "2026-02-01T18:37:05.201Z"
+    },
+    {
+      "id": 4,
+      "full_name": "ali",
+      "email": "ali@gmail.com",
+      "password": "$2b$10$qeB7xDCTGBVL6.wx59dPae.qfs269/SKb2HNp0hFZjBtCTjVsyr62",
+      "profile_image": null,
+      "department_name": "Information Systems (IS)",
+      "about_me": "ali rashad",
+      "role": "Freelance Developer",
+      "createdAt": "2026-02-01T19:29:13.772Z",
+      "updatedAt": "2026-02-01T19:37:54.603Z"
+    }
+  ],
+  "Department": [],
+  "Roadmap": [],
+  "TechSkill": [
+    {
+      "id": "2",
+      "skill_name": "Algorithmic Geometry"
+    },
+    {
+      "id": "3",
+      "skill_name": "Android (Kotlin)"
+    },
+    {
+      "id": "4",
+      "skill_name": "Angular"
+    },
+    {
+      "id": "5",
+      "skill_name": "Arduino"
+    },
+    {
+      "id": "6",
+      "skill_name": "Biosignals (EEG/EOG/ECG)"
+    },
+    {
+      "id": "7",
+      "skill_name": "Brain-Computer Interfaces (BCI)"
+    },
+    {
+      "id": "8",
+      "skill_name": "Bus Protocols"
+    },
+    {
+      "id": "9",
+      "skill_name": "C"
+    },
+    {
+      "id": "10",
+      "skill_name": "C# (.NET Integration)"
+    },
+    {
+      "id": "11",
+      "skill_name": "C#/Java"
+    },
+    {
+      "id": "12",
+      "skill_name": "C++"
+    },
+    {
+      "id": "13",
+      "skill_name": "C++ (Arduino)"
+    },
+    {
+      "id": "14",
+      "skill_name": "C/C++"
+    },
+    {
+      "id": "15",
+      "skill_name": "CNN Architectures"
+    },
+    {
+      "id": "16",
+      "skill_name": "CUDA"
+    },
+    {
+      "id": "17",
+      "skill_name": "Circuit Simulation (Logisim/Multisim)"
+    },
+    {
+      "id": "18",
+      "skill_name": "Cisco Packet Tracer"
+    },
+    {
+      "id": "19",
+      "skill_name": "Context-Aware Systems"
+    },
+    {
+      "id": "20",
+      "skill_name": "Context-Free Grammars"
+    },
+    {
+      "id": "21",
+      "skill_name": "Convex Hull"
+    },
+    {
+      "id": "22",
+      "skill_name": "Data Acquisition (DAQ)"
+    },
+    {
+      "id": "23",
+      "skill_name": "Deep Learning Foundations (Perceptron/Adaline)"
+    },
+    {
+      "id": "24",
+      "skill_name": "Discrete Event Simulation"
+    },
+    {
+      "id": "25",
+      "skill_name": "Docker"
+    },
+    {
+      "id": "26",
+      "skill_name": "Edge Computing"
+    },
+    {
+      "id": "27",
+      "skill_name": "Encryption (AES/RSA)"
+    },
+    {
+      "id": "28",
+      "skill_name": "Ethernet"
+    },
+    {
+      "id": "29",
+      "skill_name": "Feature Extraction (ICA/CSP/PCA)"
+    },
+    {
+      "id": "30",
+      "skill_name": "Finite Automata"
+    },
+    {
+      "id": "31",
+      "skill_name": "Fixed-point Arithmetic"
+    },
+    {
+      "id": "32",
+      "skill_name": "Flutter"
+    },
+    {
+      "id": "33",
+      "skill_name": "Gephi"
+    },
+    {
+      "id": "34",
+      "skill_name": "Gradient Descent/Backprop"
+    },
+    {
+      "id": "35",
+      "skill_name": "Hadoop"
+    },
+    {
+      "id": "36",
+      "skill_name": "Hardware Acceleration"
+    },
+    {
+      "id": "37",
+      "skill_name": "Hashing"
+    },
+    {
+      "id": "38",
+      "skill_name": "IoT Protocols (MQTT/CoAP)"
+    },
+    {
+      "id": "39",
+      "skill_name": "JUnit (Unit Testing)"
+    },
+    {
+      "id": "40",
+      "skill_name": "Java"
+    },
+    {
+      "id": "41",
+      "skill_name": "Java, Scala, JavaScript, TypeScript, Syntax & Semantics, Readability, Writability, Reliability, Orthogonality"
+    },
+    {
+      "id": "42",
+      "skill_name": "JavaFX (Scene Builder)"
+    },
+    {
+      "id": "43",
+      "skill_name": "JavaScript"
+    },
+    {
+      "id": "44",
+      "skill_name": "JavaScript, Node.js, REST APIs"
+    },
+    {
+      "id": "45",
+      "skill_name": "Kinematics"
+    },
+    {
+      "id": "46",
+      "skill_name": "LLVM"
+    },
+    {
+      "id": "47",
+      "skill_name": "Lex/Flex"
+    },
+    {
+      "id": "48",
+      "skill_name": "Line Segment Intersection"
+    },
+    {
+      "id": "49",
+      "skill_name": "Linear Algebra"
+    },
+    {
+      "id": "50",
+      "skill_name": "Linux Shell/Bash"
+    },
+    {
+      "id": "51",
+      "skill_name": "Low-level Programming"
+    },
+    {
+      "id": "52",
+      "skill_name": "MATLAB"
+    },
+    {
+      "id": "53",
+      "skill_name": "MATLAB (Simulink)"
+    },
+    {
+      "id": "54",
+      "skill_name": "MPI"
+    },
+    {
+      "id": "55",
+      "skill_name": "MPI, OpenMP, Parallel Concepts"
+    },
+    {
+      "id": "56",
+      "skill_name": "MQTT"
+    },
+    {
+      "id": "57",
+      "skill_name": "Machine Learning Models"
+    },
+    {
+      "id": "58",
+      "skill_name": "Memory Interfacing"
+    },
+    {
+      "id": "59",
+      "skill_name": "Mobile UI Design"
+    },
+    {
+      "id": "60",
+      "skill_name": "Model Evaluation"
+    },
+    {
+      "id": "61",
+      "skill_name": "MongoDB, NoSQL Databases"
+    },
+    {
+      "id": "62",
+      "skill_name": "Multi-core Optimization"
+    },
+    {
+      "id": "63",
+      "skill_name": "NLTK"
+    },
+    {
+      "id": "64",
+      "skill_name": "Neural Networks"
+    },
+    {
+      "id": "65",
+      "skill_name": "Node.js"
+    },
+    {
+      "id": "66",
+      "skill_name": "NumPy"
+    },
+    {
+      "id": "67",
+      "skill_name": "OSI Model"
+    },
+    {
+      "id": "68",
+      "skill_name": "Object Detection (YOLO/R-CNN)"
+    },
+    {
+      "id": "69",
+      "skill_name": "OpenCL"
+    },
+    {
+      "id": "70",
+      "skill_name": "OpenCV"
+    },
+    {
+      "id": "71",
+      "skill_name": "OpenGL"
+    },
+    {
+      "id": "72",
+      "skill_name": "OpenMP"
+    },
+    {
+      "id": "73",
+      "skill_name": "Optimization (Gradient Descent/Backprop)"
+    },
+    {
+      "id": "74",
+      "skill_name": "Parallel Concepts"
+    },
+    {
+      "id": "75",
+      "skill_name": "Penetration Testing"
+    },
+    {
+      "id": "76",
+      "skill_name": "Postman (API Testing)"
+    },
+    {
+      "id": "77",
+      "skill_name": "Prolog Programming Language"
+    },
+    {
+      "id": "78",
+      "skill_name": "PyCharm"
+    },
+    {
+      "id": "79",
+      "skill_name": "Python"
+    },
+    {
+      "id": "80",
+      "skill_name": "Python (ArcPy)"
+    },
+    {
+      "id": "81",
+      "skill_name": "Python (Keras)"
+    },
+    {
+      "id": "82",
+      "skill_name": "Python (NetworkX)"
+    },
+    {
+      "id": "83",
+      "skill_name": "Python (NumPy/Matplotlib)"
+    },
+    {
+      "id": "84",
+      "skill_name": "Python (NumPy/SciPy)"
+    },
+    {
+      "id": "85",
+      "skill_name": "Python (OpenCV)"
+    },
+    {
+      "id": "86",
+      "skill_name": "Python (Pandas)"
+    },
+    {
+      "id": "87",
+      "skill_name": "Python (Qiskit)"
+    },
+    {
+      "id": "88",
+      "skill_name": "Python (Raspberry Pi)"
+    },
+    {
+      "id": "89",
+      "skill_name": "Python (SimPy/NumPy)"
+    },
+    {
+      "id": "90",
+      "skill_name": "Python, NLTK, spaCy, Regex, TF-IDF, Word Embeddings (Word2Vec/GloVe), Text Classification"
+    },
+    {
+      "id": "91",
+      "skill_name": "Python, PowerBI, Data Warehousing, Data Visualization"
+    },
+    {
+      "id": "92",
+      "skill_name": "Python, Scikit-learn, Pandas, NumPy, XGBoost, Supervised/Unsupervised Learning, Model Evaluation"
+    },
+    {
+      "id": "93",
+      "skill_name": "Quantum Circuit Design"
+    },
+    {
+      "id": "94",
+      "skill_name": "RFID"
+    },
+    {
+      "id": "95",
+      "skill_name": "ROS (Robot Operating System)"
+    },
+    {
+      "id": "96",
+      "skill_name": "RStudio"
+    },
+    {
+      "id": "97",
+      "skill_name": "Raspberry Pi"
+    },
+    {
+      "id": "98",
+      "skill_name": "Regex"
+    },
+    {
+      "id": "99",
+      "skill_name": "Regular Expressions (Regex)"
+    },
+    {
+      "id": "100",
+      "skill_name": "Rendering Pipeline"
+    },
+    {
+      "id": "101",
+      "skill_name": "SAS"
+    },
+    {
+      "id": "102",
+      "skill_name": "SQL (Advanced)"
+    },
+    {
+      "id": "103",
+      "skill_name": "Scapy"
+    },
+    {
+      "id": "104",
+      "skill_name": "Scientific Libraries (SciPy)"
+    },
+    {
+      "id": "105",
+      "skill_name": "Selenium (Web Automation)"
+    },
+    {
+      "id": "106",
+      "skill_name": "Sensors"
+    },
+    {
+      "id": "107",
+      "skill_name": "Sensors & Actuators"
+    },
+    {
+      "id": "108",
+      "skill_name": "Shaders (GLSL)"
+    },
+    {
+      "id": "109",
+      "skill_name": "Signal Encoding"
+    },
+    {
+      "id": "110",
+      "skill_name": "Signal Operations (Shift/Fold/Add)"
+    },
+    {
+      "id": "111",
+      "skill_name": "Signal Processing (FFT/Wavelet/PSD)"
+    },
+    {
+      "id": "112",
+      "skill_name": "Signal Transformation (FFT)"
+    },
+    {
+      "id": "113",
+      "skill_name": "SpaCy"
+    },
+    {
+      "id": "114",
+      "skill_name": "Statistics"
+    },
+    {
+      "id": "115",
+      "skill_name": "Supervised/Unsupervised Learning"
+    },
+    {
+      "id": "116",
+      "skill_name": "TCP/IP"
+    },
+    {
+      "id": "117",
+      "skill_name": "TF-IDF"
+    },
+    {
+      "id": "118",
+      "skill_name": "Task Scheduling"
+    },
+    {
+      "id": "119",
+      "skill_name": "Transfer Learning"
+    },
+    {
+      "id": "120",
+      "skill_name": "Turing Machines"
+    },
+    {
+      "id": "121",
+      "skill_name": "UML"
+    },
+    {
+      "id": "122",
+      "skill_name": "Ubiquitous Computing"
+    },
+    {
+      "id": "123",
+      "skill_name": "Unit Testing"
+    },
+    {
+      "id": "124",
+      "skill_name": "Unity (C# Scripting)"
+    },
+    {
+      "id": "125",
+      "skill_name": "Usability Principles"
+    },
+    {
+      "id": "126",
+      "skill_name": "Visual Studio"
+    },
+    {
+      "id": "127",
+      "skill_name": "Web Automation"
+    },
+    {
+      "id": "128",
+      "skill_name": "Wireshark"
+    },
+    {
+      "id": "129",
+      "skill_name": "Wireframing"
+    },
+    {
+      "id": "130",
+      "skill_name": "Wireless Protocols"
+    },
+    {
+      "id": "131",
+      "skill_name": "Wireless Sensor Networks"
+    },
+    {
+      "id": "132",
+      "skill_name": "Word Embeddings (Word2Vec/GloVe)"
+    },
+    {
+      "id": "133",
+      "skill_name": "Yacc/Bison"
+    },
+    {
+      "id": "134",
+      "skill_name": "iOS (Swift)"
+    },
+    {
+      "id": "1",
+      "skill_name": "ARM Architecture"
+    }
+  ],
+  "SkillResource": []
+}

@@ -21,10 +21,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "node server.js",
-    "server": "nodemon server.js",
-    "client": "react-scripts start",
-    "build": "react-scripts build"
+"start": "node server.js",
+"dev": "nodemon server.js",
+"db:backup": "node scripts/dataManager.js backup",
+"db:restore": "node scripts/dataManager.js restore"
   },
   "eslintConfig": {
     "extends": [
