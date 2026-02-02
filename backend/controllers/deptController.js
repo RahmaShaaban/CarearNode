@@ -84,8 +84,9 @@ exports.recommendDepartment = async (req, res) => {
         // 4. تحويل النتيجة لمصفوفة وترتيبها (الأعلى نقاطاً أولاً)
         const sortedResults = Object.values(resultsMap).sort((a, b) => b.score - a.score);
 
-        // 5. إرسال الرد للفرونت بنفس الصيغة المتوقعة
+// 4. إرسال الرد (التعديل هنا 👇)
         res.status(200).json({
+            success: true,  // ✅ تمت الإضافة: هذا ما ينتظره الفرونت
             results: sortedResults
         });
 
