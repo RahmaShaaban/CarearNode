@@ -2,15 +2,16 @@ import React, { useState, useEffect } from 'react';
 import './Department.css';
 
 function Department() {
-    // --- 1. تعريف الـ States ---
+    // --- States ---
     const [courses, setCourses] = useState([]); 
     const [loadingCourses, setLoadingCourses] = useState(true);
     const [selectedCourses, setSelectedCourses] = useState([]);
     const [results, setResults] = useState(null);
     const [loadingResult, setLoadingResult] = useState(false);
     const [viewingDept, setViewingDept] = useState(null);
+    const [error, setError] = useState(null); // لإظهار أي خطأ للمستخدم
 
-    // --- 2. جلب المواد عند فتح الصفحة ---
+    // --- 1. جلب المواد عند التحميل ---
     useEffect(() => {
         const fetchCourses = async () => {
             try {
@@ -18,21 +19,21 @@ function Department() {
                 const data = await response.json();
 
                 if (data.success) {
-                    // تحويل البيانات (Mapping)
                     const mappedCourses = data.data.map(subject => ({
-                        id: subject.id, // ✅ أضفنا الـ ID عشان الأداء يكون أفضل
+                        id: subject.id,
                         name: subject.course_name, 
-                        // عرض الوصف مكان المهارات مؤقتاً
+                        // عرض جزء من الوصف كـ تلميح
                         skills: subject.description 
-                            ? subject.description.substring(0, 55) + (subject.description.length > 55 ? '...' : '')
-                            : 'Core Computer Science Subject'
+                            ? subject.description.substring(0, 60) + (subject.description.length > 60 ? '...' : '') 
+                            : 'Core Subject'
                     }));
                     setCourses(mappedCourses);
                 } else {
-                    console.error("Failed to load courses");
+                    setError("Failed to load subjects.");
                 }
-            } catch (error) {
-                console.error("Error connecting to server:", error);
+            } catch (err) {
+                console.error("Error connecting to server:", err);
+                setError("Server connection failed. Please try again later.");
             } finally {
                 setLoadingCourses(false);
             }
@@ -41,7 +42,7 @@ function Department() {
         fetchCourses();
     }, []);
 
-    // --- 3. دوال التعامل مع الأحداث ---
+    // --- 2. دوال التحكم ---
     const toggleCourse = (courseName) => {
         if (selectedCourses.includes(courseName)) {
             setSelectedCourses(selectedCourses.filter(c => c !== courseName));
@@ -55,7 +56,10 @@ function Department() {
             alert("Please select at least one course.");
             return;
         }
+        
         setLoadingResult(true);
+        setError(null);
+
         try {
             const response = await fetch('http://localhost:5000/api/dept/recommend', {
                 method: 'POST',
@@ -66,12 +70,13 @@ function Department() {
             
             if (data.success && data.results) {
                 setResults(data.results);
+                // التمرير التلقائي لأسفل لرؤية النتيجة
                 setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 100);
             } else {
-                alert("No recommendation found.");
+                alert("No recommendation found. Try selecting different courses.");
             }
-        } catch (error) {
-            console.error(error);
+        } catch (err) {
+            console.error(err);
             alert("Connection failed! Make sure the backend is running.");
         } finally {
             setLoadingResult(false);
@@ -79,50 +84,69 @@ function Department() {
     };
 
     // دوال التنقل
-    const handleRestart = () => { setResults(null); setSelectedCourses([]); setViewingDept(null); window.scrollTo({ top: 0, behavior: 'smooth' }); };
-    const handleReadMore = (dept) => { setViewingDept(dept); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    const handleRestart = () => { 
+        setResults(null); 
+        setSelectedCourses([]); 
+        setViewingDept(null); 
+        window.scrollTo({ top: 0, behavior: 'smooth' }); 
+    };
+
+    const handleReadMore = (dept) => { 
+        setViewingDept(dept); 
+        window.scrollTo({ top: 0, behavior: 'smooth' }); 
+    };
+
     const handleBack = () => setViewingDept(null);
 
-    // --- View 1: صفحة التفاصيل (Read More) ---
+    // --- 3. View: صفحة التفاصيل (Read More) ---
     if (viewingDept) {
+        // حماية ضد البيانات الناقصة باستخدام (|| [])
+        const subjectsList = viewingDept.subjects || [];
+        const skillsList = viewingDept.techSkills || [];
+        const jobsList = viewingDept.jobs || [];
+
         return (
             <div className="checklist-wrapper">
                  <div className="checklist-container">
                     <button className="btn-back" onClick={handleBack}>
-                        <i className="fa-solid fa-arrow-left"></i> Back to Recommendations
+                        <i className="fa-solid fa-arrow-left"></i> Back to Results
                     </button>
                     
                     <div className="department-details-card">
                         <div className="details-header">
-                            <div className="details-main-icon"><i className="fa-solid fa-brain"></i></div>
+                            <div className="details-main-icon"><i className="fa-solid fa-graduation-cap"></i></div>
                             <h2>{viewingDept.name}</h2>
-                            <p className="details-description">{viewingDept.desc}</p>
+                            <p className="details-description">{viewingDept.desc || "No description available."}</p>
                         </div>
                         
                         <div className="details-info-grid">
+                            {/* العمود 1: المواد المختارة المتوافقة */}
                             <div className="info-column subjects-section">
-                                <h3><i className="fa-solid fa-book-open"></i> Related Subjects</h3>
+                                <h3><i className="fa-solid fa-book-open"></i> Matched Subjects</h3>
                                 <ul className="details-list">
-                                    {/* حماية إضافية لو المصفوفة فاضية */}
-                                    {viewingDept.subjects && viewingDept.subjects.length > 0 
-                                        ? viewingDept.subjects.map((s, i) => <li key={i}>{s}</li>) 
-                                        : <li className="empty-msg">General Subjects</li>}
+                                    {subjectsList.length > 0 
+                                        ? subjectsList.map((s, i) => <li key={i}>{s}</li>) 
+                                        : <li className="empty-msg">General Fit based on profile</li>}
                                 </ul>
                             </div>
+
+                            {/* العمود 2: المهارات التقنية */}
                             <div className="info-column skills-section">
-                                <h3><i className="fa-solid fa-code"></i> Technical Skills</h3>
+                                <h3><i className="fa-solid fa-code"></i> Skills You Will Learn</h3>
                                 <ul className="details-list">
-                                    {viewingDept.techSkills && viewingDept.techSkills.length > 0 
-                                        ? viewingDept.techSkills.map((s, i) => <li key={i}>{s}</li>) 
-                                        : <li className="empty-msg">Core Skills</li>}
+                                    {skillsList.length > 0 
+                                        ? skillsList.slice(0, 12).map((s, i) => <li key={i}>{s}</li>) // عرض أول 12 مهارة فقط
+                                        : <li className="empty-msg">Core Technical Skills</li>}
                                 </ul>
                             </div>
+
+                            {/* العمود 3: الوظائف */}
                             <div className="info-column jobs-section">
-                                <h3><i className="fa-solid fa-briefcase"></i> Common Jobs</h3>
+                                <h3><i className="fa-solid fa-briefcase"></i> Career Paths</h3>
                                 <ul className="details-list">
-                                    {viewingDept.jobs && viewingDept.jobs.length > 0 
-                                        ? viewingDept.jobs.map((j, i) => <li key={i}>{j}</li>) 
-                                        : <li className="empty-msg">Tech Roles</li>}
+                                    {jobsList.length > 0 
+                                        ? jobsList.map((j, i) => <li key={i}>{j}</li>) 
+                                        : <li className="empty-msg">Software Engineer, etc.</li>}
                                 </ul>
                             </div>
                         </div>
@@ -132,12 +156,15 @@ function Department() {
         );
     }
 
-    // --- View 2: الصفحة الرئيسية ---
+    // --- 4. View: الصفحة الرئيسية ---
     return (
         <div className="checklist-wrapper">
             <div className="checklist-container">
                 <div className="header-section">
                     <h1 className="main-title">Academic Interest Checklist</h1>
+                    
+                    {error && <div className="error-banner">{error}</div>}
+
                     {!results ? (
                         <p className="sub-title">Select the courses you enjoyed the most.</p>
                     ) : (
@@ -162,60 +189,56 @@ function Department() {
                                 {courses.length > 0 ? (
                                     courses.map((course) => (
                                         <div key={course.id || course.name} 
-                                             className={`card ${selectedCourses.includes(course.name) ? 'card-selected' : ''}`}
-                                             onClick={() => toggleCourse(course.name)}>
+                                           className={`card ${selectedCourses.includes(course.name) ? 'card-selected' : ''}`}
+                                           onClick={() => toggleCourse(course.name)}>
                                             <div className="card-top">
-                                                <h3 className="course-title">{course.name}</h3>
-                                                <div className={`circle-check ${selectedCourses.includes(course.name) ? 'checked' : ''}`}></div>
+                                                <h3>{course.name}</h3>
+                                                {selectedCourses.includes(course.name) && <i className="fa-solid fa-check-circle check-icon"></i>}
                                             </div>
                                             <p className="skills-text">{course.skills}</p>
                                         </div>
                                     ))
                                 ) : (
-                                    <p className="no-data-msg">No subjects found in database.</p>
+                                    !error && <p className="no-data-msg">No subjects found.</p>
                                 )}
                             </div>
                         )}
+                        
                         <div className="button-container">
-                            <button className="btn-recommend" onClick={handleRecommend} disabled={loadingResult || loadingCourses}>
+                            <button className="btn-recommend" onClick={handleRecommend} disabled={loadingResult || loadingCourses || courses.length === 0}>
                                 {loadingResult ? "Analyzing..." : "Recommend Department"}
                             </button>
                         </div>
                     </>
                 )}
                 
-                {/* قسم النتائج (بالتصميم الكامل) */}
+                {/* قسم النتائج */}
                 {results && (
-                     <div className="results-list">
+                      <div className="results-list">
                         {results.map((dept, index) => {
-                            const isTopChoice = index === 0;
+                            const isTop = index === 0;
                             return (
-                                <div key={index} className={`result-card-row ${isTopChoice ? 'top-choice' : ''}`}>
-                                    {/* 1. الأيقونة (كأس أو رقم) */}
+                                <div key={index} className={`result-card-row ${isTop ? 'top-choice' : ''}`}>
                                     <div className="result-icon">
-                                        {isTopChoice ? <i className="fa-solid fa-trophy"></i> : <span className="rank-num">#{index + 1}</span>}
+                                        {isTop ? <i className="fa-solid fa-trophy"></i> : <span className="rank-num">#{index + 1}</span>}
                                     </div>
-                                    
-                                    {/* 2. بيانات القسم */}
                                     <div className="result-info">
                                         <div className="result-header">
                                             <h3>{dept.name}</h3>
-                                            {isTopChoice && <span className="badge-best-fit">Best Fit</span>}
+                                            {isTop && <span className="badge-best-fit">Best Fit</span>}
                                         </div>
                                         <p>{dept.desc}</p>
                                         <button className="btn-read-more" onClick={() => handleReadMore(dept)}>
                                             Read More <i className="fa-solid fa-arrow-right"></i>
                                         </button>
                                     </div>
-
-                                    {/* 3. النقاط */}
                                     <div className="result-score">
                                         <span>{dept.score}</span> pts
                                     </div>
                                 </div>
                             );
                         })}
-                     </div>
+                      </div>
                 )}
             </div>
         </div>
