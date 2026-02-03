@@ -5,32 +5,53 @@ require('dotenv').config();
 
 // استدعاء ملف الاتصال بالداتابيز
 const sequelize = require('./backend/config/database');
+////
+                  const User = require('./backend/models/User');
+                  const DepartmentName = require('./backend/models/DepartmentName');
+                  const { Roadmap, TechSkill, SkillResource } = require('./backend/models/Roadmap_models');
 
+////
 const app = express();
 
 // 1. تفعيل CORS للجميع (لحل أي مشكلة ربط مؤقتاً) ✅
 app.use(cors({
-    origin: '*', // السماح لأي مصدر بالاتصال (للأمان أثناء التطوير)
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    origin: 'http://localhost:3000', // السماح لأي مصدر بالاتصال (للأمان أثناء التطوير)
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 2. كاشف الطلبات (Logger) - عشان نشوف الفرونت بيكلم الباك ولا لأ 🕵️‍♂️
-app.use((req, res, next) => {
-    console.log(`🔔 Request received: ${req.method} ${req.url}`);
-    next();
+//////////////
+         app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+//////////////
+
+///////////// 2. كاشف الطلبات (Logger) - عشان نشوف الفرونت بيكلم الباك ولا لأ 🕵️‍♂️
+// راوت تجريبي
+app.get('/', (req, res) => {
+    res.send('CarearNode Server is Running!');
 });
+////////////
 
 // استدعاء الراوتس (تأكدي أن المسارات صحيحة)
 const deptRoutes = require('./backend/routes/deptRoutes');
 const subjectRoutes = require('./backend/routes/subjectRoutes');
+////////////
+                const authRoutes = require('./backend/routes/authRoutes');
+                const jobRoutes = require('./backend/routes/jobRoutes');
+                const roadmapRoutes = require('./backend/routes/roadmapRoutes');
 
+////////////
 // ربط المسارات
 app.use('/api/dept', deptRoutes);
 app.use('/api/subjects', subjectRoutes);
+////////////
+             app.use('/api/auth', authRoutes);
+             app.use('/api/jobs', jobRoutes);
+             app.use('/api/roadmaps', roadmapRoutes);
+////////////
 
 // مسار تجريبي للتأكد أن السيرفر شغال
 app.get('/', (req, res) => {

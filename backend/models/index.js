@@ -1,6 +1,5 @@
 const sequelize = require('../config/database');
 const { DataTypes } = require('sequelize');
-
 // ============================================================
 // 1. استدعاء الموديلات (Import Models)
 // ============================================================

@@ -1,12 +1,10 @@
 const sequelize = require('../config/database'); 
-// تأكدي أن هذا السطر بدون أقواس {} حول المتغير كما اتفقنا سابقاً
 
 exports.getAllDepartments = async (req, res) => {
     try {
         const [results] = await sequelize.query("SELECT * FROM departments_name");
         res.status(200).json(results);
     } catch (error) {
-        console.error("Error fetching depts:", error);
         res.status(500).json({ error: error.message });
     }
 };
@@ -16,34 +14,33 @@ exports.recommendDepartment = async (req, res) => {
         const { selectedCourses } = req.body;
         console.log("🚀 Starting Recommendation for:", selectedCourses);
 
-        // 1. جلب كل الأقسام
         const [departments] = await sequelize.query("SELECT * FROM departments_name");
         
         if (!departments || departments.length === 0) {
-            console.error("❌ No departments found in DB!");
             return res.status(500).json({ success: false, message: "Database empty" });
         }
 
         let resultsMap = {};
 
-        // 2. تجهيز البيانات لكل قسم
         for (const dept of departments) {
-            
-            // أ. جلب الوظائف
+            // جلب الوظائف
             const [jobs] = await sequelize.query(`
-                SELECT j.title 
-                FROM jobs j
+                SELECT j.title FROM jobs j
                 JOIN job_departments jd ON j.id = jd.job_id
                 WHERE jd.department_name = '${dept.name}'
             `);
 
-            // ب. جلب المهارات (تم التصحيح هنا ✅)
-            // نختار skill_name ونسميه name عشان الفرونت إند يفهمه
+            // جلب المهارات
             const [skills] = await sequelize.query(`
-                SELECT t.skill_name as name 
-                FROM tech_skills t
+                SELECT t.skill_name as name FROM tech_skills t
                 JOIN skills_for_department sd ON t.id = sd.skill_id
                 WHERE sd.department_name = '${dept.name}'
+            `);
+
+            // جلب كل مواد القسم
+            const [allSubjects] = await sequelize.query(`
+                SELECT course_name FROM department_subjects 
+                WHERE department_name = '${dept.name}'
             `);
 
             resultsMap[dept.name] = {
@@ -51,15 +48,14 @@ exports.recommendDepartment = async (req, res) => {
                 name: dept.name,
                 score: 0,
                 desc: dept.description,
-                subjects: [],
+                allSubjects: allSubjects.map(s => s.course_name),
+                matchedSubjects: [], // تأكدي إن الاسم ده هو اللي بنستخدمه تحت ✅
                 jobs: jobs.map(j => j.title),
-                techSkills: skills.map(s => s.name) // هنا سيقرأ 'name' الذي هو الاسم المستعار لـ skill_name
+                techSkills: skills.map(s => s.name)
             };
         }
 
-        // 3. حساب النقاط
         if (selectedCourses && selectedCourses.length > 0) {
-            // تنظيف أسماء المواد
             const coursesList = selectedCourses.map(c => `'${c.replace(/'/g, "''")}'`).join(", ");
             
             const [matches] = await sequelize.query(`
@@ -68,23 +64,23 @@ exports.recommendDepartment = async (req, res) => {
                 WHERE course_name IN (${coursesList})
             `);
 
-            console.log(`✅ Found ${matches.length} matches in department_subjects`);
+            console.log(`✅ Found ${matches.length} matches`);
 
             matches.forEach(match => {
                 const deptName = match.department_name;
+                // التأكد إن القسم موجود في الـ Map وإن الـ matchedSubjects معرفة
                 if (resultsMap[deptName]) {
                     resultsMap[deptName].score += 2;
-                    if (!resultsMap[deptName].subjects.includes(match.course_name)) {
-                        resultsMap[deptName].subjects.push(match.course_name);
+                    
+                    // التصحيح هنا: التأكد من وجود المصفوفة قبل عمل includes ✅
+                    if (resultsMap[deptName].matchedSubjects && !resultsMap[deptName].matchedSubjects.includes(match.course_name)) {
+                        resultsMap[deptName].matchedSubjects.push(match.course_name);
                     }
                 }
             });
         }
 
-        // 4. الترتيب
         const sortedResults = Object.values(resultsMap).sort((a, b) => b.score - a.score);
-
-        console.log("🏆 Top Recommendation:", sortedResults[0]?.name);
 
         res.status(200).json({
             success: true,
@@ -92,11 +88,7 @@ exports.recommendDepartment = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("❌ CRITICAL ERROR in recommendDepartment:", error);
-        res.status(500).json({ 
-            success: false, 
-            error: error.message,
-            stack: error.stack 
-        });
+        console.error("❌ CRITICAL ERROR:", error);
+        res.status(500).json({ success: false, error: error.message });
     }
 };

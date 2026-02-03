@@ -99,61 +99,69 @@ function Department() {
     const handleBack = () => setViewingDept(null);
 
     // --- 3. View: صفحة التفاصيل (Read More) ---
-    if (viewingDept) {
-        // حماية ضد البيانات الناقصة باستخدام (|| [])
-        const subjectsList = viewingDept.subjects || [];
-        const skillsList = viewingDept.techSkills || [];
-        const jobsList = viewingDept.jobs || [];
+    // --- 3. View: صفحة التفاصيل (Read More) ---
+if (viewingDept) {
+    // تأكدي أننا نقرأ allSubjects الذي أرسلناه من الباك إند
+    const fullSyllabus = viewingDept.allSubjects || []; 
+    const matchedOnly = viewingDept.matchedSubjects || []; // المواد اللي الطالب اختارها فعلاً
+    const skillsList = viewingDept.techSkills || [];
+    const jobsList = viewingDept.jobs || [];
 
-        return (
-            <div className="checklist-wrapper">
-                 <div className="checklist-container">
-                    <button className="btn-back" onClick={handleBack}>
-                        <i className="fa-solid fa-arrow-left"></i> Back to Results
-                    </button>
+    return (
+        <div className="checklist-wrapper">
+            <div className="checklist-container">
+                <button className="btn-back" onClick={handleBack}>
+                    <i className="fa-solid fa-arrow-left"></i> Back to Results
+                </button>
+                
+                <div className="department-details-card">
+                    <div className="details-header">
+                        <h2>{viewingDept.name}</h2>
+                        <p className="details-description">{viewingDept.desc}</p>
+                    </div>
                     
-                    <div className="department-details-card">
-                        <div className="details-header">
-                            <div className="details-main-icon"><i className="fa-solid fa-graduation-cap"></i></div>
-                            <h2>{viewingDept.name}</h2>
-                            <p className="details-description">{viewingDept.desc || "No description available."}</p>
+                    <div className="details-info-grid">
+                        {/* عمود المواد: يعرض كل مواد القسم مع تمييز المختارة */}
+                        <div className="info-column subjects-section">
+                            <h3><i className="fa-solid fa-book-open"></i> Department Syllabus</h3>
+                            <ul className="details-list">
+                                {fullSyllabus.length > 0 ? (
+                                    fullSyllabus.map((s, i) => {
+                                        // نتحقق هل المادة دي الطالب اختارها؟
+                                        const isMatched = matchedOnly.includes(s);
+                                        return (
+                                            <li key={i} className={isMatched ? "matched-item" : ""}>
+                                                {s} {isMatched && <i className="fa-solid fa-circle-check" style={{color: '#2ecc71', marginLeft: '8px'}}></i>}
+                                            </li>
+                                        );
+                                    })
+                                ) : (
+                                    <li className="empty-msg">Syllabus loading or not found.</li>
+                                )}
+                            </ul>
                         </div>
-                        
-                        <div className="details-info-grid">
-                            {/* العمود 1: المواد المختارة المتوافقة */}
-                            <div className="info-column subjects-section">
-                                <h3><i className="fa-solid fa-book-open"></i> Matched Subjects</h3>
-                                <ul className="details-list">
-                                    {subjectsList.length > 0 
-                                        ? subjectsList.map((s, i) => <li key={i}>{s}</li>) 
-                                        : <li className="empty-msg">General Fit based on profile</li>}
-                                </ul>
-                            </div>
 
-                            {/* العمود 2: المهارات التقنية */}
-                            <div className="info-column skills-section">
-                                <h3><i className="fa-solid fa-code"></i> Skills You Will Learn</h3>
-                                <ul className="details-list">
-                                    {skillsList.length > 0 
-                                        ? skillsList.slice(0, 12).map((s, i) => <li key={i}>{s}</li>) // عرض أول 12 مهارة فقط
-                                        : <li className="empty-msg">Core Technical Skills</li>}
-                                </ul>
-                            </div>
+                        {/* عمود المهارات */}
+                        <div className="info-column skills-section">
+                            <h3><i className="fa-solid fa-code"></i> Skills You'll Learn</h3>
+                            <ul className="details-list">
+                                {skillsList.length > 0 ? skillsList.map((s, i) => <li key={i}>{s}</li>) : <li>Core Skills</li>}
+                            </ul>
+                        </div>
 
-                            {/* العمود 3: الوظائف */}
-                            <div className="info-column jobs-section">
-                                <h3><i className="fa-solid fa-briefcase"></i> Career Paths</h3>
-                                <ul className="details-list">
-                                    {jobsList.length > 0 
-                                        ? jobsList.map((j, i) => <li key={i}>{j}</li>) 
-                                        : <li className="empty-msg">Software Engineer, etc.</li>}
-                                </ul>
-                            </div>
+                        {/* عمود الوظائف */}
+                        <div className="info-column jobs-section">
+                            <h3><i className="fa-solid fa-briefcase"></i> Career Paths</h3>
+                            <ul className="details-list">
+                                {jobsList.length > 0 ? jobsList.map((j, i) => <li key={i}>{j}</li>) : <li>Software Roles</li>}
+                            </ul>
                         </div>
                     </div>
-                 </div>
+                </div>
             </div>
-        );
+        </div>
+    );
+
     }
 
     // --- 4. View: الصفحة الرئيسية ---
