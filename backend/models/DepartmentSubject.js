@@ -7,8 +7,8 @@ const DepartmentSubject = sequelize.define('DepartmentSubject', {
         primaryKey: true,
         autoIncrement: true
     },
-    course_id: {
-        type: DataTypes.INTEGER,
+    course_name: {
+        type: DataTypes.STRING,
         allowNull: false
     },
     department_name: {
