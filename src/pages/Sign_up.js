@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'; // 1. استيراد useEffect
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Sign_up.css';
 import logo from '../photos/logo.png';
@@ -8,19 +8,17 @@ function SignUp() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [fullName, setFullName] = useState("");
-    const [role, setRole] = useState("student");
+    // جعلنا القيمة الافتراضية "Student" (بحرف كبير) لتتناسق مع باقي الوظائف
+    const [role, setRole] = useState("Student"); 
     const [confirmPassword, setConfirmPassword] = useState("");
     const [bio, setBio] = useState("");
-
-    // State لتخزين أخطاء الباسورد
     const [passwordError, setPasswordError] = useState("");
-
-    // 2. State جديد لتخزين الوظائف القادمة من الداتابيز
+    
+    // State لتخزين الوظائف
     const [jobOptions, setJobOptions] = useState([]);
 
     const fileInputRef = useRef(null);
     const [profileImage, setProfileImage] = useState(null);
-
     const navigate = useNavigate();
 
     const togglePasswordVisibility = () => {
@@ -34,15 +32,14 @@ function SignUp() {
         }
     };
 
-    // 3. دالة جلب الوظائف من الباك إند عند تحميل الصفحة
+    // جلب الوظائف عند فتح الصفحة
     useEffect(() => {
         const fetchJobs = async () => {
             try {
-                // تأكدي إن الباك إند شغال والراوت /api/jobs موجود
                 const response = await fetch('http://localhost:5000/api/jobs');
                 if (response.ok) {
                     const data = await response.json();
-                    setJobOptions(data); // تخزين البيانات في الـ State
+                    setJobOptions(data);
                 } else {
                     console.error("Failed to fetch jobs");
                 }
@@ -50,11 +47,9 @@ function SignUp() {
                 console.error("Error connecting to jobs API:", error);
             }
         };
-
         fetchJobs();
     }, []);
 
-    // دالة التحقق من قوة الباسورد
     const validatePassword = (pass) => {
         const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
         return strongPasswordRegex.test(pass);
@@ -62,10 +57,8 @@ function SignUp() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         setPasswordError("");
 
-        // التحقق من قوة الباسورد
         if (!validatePassword(password)) {
             setPasswordError("Weak Password! Must contain 8+ chars, Uppercase, Lowercase, Number & Symbol (@$!%*?&).");
             return;
@@ -96,7 +89,6 @@ function SignUp() {
             const data = await response.json();
 
             if (response.ok) {
-                // حفظ البيانات وتوجيه المستخدم
                 localStorage.setItem('userId', data.userId);
                 if (data.profile_image) {
                     localStorage.setItem('userImage', data.profile_image);
@@ -108,13 +100,12 @@ function SignUp() {
                 navigate('/');
                 window.location.reload();
             } else {
-                console.log("Server Error Details:", data);
                 alert("فشل التسجيل: " + (data.message || "تأكدي من البيانات المدخلة"));
             }
 
         } catch (error) {
             console.error("Error:", error);
-            alert("فشل الاتصال بالسيرفر. تأكدي إن الباك إند شغال.");
+            alert("فشل الاتصال بالسيرفر.");
         }
     };
 
@@ -147,16 +138,12 @@ function SignUp() {
                                         <path d="M3 7C3 5.89543 3.89543 5 5 5H7L9 3H15L17 5H19C20.1046 5 21 5.89543 21 7V17C21 18.1046 20.1046 19 19 19H5C3.89543 19 3 18.1046 3 17V7Z" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                     </svg>
                                 </div>
-                                <div className="hover-overlay">
-                                    <span className="upload-text">Upload</span>
-                                </div>
+                                <div className="hover-overlay"><span className="upload-text">Upload</span></div>
                             </>
                         ) : (
                             <>
                                 <img src={profileImage} alt="Profile" className="preview-img" />
-                                <div className="hover-overlay">
-                                    <span className="upload-text">Change</span>
-                                </div>
+                                <div className="hover-overlay"><span className="upload-text">Change</span></div>
                             </>
                         )}
                     </div>
@@ -178,9 +165,10 @@ function SignUp() {
                             onChange={(e) => setRole(e.target.value)} 
                             required
                         >
-                            <option value="student">Student</option>
+                            {/* تم توحيد القيمة لتكون Student بحرف كبير */}
+                            <option value="Student">Student</option>
                             
-                            {/* 4. عرض الخيارات ديناميكياً */}
+                            {/* عرض الوظائف من الداتابيز باستخدام title */}
                             {jobOptions.length > 0 ? (
                                 jobOptions.map((job) => (
                                     <option key={job.id} value={job.title}>
@@ -208,9 +196,7 @@ function SignUp() {
                                 value={password}
                                 onChange={(e) => {
                                     setPassword(e.target.value);
-                                    if (passwordError && validatePassword(e.target.value)) {
-                                        setPasswordError("");
-                                    }
+                                    if (passwordError && validatePassword(e.target.value)) setPasswordError("");
                                 }}
                                 required
                             />
@@ -222,7 +208,6 @@ function SignUp() {
                                 )}
                             </span>
                         </div>
-
                         {passwordError ? (
                             <p style={{ color: '#ef4444', fontSize: '12px', marginTop: '5px', fontWeight: 'bold' }}>
                                 <i className="fa-solid fa-circle-exclamation"></i> {passwordError}
@@ -241,19 +226,11 @@ function SignUp() {
 
                     <div className="input-group bio-field">
                         <label className="input-label">About Me (Bio)</label>
-                        <textarea
-                            placeholder="Briefly describe your interests and goals..."
-                            rows="5"
-                            className="form-textarea"
-                            value={bio}
-                            onChange={(e) => setBio(e.target.value)}
-                        />
+                        <textarea placeholder="Briefly describe your interests and goals..." rows="5" className="form-textarea" value={bio} onChange={(e) => setBio(e.target.value)} />
                     </div>
 
                     <button type="submit" className="signup-submit-btn">Register</button>
-                    <p className="auth-footer-text">
-                        Already have an account? <Link to="/Sign_In" className="auth-link">Sign in</Link>
-                    </p>
+                    <p className="auth-footer-text">Already have an account? <Link to="/Sign_In" className="auth-link">Sign in</Link></p>
                 </form>
             </div>
         </div>

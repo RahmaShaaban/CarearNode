@@ -11,9 +11,6 @@ const Job = sequelize.define('Job', {
         type: DataTypes.STRING, 
         allowNull: false },
 
-    description: { 
-        type: DataTypes.TEXT }
-
 }, 
 { tableName: 
     'jobs', timestamps: false });

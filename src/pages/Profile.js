@@ -11,7 +11,7 @@ function Profile() {
     const [previewImage, setPreviewImage] = useState(null);
     const [imageFile, setImageFile] = useState(null);
 
-    // State لتخزين الوظائف القادمة من الداتابيز
+    // State لتخزين الوظائف
     const [jobOptions, setJobOptions] = useState([]);
 
     const [editForm, setEditForm] = useState({
@@ -43,7 +43,6 @@ function Profile() {
         ]
     });
 
-    // 1. جلب بيانات المستخدم + الوظائف
     useEffect(() => {
         const fetchData = async () => {
             const userId = localStorage.getItem('userId');
@@ -89,8 +88,8 @@ function Profile() {
         setEditForm({
             fullName: userData.fullName,
             email: userData.email,
-            // هنا بنخلي القيمة الافتراضية هي الدور الحالي لليوزر
-            role: userData.role || "student", 
+            // التأكد من استخدام القيمة المخزنة
+            role: userData.role || "Student", 
             bio: userData.bio === "No bio added yet." ? "" : userData.bio
         });
         setPreviewImage(userData.profilePic);
@@ -235,26 +234,26 @@ function Profile() {
                         </div>
                     </div>
                 ) : (
-                    <div className="edit-form-container" style={{ padding: '20px', width: '100%' }}>
+                    <div className="edit-form-container" style={{ padding: '20px 30px', boxSizing: 'border-box' }}>
                         <div className="form-group" style={{ marginBottom: '15px' }}>
                             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Full Name</label>
                             <input type="text" name="fullName" value={editForm.fullName} onChange={handleInputChange} className="form-input" style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }} />
                         </div>
                         
-                        {/* >>> التعديل هنا: الـ Dropdown الديناميكي <<< */}
+                        {/* Dropdown القائمة المنسدلة للوظائف */}
                         <div className="form-group" style={{ marginBottom: '15px' }}>
                             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Current Role</label>
                             <select 
                                 name="role" 
-                                value={editForm.role} // هنا القيمة هتبقى الدور الحالي لليوزر أول ما يفتح الـ Edit
+                                value={editForm.role} 
                                 onChange={handleInputChange} 
                                 className="form-select" 
                                 style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }}
                             >
-                                {/* 1. خيار Student الثابت */}
-                                <option value="student">Student</option>
+                                {/* خيار Student الثابت بحرف كبير */}
+                                <option value="Student">Student</option>
 
-                                {/* 2. باقي الوظائف من الداتابيز */}
+                                {/* باقي الوظائف من الداتابيز */}
                                 {jobOptions.length > 0 && jobOptions.map((job) => (
                                     <option key={job.id} value={job.title}>
                                         {job.title}
