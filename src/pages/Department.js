@@ -71,7 +71,7 @@ function Department() {
             if (data.success && data.results) {
                 setResults(data.results);
                 // التمرير التلقائي لأسفل لرؤية النتيجة
-                setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 100);
+                setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
             } else {
                 alert("No recommendation found. Try selecting different courses.");
             }
