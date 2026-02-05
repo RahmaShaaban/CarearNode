@@ -11,8 +11,7 @@ const Roadmaps = () => {
   useEffect(() => {
     const fetchRoadmaps = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/roadmaps/all'); 
-        const data = await response.json();
+const response = await fetch('http://localhost:5000/api/roadmaps');        const data = await response.json();
 
         if (data.success) {
           setRoadmaps(data.data);
