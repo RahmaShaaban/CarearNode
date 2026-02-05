@@ -1,6 +1,9 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 
+// ⚠️ هام جداً: استدعاء الموديلات عشان نقدر نجيب بيانات الرودمابس مع اليوزر
+const { UserRoadmap, Roadmap } = require('../models/Roadmap_models');
+
 // --- 1. Signup ---
 exports.signup = async (req, res) => {
     try {
@@ -67,8 +70,8 @@ exports.login = async (req, res) => {
             full_name: user.full_name,
             profile_image: user.profile_image,
             department_name: user.department_name,
-            role: user.role,        // يفضل إرجاعها هنا أيضاً
-            about_me: user.about_me // يفضل إرجاعها هنا أيضاً
+            role: user.role,
+            about_me: user.about_me
         });
 
     } catch (error) {
@@ -77,12 +80,22 @@ exports.login = async (req, res) => {
     }
 };
 
-// --- 3. Get User Profile ---
+// --- 3. Get User Profile (التعديل الرئيسي هنا) ---
 exports.getUserProfile = async (req, res) => {
     try {
         const userId = req.params.id;
+        
+        // التعديل: إضافة include لجلب الاشتراكات وتفاصيل الرودماب
         const user = await User.findByPk(userId, {
-            attributes: { exclude: ['password'] }
+            attributes: { exclude: ['password'] },
+            include: [
+                {
+                    model: UserRoadmap, // هات جدول الاشتراكات
+                    include: [
+                        { model: Roadmap } // ومن جواه هات تفاصيل الرودماب (الاسم، الوصف، الخ)
+                    ]
+                }
+            ]
         });
 
         if (!user) {
@@ -110,18 +123,14 @@ exports.updateProfile = async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-
-        if (bio !== undefined) {
-            user.about_me = bio;
-        }
-
-
         // تحديث البيانات
         user.full_name = full_name || user.full_name;
         user.email = email || user.email;
         user.role = role || user.role;
-        // هنا بنربط الـ bio اللي جاي من الفرونت بالـ about_me في الداتابيز
-        user.about_me = bio || user.about_me;
+        // ربط bio بالـ about_me
+        if (bio !== undefined) {
+            user.about_me = bio;
+        }
 
         if (department_name) {
             user.department_name = department_name;
@@ -131,11 +140,8 @@ exports.updateProfile = async (req, res) => {
             user.profile_image = newProfileImage;
         }
 
+        await user.save();
 
-
-        await user.save(); // الحفظ النهائي في الداتابيز
-
-        // الرد المعدل (تم إضافة role و about_me)
         res.status(200).json({
             message: "Profile updated successfully",
             user: {
@@ -144,8 +150,6 @@ exports.updateProfile = async (req, res) => {
                 email: user.email,
                 department_name: user.department_name,
                 profile_image: user.profile_image,
-
-                // >>>>> الإضافات المهمة جداً <<<<<
                 role: user.role,
                 about_me: user.about_me
             }
