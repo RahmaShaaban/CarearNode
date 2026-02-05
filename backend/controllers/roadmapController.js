@@ -11,7 +11,7 @@ const {
 // دوال التتبع والاشتراك (الجزء الجديد)
 // ---------------------------------------------------------
 
-// 1. دالة الاشتراك (Enroll) - دي اللي الزرار بينادي عليها
+// 1. دالة الاشتراك (Enroll)
 exports.enrollRoadmap = async (req, res) => {
     try {
         const { userId, roadmapId } = req.body;
@@ -111,7 +111,7 @@ exports.updateProgress = async (req, res) => {
 // دوال عرض الرودماب (الجزء المعدل)
 // ---------------------------------------------------------
 
-
+// جلب تفاصيل رودماب واحدة (للصفحة الداخلية)
 exports.getRoadmapData = async (req, res) => {
     try {
         const { id } = req.params;
@@ -126,7 +126,7 @@ exports.getRoadmapData = async (req, res) => {
                     include: [StepResources] // استخدام الاسم الجديد للمصادر
                 }
             ],
-            // التعديل هنا: الترتيب باستخدام الجدول الوسيط RoadmapSteps وعمود step_order
+            // الترتيب باستخدام الجدول الوسيط RoadmapSteps وعمود step_order
             order: [
                 [Step, RoadmapSteps, 'step_order', 'ASC']
             ]
@@ -143,13 +143,23 @@ exports.getRoadmapData = async (req, res) => {
     }
 };
 
+// جلب كل الرودمابس (للصفحة الخارجية) - تم التعديل لجلب عدد الخطوات
 exports.getAllRoadmaps = async (req, res) => {
     try {
         const roadmaps = await Roadmap.findAll({
-            attributes: ['id', 'title', 'description']
+            attributes: ['id', 'title', 'description'],
+            // الإضافة الجديدة: بنجيب جدول الخطوات عشان نعدهم في الفرونت
+            include: [
+                {
+                    model: Step,
+                    attributes: ['id'], // بنجيب الـ id بس عشان نخفف الحمل
+                    through: { attributes: [] } // مش عايزين بيانات الجدول الوسيط هنا
+                }
+            ]
         });
         res.status(200).json({ success: true, data: roadmaps });
     } catch (error) {
+        console.error("GetAllRoadmaps Error:", error);
         res.status(500).json({ success: false, error: error.message });
     }
 };

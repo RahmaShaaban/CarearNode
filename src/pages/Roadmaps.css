@@ -167,3 +167,48 @@
 .view-roadmap-btn:hover i {
   margin-left: 12px; /* السهم يتحرك يمين شوية */
 }
+/* --- ستايل الكارت المختار (Enrolled) --- */
+.roadmap-card.enrolled-active {
+    border: 2px solid #58A492; /* برواز أخضر */
+    background: #f0fdfa; /* خلفية فاتحة جداً */
+    transform: translateY(-5px); /* مرفوع لفوق شوية */
+    box-shadow: 0 10px 25px rgba(88, 164, 146, 0.2); /* ضل ملون */
+    position: relative;
+}
+
+/* علامة الـ Badge (الشريطة اللي فوق) */
+.enrolled-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #58A492;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    animation: fadeIn 0.5s ease;
+}
+
+/* تغيير شكل زرار Continue */
+.view-roadmap-btn.btn-continue {
+    background-color: #1e293b; /* لون غامق مميز */
+    color: white;
+    border: none;
+}
+
+.view-roadmap-btn.btn-continue:hover {
+    background-color: #334155;
+    transform: scale(1.02);
+}
+
+/* أنيميشن بسيط للظهور */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}

@@ -1,23 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import './Roadmaps.css'; // تأكدي إن ملف الـ CSS موجود جنبه
+import './Roadmaps.css';
 
 const Roadmaps = () => {
   const [roadmaps, setRoadmaps] = useState([]);
+  const [enrolledIds, setEnrolledIds] = useState([]); // هنخزن هنا أرقام الرودمابس المشترك فيها
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // 1. دالة جلب البيانات من الباك إند
   useEffect(() => {
-    const fetchRoadmaps = async () => {
+    const fetchData = async () => {
       try {
-const response = await fetch('http://localhost:5000/api/roadmaps');        const data = await response.json();
+        // 1. جلب كل الرودمابس
+        const roadmapsRes = await fetch('http://localhost:5000/api/roadmaps');
+        const roadmapsData = await roadmapsRes.json();
 
-        if (data.success) {
-          setRoadmaps(data.data);
+        if (roadmapsData.success) {
+          setRoadmaps(roadmapsData.data);
         } else {
           setError("Failed to load roadmaps");
         }
+
+        // 2. جلب اشتراكات اليوزر (لو مسجل دخول)
+        const userId = localStorage.getItem('userId');
+        if (userId) {
+          const profileRes = await fetch(`http://localhost:5000/api/auth/profile/${userId}`);
+          if (profileRes.ok) {
+            const profileData = await profileRes.json();
+            // بنطلع مصفوفة فيها الـ ID بتاع الرودمابس اللي هو مشترك فيها بس
+            // مثلا: [1, 3]
+            const ids = profileData.UserRoadmaps 
+              ? profileData.UserRoadmaps.map(item => item.roadmapId) 
+              : [];
+            setEnrolledIds(ids);
+          }
+        }
+
       } catch (err) {
         console.error("Error:", err);
         setError("Connection error");
@@ -26,30 +44,23 @@ const response = await fetch('http://localhost:5000/api/roadmaps');        const
       }
     };
 
-    fetchRoadmaps();
+    fetchData();
   }, []);
 
-  // 2. دالة مساعدة لتحديد الأيقونة واللون (جزء الكارت سابقاً)
   const getIcon = (title) => {
-    // 1. ده اللون الأخضر الأساسي للموقع (Emerald Green)
     const mainColor = "#58A492"; 
-
     if (!title) return { icon: "fa-solid fa-road", color: mainColor };
-
     const t = title.toLowerCase();
 
-    // 2. هنا بنغير الأيقونة بس، لكن اللون (color) ثابت للكل
     if (t.includes('front')) return { icon: "fa-solid fa-code", color: mainColor }; 
     if (t.includes('back')) return { icon: "fa-solid fa-server", color: mainColor }; 
     if (t.includes('full')) return { icon: "fa-solid fa-layer-group", color: mainColor };
     if (t.includes('android') || t.includes('mobile')) return { icon: "fa-brands fa-android", color: mainColor };
     if (t.includes('data') || t.includes('machine')) return { icon: "fa-solid fa-brain", color: mainColor };
     
-    // الافتراضي
     return { icon: "fa-solid fa-road", color: mainColor }; 
-};
+  };
 
-  // 3. تصميم الصفحة
   return (
     <div className="roadmaps-page">
       <div className="page-header">
@@ -65,13 +76,25 @@ const response = await fetch('http://localhost:5000/api/roadmaps');        const
         <div className="error-message">{error}</div>
       ) : (
         <div className="roadmaps-grid">
-          {/* هنا بنعمل Loop ونرسم الكروت مباشرة */}
           {roadmaps.map((roadmap) => {
             const style = getIcon(roadmap.title);
+            const stepsCount = roadmap.Steps?.length || 0;
             
+            // هل اليوزر مشترك في الرودماب دي؟
+            const isEnrolled = enrolledIds.includes(roadmap.id);
+
             return (
-              <div className="roadmap-card" key={roadmap.id}>
-                {/* الخط الملون الجانبي */}
+              <div 
+                className={`roadmap-card ${isEnrolled ? 'enrolled-active' : ''}`} 
+                key={roadmap.id}
+              >
+                {/* بادج بيظهر بس للمشتركين */}
+                {isEnrolled && (
+                    <div className="enrolled-badge">
+                        <i className="fa-solid fa-check"></i> Enrolled
+                    </div>
+                )}
+
                 <div className="card-accent" style={{ backgroundColor: style.color }}></div>
 
                 <div className="card-content">
@@ -85,15 +108,16 @@ const response = await fetch('http://localhost:5000/api/roadmaps');        const
                     </div>
                   </div>
 
-                  {/* بيانات إضافية للشكل */}
-                  <div className="card-meta">
-                    <span><i className="fa-solid fa-list-ol"></i> Steps: TBD</span>
-                    <span><i className="fa-regular fa-clock"></i> 6 Months</span>
+                  <div className="card-meta" style={{ justifyContent: 'flex-end' }}>
+                    <span>
+                        {stepsCount} Steps <i className="fa-solid fa-list-ol" style={{ marginLeft: '5px' }}></i>
+                    </span>
                   </div>
 
-                  {/* زرار التفاصيل */}
-                  <Link to={`/roadmap/${roadmap.id}`} className="view-roadmap-btn">
-                        View Roadmap <i className="fa-solid fa-arrow-right"></i>
+                  {/* تغيير شكل الزرار لو مشترك */}
+                  <Link to={`/roadmap/${roadmap.id}`} className={`view-roadmap-btn ${isEnrolled ? 'btn-continue' : ''}`}>
+                        {isEnrolled ? 'Continue Learning' : 'View Roadmap'} 
+                        <i className={`fa-solid ${isEnrolled ? 'fa-play' : 'fa-arrow-right'}`}></i>
                    </Link>
                 </div>
               </div>
