@@ -7,6 +7,17 @@ const Subject = require('./Subject');
 const TechSkill = require('./TechSkill');
 const User = require('./User'); 
 
+
+
+///////////////// CV BUILDER (التعديل هنا) //////////////
+const UserCVData = require('./UserCVData')(sequelize, sequelize);
+
+// الربط بين المستخدم والـ CV Builder
+User.hasMany(UserCVData, { foreignKey: 'user_id', as: 'cvBuilderData' });
+UserCVData.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+
+
+
 // --- الإضافات الجديدة (The New Part) ---
 const DepartmentName = require('./DepartmentName');
 const Job = require('./Job');
@@ -102,6 +113,7 @@ module.exports = {
   SubjectSkill, 
   User,
   CV,
+  UserCVData,
   // تأكدي من وجود هؤلاء:
   DepartmentName,
   Job,

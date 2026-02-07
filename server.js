@@ -6,6 +6,8 @@ require('dotenv').config();
 
 ////////// CV Analysis //////////
 const cvRoutes = require('./backend/routes/cvRoutes'); //
+//////////// CV Builder //////////
+const cvBuilderRoutes = require('./backend/routes/cvBuilderRoutes');
 
 // استدعاء ملف الاتصال بالداتابيز
 const sequelize = require('./backend/config/database');
@@ -27,6 +29,9 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+////////////// CV Builder //////////////
+app.use('/api/cv-builder', cvBuilderRoutes);
+
 
 //////////////
          app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
