@@ -421,4 +421,48 @@
     .result-header {
         justify-content: center;
     }
+
+    /* أضيفي هذا الكود في ملف Department.css */
+
+    .matched-item {
+        font-weight: 800 !important; /* جعل الخط عريض جداً */
+        color: #0f172a; /* لون داكن للوضوح أو يمكنك استخدام لون الثيم #355d55 */
+        background-color: rgba(53, 93, 85, 0.1); /* اختياري: خلفية خفيفة جداً لتمييز السطر */
+        border-radius: 4px;
+    }
+
+    /* Department.css */
+
+    /* ضيفي الكود ده في آخر الملف خالص */
+    ul.details-list li.matched-item {
+        font-weight: bold !important; /* استخدمنا bold بدل 800 لضمان الدعم */
+        color: #000000 !important; /* لون أسود صريح */
+        background-color: #e6fffa; /* خلفية خضراء فاتحة جداً عشان تتأكدي إن الكلاس متطبق */
+        border: 1px solid #43766C; /* حدود خضراء للتأكيد */
+    }
+    /* تنسيق العنصر المختار ليكون Bold وواضح */
+    li.matched-item {
+        font-weight: 800 !important; /* خط عريض جداً */
+        color: #000000 !important; /* لون أسود صريح */
+        background-color: #e0f2fe; /* خلفية سماوي فاتحة جداً عشان تتأكدي إن الكلاس اتطبق */
+        border-radius: 4px;
+        padding: 2px 8px; /* مسافة داخلية عشان الخلفية يبقى شكلها حلو */
+    }
+
+
+
+
+}
+
+
+
+/* Department.css */
+
+/* ضيفي الكود ده في آخر الملف خالص، وتأكدي إنه مش جوه أي أقواس تانية */
+
+li.matched-item {
+    font-weight: 800 !important;
+    background-color: transparent !important; /* بدون خلفية */
+    color: inherit !important; /* نفس لون الكلام العادي */
+    /* أي تنسيقات زيادة تحبيها */
 }
