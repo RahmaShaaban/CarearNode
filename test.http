@@ -1,0 +1,15 @@
+### اختبار رفع وتحليل السي في
+POST http://localhost:5000/api/cv/upload
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="userId"
+
+1
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="cvFile"; filename="cv.pdf"
+Content-Type: application/pdf
+
+< C:/Users/A2B/Desktop/PDF.pdf
+------WebKitFormBoundary--

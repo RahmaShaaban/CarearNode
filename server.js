@@ -3,6 +3,10 @@ const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
 
+
+////////// CV Analysis //////////
+const cvRoutes = require('./backend/routes/cvRoutes'); //
+
 // استدعاء ملف الاتصال بالداتابيز
 const sequelize = require('./backend/config/database');
 ////
@@ -44,6 +48,9 @@ const subjectRoutes = require('./backend/routes/subjectRoutes');
                 const roadmapRoutes = require('./backend/routes/roadmapRoutes');
 
 ////////////
+//////////////// CV Analysis  /////////////
+app.use('/uploads/cvs', express.static(path.join(__dirname, 'uploads/cvs'))); //
+
 // ربط المسارات
 app.use('/api/dept', deptRoutes);
 app.use('/api/subjects', subjectRoutes);
@@ -52,7 +59,8 @@ app.use('/api/subjects', subjectRoutes);
              app.use('/api/jobs', jobRoutes);
              app.use('/api/roadmaps', roadmapRoutes);
 ////////////
-
+/////////// CV Analysis /////////////
+app.use('/api/cv', cvRoutes); //
 // مسار تجريبي للتأكد أن السيرفر شغال
 app.get('/', (req, res) => {
     res.send('✅ Server is running perfectly!');

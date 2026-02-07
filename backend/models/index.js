@@ -12,6 +12,10 @@ const DepartmentName = require('./DepartmentName');
 const Job = require('./Job');
 const DepartmentSubject = require('./DepartmentSubject'); // مهم للـ Controller
 
+//////////////// CV Analysis Model //////////////
+const CV = require('./CV')(sequelize, DataTypes); //
+
+
 // ============================================================
 // 2. تعريف الجداول الوسيطة (Intermediate Tables)
 // ============================================================
@@ -30,6 +34,10 @@ const SubjectSkill = sequelize.define('SubjectSkill', {
   tableName: 'subject_skills', 
   timestamps: false 
 });
+
+////////////////// CV Analysis ////////
+User.hasOne(CV, { foreignKey: 'user_id', as: 'cvAnalysis' }); //
+CV.belongsTo(User, { foreignKey: 'user_id', as: 'user' }); //
 
 // ============================================================
 // 3. بناء العلاقات (Associations)
@@ -93,6 +101,7 @@ module.exports = {
   TechSkill,
   SubjectSkill, 
   User,
+  CV,
   // تأكدي من وجود هؤلاء:
   DepartmentName,
   Job,
