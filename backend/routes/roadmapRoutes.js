@@ -16,4 +16,6 @@ router.get('/status/:roadmapId/:userId', roadmapController.getUserRoadmapStatus)
 // 3. رابط الـ Checkbox (تحديث البروجرس)
 router.put('/progress', roadmapController.updateProgress); 
 
+router.delete('/enroll', roadmapController.unenrollRoadmap);
+
 module.exports = router;

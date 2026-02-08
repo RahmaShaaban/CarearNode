@@ -249,7 +249,7 @@
 
 /* 2. زرار Start Roadmap (للمسجلين) */
 .btn-start-roadmap {
-    background-color: #2563eb; /* أزرق مميز للبدء (زي الصورة) */
+    background-color: #58A492; /* أزرق مميز للبدء (زي الصورة) */
     color: white;
     border: none;
     padding: 12px 28px;
@@ -264,22 +264,44 @@
 }
 
 .btn-start-roadmap:hover {
-    background-color: #1d4ed8;
+    background-color: #58A492;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    opacity: 0.9;
+    box-shadow: 0 4px 12px rgba(94, 92, 92, 0.3);
 }
 
 /* 3. زرار Tracking Active (لما يكون مشترك) */
+/* زرار Tracking Active (Green Palette) */
 .btn-continue-roadmap {
-    background-color: #f1f5f9;
-    color: #64748b;
-    border: 1px solid #cbd5e1;
-    padding: 10px 20px;
+    /* 1. الألوان (أخضر هادي ومريح) */
+    background-color: #cef0e7; /* خلفية خضراء فاتحة جداً */
+    color: #166534; /* نص أخضر غامق لسهولة القراءة */
+    border: 1px solid #58a494; /* إطار أخضر خفيف */
+
+    /* 2. الشكل والحجم */
+    width: 100%;
+    padding: 12px 20px;
     border-radius: 8px;
-    cursor: default;
-    font-weight: 500;
+    font-weight: 700;
+    font-size: 1rem;
+    
+    /* 3. المحازاة */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* مسافة بين الأيقونة والكلمة */
+
+    /* 4. إلغاء تأثير الـ Disabled الافتراضي */
+    cursor: default; /* الماوس يفضل سهم عادي */
+    opacity: 1; /* عشان ميبقاش باهت */
+    box-shadow: none;
 }
 
+/* تنسيق الأيقونة جوا الزرار */
+.btn-continue-roadmap i {
+    color: #58A492; /* لون الأيقونة أخضر زاهي */
+    font-size: 1.1rem;
+}
 /* --- Progress Bar Styles --- */
 .main-progress-container {
     margin-top: 20px;
@@ -304,7 +326,7 @@
 
 .percentage-text {
     font-weight: bold;
-    color: #2563eb;
+    color: #166534;
 }
 
 .progress-bar-bg {
@@ -317,7 +339,7 @@
 
 .progress-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, #2563eb, #10b981); /* تدرج أزرق لأخضر */
+    background: linear-gradient(90deg, #0c9a6d, #46dbaa); /* تدرج أزرق لأخضر */
     transition: width 0.5s ease-in-out;
 }
 
@@ -329,7 +351,7 @@
     cursor: pointer;
     padding: 5px 10px;
     border-radius: 6px;
-    transition: background 0.2s;
+    transition: 0.2s;
 }
 
 .checkbox-wrapper:hover {
@@ -364,4 +386,82 @@
 .step-completed {
     border-left: 4px solid #10b981;
     background-color: #f0fdf4;
+}
+
+/* زر مغادرة الرودماب (Modern Style) */
+.btn-unenroll {
+    /* 1. التنسيق والمحازاة */
+    display: inline-flex;
+    align-items: center;
+    gap: 8px; /* مسافة بين الأيقونة والنص */
+    margin: 20px 0px; 
+
+    
+    /* 2. الحجم والشكل */
+    padding: 8px 16px;
+    border-radius: 8px; /* حواف دائرية ناعمة */
+    border: 1px solid transparent; /* إطار شفاف */
+    
+    /* 3. الألوان (أحمر فاتح وهادي) */
+    background-color: #fee2e2; /* خلفية حمراء فاتحة جداً */
+    color: #991b1b; /* نص أحمر غامق للقراءة */
+    
+    /* 4. الخط */
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: inherit;
+    
+    /* 5. التفاعل */
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* عند مرور الماوس (Hover) */
+.btn-unenroll:hover {
+    background-color: #fecaca; /* تغميق الخلفية قليلاً */
+    color: #7f1d1d; /* تغميق النص */
+    transform: translateY(-2px); /* حركة بسيطة للأعلى */
+    box-shadow: 0 2px 5px rgba(239, 68, 68, 0.15); /* ظل خفيف */
+}
+
+/* تنسيق الأيقونة داخل الزر */
+.btn-unenroll i {
+    font-size: 1rem;
+}
+/* زرار الاكتمال النهائي (في الهيدر) */
+.btn-completed-roadmap {
+    /* 1. الألوان (أخضر احتفالي) */
+    background-color: #16c08a; /* أخضر (Green-500) */
+    color: white; /* نص أبيض */
+    border: 0px solid #16a34a; /* إطار أغمق سنة */
+
+    /* 2. الشكل والحجم (نفس أبعاد الزرار اللي قبله) */
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 800; /* خط سميك */
+    font-size: 1rem;
+    
+    /* 3. المحازاة */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    /* 4. الحالة */
+    cursor: default;
+    /* box-shadow: 0 4px 6px rgba(34, 197, 94, 0.2);  */
+}
+
+/* أيقونة الكأس */
+.btn-completed-roadmap i {
+    color: #fef08a; /* لون أصفر فاتح للكأس عشان ينور على الأخضر */
+    font-size: 1.1rem;
+    animation: bounce 2s infinite; /* حركة بسيطة للكأس (اختياري) */
+}
+
+/* حركة بسيطة للكأس */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
 }

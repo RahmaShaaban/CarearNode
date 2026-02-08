@@ -4,7 +4,7 @@ import './RoadmapDetails.css';
 
 const RoadmapDetails = () => {
   const { id } = useParams();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   
   // --- States ---
   const [roadmap, setRoadmap] = useState(null);
@@ -21,7 +21,6 @@ const RoadmapDetails = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch Roadmap Details
         const response = await fetch(`http://localhost:5000/api/roadmaps/${id}`);
         const data = await response.json();
 
@@ -30,7 +29,6 @@ const RoadmapDetails = () => {
           
           const stepsList = data.data.Steps || data.data.TechSkills || [];
 
-          // Check Enrollment Status
           if (userId) {
             const statusRes = await fetch(`http://localhost:5000/api/roadmaps/status/${id}/${userId}`);
             if (statusRes.ok) {
@@ -60,7 +58,7 @@ const RoadmapDetails = () => {
     fetchData();
   }, [id, userId]);
 
-  // 2. Start Roadmap Function
+  // 2. Start Roadmap
   const handleStartRoadmap = async () => {
     try {
       const response = await fetch('http://localhost:5000/api/roadmaps/enroll', {
@@ -81,7 +79,36 @@ const RoadmapDetails = () => {
     }
   };
 
-  // 3. Toggle Checkbox Function
+  // 3. Unenroll Roadmap (New Function) ⚠️
+  const handleUnenroll = async () => {
+      // لو فيه تقدم، طلع رسالة تحذير
+      if (progress > 0 || completedSteps.length > 0) {
+          const confirmDelete = window.confirm(
+              "Are you sure you want to unenroll? All your progress in this roadmap will be lost permanently!"
+          );
+          if (!confirmDelete) return; // لو داس Cancel نوقف الدالة
+      }
+
+      try {
+          const response = await fetch('http://localhost:5000/api/roadmaps/enroll', {
+              method: 'DELETE', // تأكدي إن الراوت في الباك إند مربوط بـ DELETE
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ userId, roadmapId: id })
+          });
+
+          if (response.ok) {
+              setIsEnrolled(false);
+              setCompletedSteps([]);
+              setProgress(0);
+          } else {
+              alert("Failed to unenroll.");
+          }
+      } catch (error) {
+          console.error("Unenroll failed", error);
+      }
+  };
+
+  // 4. Toggle Checkbox
   const handleStepToggle = async (stepId) => {
     if (!isEnrolled) return; 
 
@@ -118,7 +145,6 @@ const RoadmapDetails = () => {
 
   return (
     <div className="details-page">
-      {/* 1. Header */}
       <div className="details-header">
         <Link to="/roadmaps" className="back-btn">
             <button className="btn-back">
@@ -141,14 +167,19 @@ const RoadmapDetails = () => {
             {isEnrolled && (
                 <div className="main-progress-container">
                     <div className="progress-info">
-                    <span className={`status-badge ${progress === 100 ? 'completed' : 'in-progress'}`}>
-                        {progress === 100 ? 'Completed' : 'In Progress'}
-                    </span>
-                    <span className="percentage-text">{progress}%</span>
+                        <span className={`status-badge ${progress === 100 ? 'completed' : 'in-progress'}`}>
+                            {progress === 100 ? 'Completed' : 'In Progress'}
+                        </span>
+                        <span className="percentage-text">{progress}%</span>
                     </div>
                     <div className="progress-bar-bg">
-                    <div className="progress-bar-fill" style={{ width: `${progress}%` }}></div>
+                        <div className="progress-bar-fill" style={{ width: `${progress}%` }}></div>
                     </div>
+
+                    {/* زرار الحذف الجديد 👇 */}
+                    <button className="btn-unenroll" onClick={handleUnenroll}>
+                        <i className="fa-regular fa-trash-can"></i> Unenroll
+                    </button>
                 </div>
             )}
           </div>
@@ -162,7 +193,13 @@ const RoadmapDetails = () => {
                     <button className="btn-start-roadmap" onClick={handleStartRoadmap}>
                         <i className="fa-solid fa-play"></i> Start this Roadmap
                     </button>
+                ) : progress === 100 ? (
+                    /* --- الحالة الجديدة: لما يخلص 100% --- */
+                    <button className="btn-completed-roadmap" disabled>
+                        <i className="fa-solid fa-trophy"></i> Roadmap Completed
+                    </button>
                 ) : (
+                    /* --- الحالة العادية: لسه شغال --- */
                     <button className="btn-continue-roadmap" disabled>
                         <i className="fa-solid fa-bars-progress"></i> Tracking Active
                     </button>
@@ -171,16 +208,12 @@ const RoadmapDetails = () => {
         </div>
       </div>
 
-      {/* 2. Timeline Steps */}
       <div className="timeline-container">
         {stepsToRender.length > 0 ? (
           stepsToRender.map((skill, index) => {
-            
             const junction = skill.Roadmap_steps || skill.RoadmapSkill; 
             const stepOrder = junction ? junction.step_order : index + 1;
-            
             const isChecked = completedSteps.includes(Number(skill.id));
-            
             const resources = skill.StepResources || skill.SkillResources || [];
 
             return (
@@ -189,7 +222,6 @@ const RoadmapDetails = () => {
                 <div className="step-header-row">
                     <div className="step-meta">
                         <span className="step-badge">Step {stepOrder}</span>
-                        {/* ⚠️ Deleted the duration span from here */}
                     </div>
 
                     {isEnrolled && (
@@ -207,13 +239,11 @@ const RoadmapDetails = () => {
 
                 <div className="resources-section">
                     <h4><i className="fa-solid fa-book-open"></i> Recommended Resources:</h4>
-                    
                     <div className="resources-list">
                         {resources.length > 0 ? (
                             resources.map((res) => {
                                 const linkUrl = res.url || res.link;
                                 if (!linkUrl) return null; 
-
                                 return (
                                     <a href={linkUrl} target="_blank" rel="noopener noreferrer" className="resource-card" key={res.id}>
                                     <div className="res-info">
