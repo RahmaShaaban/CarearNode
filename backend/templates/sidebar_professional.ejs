@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #fff;
+            display: flex;
+        }
+        /* Sidebar Column */
+        .sidebar {
+            width: 30%;
+            background-color: #f8f9fa;
+            border-right: 1px solid #ddd;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        /* Main Column */
+        .main-content {
+            width: 70%;
+            padding: 40px 30px;
+        }
+        .name-title h1 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 28px;
+            text-transform: uppercase;
+        }
+        .name-title h3 {
+            margin: 5px 0 20px 0;
+            color: #3498db;
+            font-weight: normal;
+        }
+        .sidebar-section {
+            margin-bottom: 30px;
+        }
+        .sidebar-title {
+            font-weight: bold;
+            font-size: 14px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #3498db;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+        }
+        .contact-item {
+            font-size: 12px;
+            margin-bottom: 8px;
+            word-break: break-all;
+        }
+        .skill-list {
+            list-style: none;
+            padding: 0;
+            font-size: 13px;
+        }
+        .skill-list li {
+            margin-bottom: 5px;
+            padding-left: 10px;
+            border-left: 3px solid #3498db;
+        }
+        .main-section-title {
+            font-size: 18px;
+            color: #2c3e50;
+            border-bottom: 1px solid #eee;
+            margin: 25px 0 15px 0;
+            padding-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        .main-section-title::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            background-color: #3498db;
+            margin-right: 10px;
+        }
+        .exp-item {
+            margin-bottom: 20px;
+        }
+        .exp-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .exp-sub {
+            color: #7f8c8d;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+        .description {
+            font-size: 13px;
+            text-align: justify;
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">Contact</div>
+            <div class="contact-item">📍 <%= personal_info.location %></div>
+            <div class="contact-item">📧 <%= personal_info.email %></div>
+            <div class="contact-item">📞 <%= personal_info.phone %></div>
+            <% if(personal_info.linkedin) { %><div class="contact-item">🔗 <%= personal_info.linkedin %></div><% } %>
+            <% if(personal_info.github) { %><div class="contact-item">💻 <%= personal_info.github %></div><% } %>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-title">Education</div>
+            <% education.forEach(edu => { %>
+                <div style="font-size: 13px; font-weight: bold;"><%= edu.degree %></div>
+                <div style="font-size: 12px;"><%= edu.university %></div>
+                <div style="font-size: 11px; color: #7f8c8d; margin-bottom: 10px;"><%= edu.year %></div>
+            <% }); %>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-title">Skills</div>
+            <ul class="skill-list">
+                <% skills.forEach(skill => { %>
+                    <li><%= skill %></li>
+                <% }); %>
+            </ul>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="name-title">
+            <h1><%= personal_info.full_name %></h1>
+            <h3><%= personal_info.job_title %></h3>
+        </div>
+
+        <% if(summary) { %>
+            <div class="main-section-title">Summary</div>
+            <p class="description"><%= summary %></p>
+        <% } %>
+
+        <div class="main-section-title">Experience</div>
+        <% experience.forEach(exp => { %>
+            <div class="exp-item">
+                <div class="exp-header">
+                    <span><%= exp.job_title %></span>
+                    <span><%= exp.start_date %> - <%= exp.end_date %></span>
+                </div>
+                <div class="exp-sub"><%= exp.company %></div>
+                <p class="description"><%= exp.description %></p>
+            </div>
+        <% }); %>
+
+        <div class="main-section-title">Projects</div>
+        <% projects.forEach(proj => { %>
+            <div class="exp-item">
+                <div class="exp-header">
+                    <span><%= proj.name %></span>
+                    <% if(proj.link) { %> <small style="font-weight: normal;"><%= proj.link %></small> <% } %>
+                </div>
+                <p class="description"><%= proj.description %></p>
+            </div>
+        <% }); %>
+    </div>
+
+</body>
+</html>

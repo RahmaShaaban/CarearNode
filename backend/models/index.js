@@ -10,7 +10,7 @@ const User = require('./User');
 
 
 ///////////////// CV BUILDER (التعديل هنا) //////////////
-const UserCVData = require('./UserCVData')(sequelize, sequelize);
+const UserCVData = require('./UserCVData')(sequelize, DataTypes);
 
 // الربط بين المستخدم والـ CV Builder
 User.hasMany(UserCVData, { foreignKey: 'user_id', as: 'cvBuilderData' });
@@ -49,6 +49,19 @@ const SubjectSkill = sequelize.define('SubjectSkill', {
 ////////////////// CV Analysis ////////
 User.hasOne(CV, { foreignKey: 'user_id', as: 'cvAnalysis' }); //
 CV.belongsTo(User, { foreignKey: 'user_id', as: 'user' }); //
+//////////////// CV & Templates/////////////////
+const Template = require('./Template');
+UserCVData.belongsTo(Template, {
+  foreignKey: 'selected_template_id',
+  as: 'template'
+});
+
+Template.hasMany(UserCVData, {
+  foreignKey: 'selected_template_id',
+  as: 'user_cvs'
+});
+
+// تصدير الموديلز والـ sequelize instance
 
 // ============================================================
 // 3. بناء العلاقات (Associations)
@@ -114,6 +127,7 @@ module.exports = {
   User,
   CV,
   UserCVData,
+  Template,
   // تأكدي من وجود هؤلاء:
   DepartmentName,
   Job,

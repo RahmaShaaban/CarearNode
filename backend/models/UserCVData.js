@@ -49,3 +49,4 @@ module.exports = (sequelize) => {
         timestamps: true // Sequelize هيستخدم createdAt و updatedAt اللي عملناهم
     });
 };
+

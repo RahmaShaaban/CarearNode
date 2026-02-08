@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        :root {
+            /* جعلنا الألوان Dynamic بناءً على اختيارات المستخدم أو قيم افتراضية */
+            --main-text: #333333;
+            --section-header: <%= template_settings.color || '#003366' %>; 
+            --sub-text: #555555;
+            --line-color: #eeeeee;
+        }
+        body {
+            font-family: '<%= template_settings.font || "Arial, Helvetica, sans-serif" %>', sans-serif;
+            line-height: 1.5;
+            color: var(--main-text);
+            margin: 0;
+            padding: 40px;
+        }
+        .name-header { text-align: left; margin-bottom: 10px; }
+        .name-header h1 { 
+            margin: 0; 
+            font-size: 28px; 
+            text-transform: uppercase;
+            color: var(--section-header); 
+        }
+        .job-title { font-size: 16px; color: var(--sub-text); font-weight: bold; }
+        .contact-bar {
+            font-size: 11px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-bottom: 2px solid var(--section-header);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .section-label {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--section-header);
+            text-transform: uppercase;
+            background: #f4f4f4;
+            padding: 5px 10px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .summary-text { font-size: 12px; text-align: justify; margin: 0; }
+        .item-block { margin-bottom: 15px; }
+        .item-top-row { display: flex; justify-content: space-between; font-weight: bold; font-size: 13px; }
+        .item-sub-row { display: flex; justify-content: space-between; font-style: italic; font-size: 12px; color: var(--sub-text); }
+        .bullet-list { margin: 8px 0 0 20px; padding: 0; font-size: 12px; }
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 أعمدة لشكل أشيك */
+            gap: 8px;
+            padding: 0 10px;
+        }
+        .skill-item { font-size: 12px; display: flex; align-items: center; }
+        .skill-item::before { content: "▪"; margin-right: 8px; color: var(--section-header); }
+    </style>
+</head>
+<body>
+
+    <div class="name-header">
+        <h1><%= personal_info.name || personal_info.full_name || 'Your Name' %></h1>
+        <div class="job-title"><%= personal_info.job_title || 'Software Engineer' %></div>
+    </div>
+
+    <div class="contact-bar">
+        <span>📍 <%= personal_info.location || 'Location Not Provided' %></span> | 
+        <span>📧 <%= personal_info.email %></span> | 
+        <span>📞 <%= personal_info.phone %></span>
+        <% if(personal_info.linkedin) { %> | <span>🔗 LinkedIn</span> <% } %>
+        <% if(personal_info.github) { %> | <span>💻 GitHub</span> <% } %>
+    </div>
+
+    <% if(summary) { %>
+        <div class="section-label">Professional Summary</div>
+        <p class="summary-text"><%= summary.replace(/"/g, '') %></p>
+    <% } %>
+
+    <% if(skills && skills.length > 0) { %>
+        <div class="section-label">Technical Skills</div>
+        <div class="skills-grid">
+            <% skills.forEach(skill => { %>
+                <div class="skill-item"><%= skill %></div>
+            <% }); %>
+        </div>
+    <% } %>
+
+    <% if(experience && experience.length > 0) { %>
+        <div class="section-label">Work Experience</div>
+        <% experience.forEach(exp => { %>
+            <div class="item-block">
+                <div class="item-top-row">
+                    <span><%= exp.role || exp.job_title %></span>
+                    <span><%= exp.start_date || '' %> – <%= exp.end_date || 'Present' %></span>
+                </div>
+                <div class="item-sub-row">
+                    <span><%= exp.company %></span>
+                </div>
+                <% if(exp.description) { %>
+                    <ul class="bullet-list">
+                        <% exp.description.split('\n').forEach(point => { %>
+                            <% if(point.trim()) { %> <li><%= point.replace(/"/g, '') %></li> <% } %>
+                        <% }); %>
+                    </ul>
+                <% } %>
+            </div>
+        <% }); %>
+    <% } %>
+
+    <% if(education && education.length > 0) { %>
+        <div class="section-label">Education</div>
+        <% education.forEach(edu => { %>
+            <div class="item-block">
+                <div class="item-top-row">
+                    <span><%= edu.degree %></span>
+                    <span><%= edu.year || edu.end_date %></span>
+                </div>
+                <div class="item-sub-row">
+                    <span><%= edu.university || edu.school %></span>
+                </div>
+            </div>
+        <% }); %>
+    <% } %>
+
+</body>
+</html>
