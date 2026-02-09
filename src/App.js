@@ -1,4 +1,5 @@
 import React from 'react';
+import AnalyzeCV from './pages/AnalyzeCV';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './Navbar'; 
 import './App.css';
@@ -38,6 +39,8 @@ function App() {
                         <Route path="/Sign_In" element={<Sign_In />} />
                         <Route path="/signup" element={<Sign_up />} />
                         <Route path="/Profile" element={<Profile />} />
+
+                        <Route path="/cv/analyze" element={<AnalyzeCV />} />
                         <Route path="/roadmap/:id" element={<RoadmapDetails />} />
                     </Routes>
                 </div>
