@@ -183,9 +183,10 @@ if (viewingDept) {
 
                         {/*تالت تعديل */}
 
+                                {/*تالت تعديل */}
 
-                        {/* 3. (تعديل جديد) عمود المهارات مع منطق الـ Show More */}
-                        
+                                {/* 3. (تعديل جديد) عمود المهارات مع منطق الـ Show More و Show Less */}
+
                                 {skillsList.length > 0 ? (
                                     // نعرض إما القائمة كاملة أو أول 15 عنصر فقط بناءً على الحالة
                                     (showAllSkills ? skillsList : skillsList.slice(0, 15)).map((s, i) => (
@@ -196,10 +197,10 @@ if (viewingDept) {
                                 )}
                             </ul>
 
-                            {/* زرار Read More يظهر فقط لو فيه أكتر من 15 مهارة وإحنا مش عارضينهم كلهم */}
-                            {skillsList.length > 15 && !showAllSkills && (
+                            {/* الزرار الذكي: يظهر لو العناصر أكتر من 15، ويغير شكله ووظيفته */}
+                            {skillsList.length > 15 && (
                                 <button
-                                    onClick={() => setShowAllSkills(true)}
+                                    onClick={() => setShowAllSkills(!showAllSkills)} // هنا بنعكس الحالة (لو مفتوح يقفل والعكس)
                                     style={{
                                         background: 'transparent',
                                         border: 'none',
@@ -214,12 +215,22 @@ if (viewingDept) {
                                         gap: '5px'
                                     }}
                                 >
-                                    Read More <i className="fa-solid fa-angle-down"></i>
+                                    {showAllSkills ? (
+                                        // الشكل لما تكون القائمة مفتوحة
+                                        <>
+                                            Show Less <i className="fa-solid fa-angle-up"></i>
+                                        </>
+                                    ) : (
+                                        // الشكل لما تكون القائمة مقفولة
+                                        <>
+                                            Show More <i className="fa-solid fa-angle-down"></i>
+                                        </>
+                                    )}
                                 </button>
                             )}
                         </div>
 
-
+                        {/*تالت تعديل نهاية */}
 
                         {/*تالت تعديل نهاية */}
 
