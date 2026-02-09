@@ -1,29 +1,45 @@
 ﻿const Roadmap = require('./Roadmap');
-const TechSkill = require('./TechSkill');
-const SkillResource = require('./SkillResource');
-const RoadmapSkill = require('./RoadmapSkill');
+const Steps = require('./Steps');
+const StepResources = require('./StepResources');
+const Roadmap_steps = require('./Roadmap_steps');
 
-// 1. علاقة Many-to-Many بين Roadmap و TechSkill
-// نستخدم جدول RoadmapSkill كـ "جسر"
-Roadmap.belongsToMany(TechSkill, { 
-    through: RoadmapSkill, 
+// 1. استدعاء الموديلات الجديدة (المهمة جداً عشان الجدول يظهر)
+const UserRoadmap = require('./UserRoadmap');
+const User = require('./User'); 
+
+// --- العلاقات القديمة (زي ما هي) ---
+Roadmap.belongsToMany(Steps, { 
+    through: Roadmap_steps, 
     foreignKey: 'roadmap_id', 
-    otherKey: 'skill_id' 
+    otherKey: 'step_id' 
 });
-TechSkill.belongsToMany(Roadmap, { 
-    through: RoadmapSkill, 
-    foreignKey: 'skill_id', 
+Steps.belongsToMany(Roadmap, { 
+    through: Roadmap_steps, 
+    foreignKey: 'step_id', 
     otherKey: 'roadmap_id' 
 });
 
-// 2. علاقة One-to-Many بين TechSkill و SkillResource
-// المهارة الواحدة لها مصادر كثيرة
-TechSkill.hasMany(SkillResource, { foreignKey: 'skill_id' });
-SkillResource.belongsTo(TechSkill, { foreignKey: 'skill_id' });
+Steps.hasMany(StepResources, { foreignKey: 'step_id' });
+StepResources.belongsTo(Steps, { foreignKey: 'step_id' });
+
+
+// --- 2. إضافة علاقات جدول التتبع (عشان الجدول يتعمل) ---
+
+// اليوزر الواحد ممكن يكون له اشتراكات كتير
+User.hasMany(UserRoadmap, { foreignKey: 'userId' });
+UserRoadmap.belongsTo(User, { foreignKey: 'userId' });
+
+// الرودماب الواحدة ممكن يشترك فيها يوزرز كتير
+Roadmap.hasMany(UserRoadmap, { foreignKey: 'roadmapId' });
+UserRoadmap.belongsTo(Roadmap, { foreignKey: 'roadmapId' });
+
 
 module.exports = {
     Roadmap,
-    TechSkill,
-    SkillResource,
-    RoadmapSkill
+    Step:Steps,
+    StepResources,
+    RoadmapSteps:Roadmap_steps,
+    // 3. تصدير الموديلات الجديدة عشان الكنترولر يشوفهم
+    UserRoadmap,
+    User
 };

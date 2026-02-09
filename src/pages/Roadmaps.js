@@ -1,24 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import './Roadmaps.css'; // تأكدي إن ملف الـ CSS موجود جنبه
+import './Roadmaps.css';
 
 const Roadmaps = () => {
   const [roadmaps, setRoadmaps] = useState([]);
+  // التعديل 1: هنخزن كائن كامل بدل مصفوفة أرقام عشان نعرف التقدم
+  const [userEnrollments, setUserEnrollments] = useState({}); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // 1. دالة جلب البيانات من الباك إند
   useEffect(() => {
-    const fetchRoadmaps = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/roadmaps/all'); 
-        const data = await response.json();
+        // 1. جلب كل الرودمابس
+        const roadmapsRes = await fetch('http://localhost:5000/api/roadmaps');
+        const roadmapsData = await roadmapsRes.json();
 
-        if (data.success) {
-          setRoadmaps(data.data);
+        if (roadmapsData.success) {
+          setRoadmaps(roadmapsData.data);
         } else {
           setError("Failed to load roadmaps");
         }
+
+        // 2. جلب اشتراكات اليوزر
+        const userId = localStorage.getItem('userId');
+        if (userId) {
+          const profileRes = await fetch(`http://localhost:5000/api/auth/profile/${userId}`);
+          if (profileRes.ok) {
+            const profileData = await profileRes.json();
+            
+            // التعديل 2: تحويل البيانات لـ Object عشان نوصل للتقدم بسهولة
+            // الشكل هيكون: { "1": { progress: 50, status: 'in-progress' }, "3": { progress: 100, ... } }
+            const enrollmentsMap = {};
+            if (profileData.UserRoadmaps) {
+                profileData.UserRoadmaps.forEach(item => {
+                    enrollmentsMap[item.roadmapId] = item;
+                });
+            }
+            setUserEnrollments(enrollmentsMap);
+          }
+        }
+
       } catch (err) {
         console.error("Error:", err);
         setError("Connection error");
@@ -27,30 +49,23 @@ const Roadmaps = () => {
       }
     };
 
-    fetchRoadmaps();
+    fetchData();
   }, []);
 
-  // 2. دالة مساعدة لتحديد الأيقونة واللون (جزء الكارت سابقاً)
   const getIcon = (title) => {
-    // 1. ده اللون الأخضر الأساسي للموقع (Emerald Green)
     const mainColor = "#58A492"; 
-
     if (!title) return { icon: "fa-solid fa-road", color: mainColor };
-
     const t = title.toLowerCase();
 
-    // 2. هنا بنغير الأيقونة بس، لكن اللون (color) ثابت للكل
     if (t.includes('front')) return { icon: "fa-solid fa-code", color: mainColor }; 
     if (t.includes('back')) return { icon: "fa-solid fa-server", color: mainColor }; 
     if (t.includes('full')) return { icon: "fa-solid fa-layer-group", color: mainColor };
     if (t.includes('android') || t.includes('mobile')) return { icon: "fa-brands fa-android", color: mainColor };
     if (t.includes('data') || t.includes('machine')) return { icon: "fa-solid fa-brain", color: mainColor };
     
-    // الافتراضي
     return { icon: "fa-solid fa-road", color: mainColor }; 
-};
+  };
 
-  // 3. تصميم الصفحة
   return (
     <div className="roadmaps-page">
       <div className="page-header">
@@ -66,36 +81,78 @@ const Roadmaps = () => {
         <div className="error-message">{error}</div>
       ) : (
         <div className="roadmaps-grid">
-          {/* هنا بنعمل Loop ونرسم الكروت مباشرة */}
           {roadmaps.map((roadmap) => {
             const style = getIcon(roadmap.title);
+            const stepsCount = roadmap.Steps?.length || 0;
             
+            // التعديل 3: استخراج بيانات الاشتراك الخاصة بالرودماب دي
+            const enrollment = userEnrollments[roadmap.id];
+            const isEnrolled = !!enrollment; // true لو موجود
+            const isCompleted = enrollment?.progress === 100; // true لو 100%
+
             return (
-              <div className="roadmap-card" key={roadmap.id}>
-                {/* الخط الملون الجانبي */}
-                <div className="card-accent" style={{ backgroundColor: style.color }}></div>
+              <div 
+                className={`roadmap-card ${isEnrolled ? 'enrolled-active' : ''} ${isCompleted ? 'roadmap-completed' : ''}`} 
+                key={roadmap.id}
+              >
+                {/* بادج الحالة (Enrolled أو Completed) */}
+                {isEnrolled && (
+                    <div className={`enrolled-badge ${isCompleted ? 'badge-completed' : ''}`}>
+                        {isCompleted ? (
+                            <><i className="fa-solid fa-trophy"></i> Completed</>
+                        ) : (
+                            <><i className="fa-solid fa-check"></i> Enrolled</>
+                        )}
+                    </div>
+                )}
+
+               {/* التعديل 1: لون الخط الجانبي (Accent) */}
+                <div 
+                    className="card-accent" 
+                    style={{ backgroundColor: isCompleted ? '#16a376' : style.color }}
+                ></div>
 
                 <div className="card-content">
                   <div className="card-header">
-                    <div className="icon-box" style={{ backgroundColor: `${style.color}15`, color: style.color }}>
-                      <i className={style.icon}></i>
+                    {/* التعديل 2: ألوان خلفية الأيقونة والأيقونة نفسها */}
+                    <div className="icon-box" style={{ 
+                        backgroundColor: isCompleted ? '#dcfce7' : `${style.color}15`, /* خلفية أيقونة فاتحة جداً */
+                        color: isCompleted ? '#16a376' : style.color /* أيقونة خضراء واضحة */
+                    }}>
+                      <i className={isCompleted ? "fa-solid fa-check-double" : style.icon}></i>
                     </div>
+                    
                     <div className="header-text">
                       <h3>{roadmap.title}</h3>
                       <p>{roadmap.description || "Start your journey now..."}</p>
                     </div>
                   </div>
-
-                  {/* بيانات إضافية للشكل */}
-                  <div className="card-meta">
-                    <span><i className="fa-solid fa-list-ol"></i> Steps: TBD</span>
-                    <span><i className="fa-regular fa-clock"></i> 6 Months</span>
+                  <div className="card-meta" style={{ justifyContent: 'flex-end' }}>
+                    <span>
+                        {stepsCount} Steps <i className="fa-solid fa-list-ol" style={{ marginLeft: '5px' }}></i>
+                    </span>
                   </div>
 
-                  {/* زرار التفاصيل */}
-                  <Link to={`/roadmap/${roadmap.id}`} className="view-roadmap-btn">
-                        View Roadmap <i className="fa-solid fa-arrow-right"></i>
-                   </Link>
+                 {/* التعديل 4: منطق الزرار (Start vs Continue vs Completed) */}
+                  {isCompleted ? (
+                      // حالة الاكتمال: زرار ذهبي ينقل للمراجعة
+                      <Link 
+                        to={`/roadmap/${roadmap.id}`} 
+                        className="view-roadmap-btn btn-completed"
+                      >
+                          Review Path 
+                          <i className="fa-solid fa-star"></i>
+                      </Link>
+                  ) : (
+                      // الحالات العادية: Start أو Continue
+                      <Link 
+                        to={`/roadmap/${roadmap.id}`} 
+                        className={`view-roadmap-btn ${isEnrolled ? 'btn-continue' : ''}`}
+                      >
+                            {isEnrolled ? 'Continue Learning' : 'View Roadmap'} 
+                            <i className={`fa-solid ${isEnrolled ? 'fa-play' : 'fa-arrow-right'}`}></i>
+                      </Link>
+                  )}
                 </div>
               </div>
             );

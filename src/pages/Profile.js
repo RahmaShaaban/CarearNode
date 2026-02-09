@@ -27,20 +27,13 @@ function Profile() {
         bio: "...",
         profilePic: "https://via.placeholder.com/150",
         role: "Student",
-        averageScore: 85,
-        interviewsDone: 12,
+        averageScore: 0, // هنجيبها من البروجرس الحقيقي
+        interviewsDone: 0,
         resumeUploaded: false, 
         resumeName: "",        
         resumeDate: "",        
-        courses: [
-            { id: 1, name: "Frontend Development", completed: 8, total: 12, percentage: 65 },
-            { id: 2, name: "React Mastery", completed: 3, total: 10, percentage: 30 }
-        ],
-        milestones: [
-            { id: 1, title: "Complete 'Advanced Hooks'", date: "Tomorrow", icon: "fa-book-open", color: "#3b82f6" },
-            { id: 2, title: "Mock Interview: System Design", date: "Feb 24, 2026", icon: "fa-users", color: "#8b5cf6" },
-            { id: 3, title: "Update Resume", date: "Next Week", icon: "fa-file-signature", color: "#f59e0b" }
-        ]
+        // هنا هنخزن الرودمابس الحقيقية
+        enrolledRoadmaps: []
     });
 
     useEffect(() => {
@@ -52,11 +45,18 @@ function Profile() {
             }
 
             try {
-                // أ. جلب بيانات البروفايل
+                // أ. جلب بيانات البروفايل (عدلنا الباك إند عشان يجيب UserRoadmaps)
                 const profileRes = await fetch(`http://localhost:5000/api/auth/profile/${userId}`);
-                const profileData = await profileRes.json();
-
+                
                 if (profileRes.ok) {
+                    const profileData = await profileRes.json();
+                    
+                    // حساب متوسط الدرجات من الرودمابس
+                    const roadmaps = profileData.UserRoadmaps || [];
+                    let totalProgress = 0;
+                    roadmaps.forEach(r => totalProgress += (r.progress || 0));
+                    const avgScore = roadmaps.length > 0 ? Math.round(totalProgress / roadmaps.length) : 0;
+
                     setUserData(prevState => ({
                         ...prevState,
                         fullName: profileData.full_name,
@@ -65,7 +65,11 @@ function Profile() {
                         role: profileData.role || "Student",
                         profilePic: profileData.profile_image
                             ? `http://localhost:5000${profileData.profile_image}`
-                            : "https://via.placeholder.com/150"
+                            : "https://via.placeholder.com/150",
+                        // تخزين الرودمابس الحقيقية
+                        enrolledRoadmaps: roadmaps,
+                        averageScore: avgScore,
+                        interviewsDone: roadmaps.filter(r => r.status === 'completed').length // مثال: عدد المسارات المكتملة
                     }));
                 }
 
@@ -88,7 +92,6 @@ function Profile() {
         setEditForm({
             fullName: userData.fullName,
             email: userData.email,
-            // التأكد من استخدام القيمة المخزنة
             role: userData.role || "Student", 
             bio: userData.bio === "No bio added yet." ? "" : userData.bio
         });
@@ -255,7 +258,6 @@ function Profile() {
                             <input type="text" name="fullName" value={editForm.fullName} onChange={handleInputChange} className="form-input" style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }} />
                         </div>
                         
-                        {/* Dropdown القائمة المنسدلة للوظائف */}
                         <div className="form-group" style={{ marginBottom: '15px' }}>
                             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Current Role</label>
                             <select 
@@ -265,10 +267,7 @@ function Profile() {
                                 className="form-select" 
                                 style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }}
                             >
-                                {/* خيار Student الثابت بحرف كبير */}
                                 <option value="Student">Student</option>
-
-                                {/* باقي الوظائف من الداتابيز */}
                                 {jobOptions.length > 0 && jobOptions.map((job) => (
                                     <option key={job.id} value={job.title}>
                                         {job.title}
@@ -301,33 +300,56 @@ function Profile() {
                         <div className="stat-icon-wrapper blue-bg"><i className="fa-solid fa-trophy"></i></div>
                         <div className="stat-content">
                             <span className="stat-value">{userData.averageScore}%</span>
-                            <span className="stat-label">Average Score</span>
+                            <span className="stat-label">Avg. Progress</span>
                         </div>
                     </div>
                     <div className="stat-card completed-card">
-                        <div className="stat-icon-wrapper green-bg"><i className="fa-solid fa-circle-check"></i></div>
+                        <div className="stat-icon-wrapper green-bg"><i className="fa-solid fa-graduation-cap"></i></div>
                         <div className="stat-content">
-                            <span className="stat-value">{userData.interviewsDone}</span>
-                            <span className="stat-label">Interviews</span>
+                            <span className="stat-value">{userData.enrolledRoadmaps.length}</span>
+                            <span className="stat-label">Active Paths</span>
                         </div>
                     </div>
                 </div>
 
                 <div className="dashboard-grid">
+                    {/* قسم عرض الـ Roadmaps الحقيقية */}
                     <div className="dashboard-card">
-                        <h4 className="card-title"><i className="fa-solid fa-chart-line"></i> Progress</h4>
-                        <div className="courses-list">
-                            {userData.courses.map(course => (
-                                <div className="course-item" key={course.id}>
-                                    <span className="course-name">{course.name}</span>
-                                    <div className="progress-bar-container">
-                                        <div className="progress-bar-fill" style={{ width: `${course.percentage}%` }}></div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                        <h4 className="card-title"><i className="fa-solid fa-chart-line"></i> My Learning Paths</h4>
+                        
+                        {userData.enrolledRoadmaps && userData.enrolledRoadmaps.length > 0 ? (
+                            <div className="courses-list">
+                                {userData.enrolledRoadmaps.map((enrollment) => {
+                                    // التأكد من وجود بيانات الرودماب
+                                    const roadmapInfo = enrollment.Roadmap || {};
+                                    
+                                    return (
+                                        <div className="course-item" key={enrollment.id} onClick={() => navigate(`/roadmap/${enrollment.roadmapId}`)} style={{cursor: 'pointer'}}>
+                                            <div className="course-info">
+                                                <span className="course-name">{roadmapInfo.title || "Unknown Roadmap"}</span>
+                                                <span className="course-count">{enrollment.progress}%</span>
+                                            </div>
+                                            <div className="progress-bar-container">
+                                                <div 
+                                                    className="progress-bar-fill" 
+                                                    style={{ width: `${enrollment.progress}%` }}
+                                                ></div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            <div className="empty-state-profile">
+                                <p>No active roadmaps yet.</p>
+                                <button className="btn-browse-small" onClick={() => navigate('/roadmaps')}>
+                                    Start Learning
+                                </button>
+                            </div>
+                        )}
                     </div>
 
+                    {/* قسم السيرة الذاتية (زي ما هو) */}
                     <div className="dashboard-card">
                         <input
                             type="file"
