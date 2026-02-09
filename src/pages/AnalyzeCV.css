@@ -1,0 +1,161 @@
+/* AnalyzeCV.css */
+
+.analyze-page-container {
+    background-color: #F0F7F5; /* ??????? ??????? */
+    min-height: 100vh;
+    padding: 40px 20px;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    justify-content: center;
+}
+
+.analyze-content-wrapper {
+    width: 100%;
+    max-width: 800px; /* ??? ?????? ???? ?????? ????? ??? */
+}
+
+/* ?? ?????? */
+.btn-back-link {
+    background: none;
+    border: none;
+    color: #0f172a;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    transition: color 0.2s;
+}
+
+    .btn-back-link:hover {
+        color: #43766C;
+    }
+
+/* ?????? ?????? ??????? */
+.analyze-card {
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+    margin-bottom: 25px;
+}
+
+.analyze-title {
+    font-size: 1.5rem;
+    color: #0f172a;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+/* 1. ????? ????? ??? ??????? */
+.upload-area {
+    /* ???? ????? ?????? (white) ???? ????? ???? ???? ?? ?? ??? ????? */
+    background-color: #eaf4f2;
+    
+    /* ???? ??????? ?? ?? ??... */
+    border: 2px dashed #cbd5e0;
+    border-radius: 10px;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* 2. ????? ????? ??????? (Text Area) */
+.cv-text-area {
+    /* ??? ????? ???? ???? ??? ????? */
+    background-color: #f1f5f9;
+    /* ???? ??????? ?? ?? ??... */
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1rem;
+    resize: vertical;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+    .upload-area:hover {
+        border-color: #43766C; /* ??? ???? ????? ???? ?????? */
+        background-color: #F0F7F5;
+    }
+
+.upload-icon {
+    font-size: 2rem;
+    color: #94a3b8;
+    margin-bottom: 15px;
+}
+
+.upload-area p {
+    color: #64748b;
+    font-weight: 500;
+    margin: 0;
+}
+
+/* ???? ?????? ??? */
+.success-icon {
+    color: #43766C;
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.change-text {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-top: 5px;
+    display: block;
+}
+
+/* ?????? (OR PASTE TEXT) */
+.divider {
+    text-align: center;
+    margin: 25px 0;
+    position: relative;
+}
+
+    .divider span {
+        background: white;
+        padding: 0 15px;
+        color: #94a3b8;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        position: relative;
+        z-index: 1;
+    }
+
+    .divider::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: #e2e8f0;
+        z-index: 0;
+    }
+
+
+/* ?? Analyze ?????? */
+.btn-analyze-action {
+    width: 100%;
+    background-color: #43766C; /* ???? ?????? */
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 10px rgba(67, 118, 108, 0.2);
+}
+
+    .btn-analyze-action:hover {
+        background-color: #355d55;
+    }
