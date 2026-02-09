@@ -16,5 +16,5 @@ Content-Type: application/json
   ],
   "skills": ["Coding"],
   "summary": "i want a job",
-  "templateId": "modern-blue"
+  "templateId": "ats-002"
 }
