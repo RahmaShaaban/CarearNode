@@ -23,7 +23,7 @@ function CV () {
                 </Link>
 
                 {/* 2. ???? Build CV */}
-                <Link to="/cv/build" className="tool-card build-card">
+                <Link to="/cv-builder" className="tool-card build-card">
                     <div className="tool-icon">
                         <i className="fa-regular fa-file-lines"></i>
                     </div>

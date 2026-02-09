@@ -15,6 +15,8 @@ import Footer from './Footer';
 import RoadmapDetails from './pages/RoadmapDetails';
 import ScrollToTop from './ScrollToTop';
 
+import CvBuilder from './pages/CvBuilder';
+
 
 
 
@@ -42,6 +44,9 @@ function App() {
 
                         <Route path="/cv/analyze" element={<AnalyzeCV />} />
                         <Route path="/roadmap/:id" element={<RoadmapDetails />} />
+                        
+                        <Route path="/cv-builder" element={<CvBuilder />} />
+
                     </Routes>
                 </div>
 

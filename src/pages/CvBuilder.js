@@ -15,7 +15,7 @@ const CvBuilder = () => {
         experience: [{ title: '', company: '', startDate: '', endDate: '', role: '' }], // role هو الوصف اللي الـ AI هيحسنه
         education: [{ degree: '', school: '', year: '' }],
         skills: '', // هناخدها كنص ونحولها لمصفوفة
-        templateId: 'modern_ats', // القيمة الافتراضية
+        templateId: 'ats-002', // القيمة الافتراضية
         templateSettings: { color: '#003366', font: 'Arial' }
     });
 
@@ -73,7 +73,7 @@ const CvBuilder = () => {
         };
 
         try {
-            const response = await fetch('http://localhost:5000/api/cv/save', {
+            const response = await fetch('http://localhost:5000/api/cv-builder/save', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -85,7 +85,7 @@ const CvBuilder = () => {
                 setGeneratedId(data.data.id); // حفظنا الـ ID عشان التحميل
                 setStep(5); // الانتقال لخطوة التحميل
             } else {
-                alert('Error saving CV: ' + data.message);
+                alert('Error saving CV: ' + (data.message || data.data || data.error));
             }
         } catch (error) {
             console.error(error);
@@ -219,8 +219,10 @@ const CvBuilder = () => {
                             {/* يمكن جلب هذه القائمة من الباك اند لاحقاً getTemplates */}
                             <div className="templates-grid">
                                 <div 
-                                    className={`template-card ${formData.templateId === 'modern_ats' ? 'selected' : ''}`}
-                                    onClick={() => setFormData({...formData, templateId: 'modern_ats'})}
+                                    // 👇 التعديل هنا (للشكل): هل هو المختار؟
+                                    className={`template-card ${formData.templateId === 'ats-002' ? 'selected' : ''}`}
+                                    // 👇 التعديل هنا (للوجيك): لما يضغط يختار ats-002
+                                    onClick={() => setFormData({...formData, templateId: 'ats-002'})}
                                 >
                                     <i className="fa-solid fa-file-lines"></i>
                                     <span>Modern ATS</span>
@@ -252,12 +254,12 @@ const CvBuilder = () => {
                         
                         <div className="action-buttons-final">
                             {/* زرار التحميل */}
-                            <a href={`http://localhost:5000/api/cv/download/${generatedId}`} className="btn-download" target="_blank" rel="noopener noreferrer">
+                            <a href={`http://localhost:5000/api/cv-builder/download/${generatedId}`} className="btn-download" target="_blank" rel="noopener noreferrer">
                                 <i className="fa-solid fa-download"></i> Download PDF
                             </a>
 
                             {/* زرار المعاينة في تاب جديد */}
-                            <a href={`http://localhost:5000/api/cv/preview/${generatedId}`} className="btn-preview" target="_blank" rel="noopener noreferrer">
+                            <a href={`http://localhost:5000/api/cv-builder/preview/${generatedId}`} className="btn-preview" target="_blank" rel="noopener noreferrer">
                                 <i className="fa-solid fa-eye"></i> Live Preview
                             </a>
                         </div>
