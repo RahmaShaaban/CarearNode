@@ -163,3 +163,24 @@ exports.getAllRoadmaps = async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 };
+
+// 4. دالة إلغاء الاشتراك (Unenroll)
+exports.unenrollRoadmap = async (req, res) => {
+    try {
+        // ممكن نستقبل البيانات من body أو query، هنا هنستخدم body زي الـ enroll
+        const { userId, roadmapId } = req.body; 
+
+        const deleted = await UserRoadmap.destroy({
+            where: { userId, roadmapId }
+        });
+
+        if (deleted) {
+            res.status(200).json({ success: true, message: "Unenrolled successfully" });
+        } else {
+            res.status(404).json({ success: false, message: "Enrollment not found" });
+        }
+    } catch (error) {
+        console.error("Unenroll Error:", error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+};

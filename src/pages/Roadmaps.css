@@ -101,11 +101,16 @@
   flex-shrink: 0;
 }
 
+/* تنسيق عنوان الرودماب */
 .header-text h3 {
-  margin: 0 0 6px 0;
-  color: #1e293b;
-  font-size: 1.2rem;
-  font-weight: 700;
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #334155;
+    
+    /* --- الحل السحري هنا --- */
+    padding-right: 90px; /* 1. بنسيب مسافة يمين عشان البادج */
+    line-height: 1.4;    /* 2. بنوسع السطور عشان لو نزل سطر جديد يبقى شكله حلو */
 }
 
 .header-text p {
@@ -211,4 +216,44 @@
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-5px); }
     to { opacity: 1; transform: translateY(0); }
+}/* --- حالة الاكتمال (Completed State - Green Palette) --- */
+
+/* 1. الكارت لما يكتمل (خلفية منت فاتحة وإطار أخضر هادي) */
+.roadmap-card.roadmap-completed {
+    border: 2px solid #16a376; /* أخضر فاتح (Green-300) */
+    background: #f0fdf4; /* خلفية خضراء باهتة جداً (Green-50) */
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(134, 239, 172, 0.2); /* ضل أخضر خفيف */
 }
+
+/* 2. البادج "Completed" */
+.enrolled-badge.badge-completed {
+    background-color: #16a376; /* أخضر زاهي (Green-400) */
+    color: #ffffff; /* كتابة بيضاء */
+    box-shadow: 0 2px 5px rgba(74, 222, 128, 0.4);
+}
+
+/* 3. زرار "Review Path" */
+.view-roadmap-btn.btn-completed {
+    background-color: #16a376; /* أخضر (Green-500) */
+    color: white; 
+    border: none;
+    font-weight: 700;
+    pointer-events: auto; 
+    cursor: pointer;
+    text-decoration: none; 
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    gap: 8px; 
+    transition: all 0.3s ease;
+}
+
+/* لما الماوس يجي عليه */
+.view-roadmap-btn.btn-completed:hover {
+    /* background-color: #16a34a; أخضر أغمق سنة (Green-600) */
+    opacity: 0.8;
+    transform: translateX(-2px);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+

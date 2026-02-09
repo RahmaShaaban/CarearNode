@@ -10,7 +10,7 @@ function Department() {
     const [loadingResult, setLoadingResult] = useState(false);
     const [viewingDept, setViewingDept] = useState(null);
     const [error, setError] = useState(null); // لإظهار أي خطأ للمستخدم
-
+    const [showAllSkills, setShowAllSkills] = useState(false);
     // --- 1. جلب المواد عند التحميل ---
     useEffect(() => {
         const fetchCourses = async () => {
@@ -93,6 +93,15 @@ function Department() {
 
     const handleReadMore = (dept) => { 
         setViewingDept(dept); 
+        {/* تاني تعديل */ }
+
+
+        setShowAllSkills(false);
+
+
+
+
+        {/* تاني تعديل  نهاية*/ }
         window.scrollTo({ top: 0, behavior: 'smooth' }); 
     };
 
@@ -124,16 +133,41 @@ if (viewingDept) {
                         {/* عمود المواد: يعرض كل مواد القسم مع تمييز المختارة */}
                         <div className="info-column subjects-section">
                             <h3><i className="fa-solid fa-book-open"></i> Department Syllabus</h3>
+
                             <ul className="details-list">
                                 {fullSyllabus.length > 0 ? (
                                     fullSyllabus.map((s, i) => {
+
+                                        const cleanS = s.trim();
+                                        const isMatched = matchedOnly.some(m => m.trim() === cleanS);
+                                        // 2. المقارنة الذكية: هل المادة دي موجودة في قائمة اختيارات الطالب؟
+                                        // بنستخدم .some عشان نلف على اختيارات الطالب وننظفها بردو قبل المقارنة
+
                                         // نتحقق هل المادة دي الطالب اختارها؟
-                                        const isMatched = matchedOnly.includes(s);
+                                        //const isMatched = matchedOnly.includes(s);
                                         return (
-                                            <li key={i} className={isMatched ? "matched-item" : ""}>
-                                                {s} {isMatched && <i className="fa-solid fa-circle-check" style={{color: '#2ecc71', marginLeft: '8px'}}></i>}
+                                            <li key={i} className={isMatched ? "matched-item" : ""}
+
+                                                style={{
+
+
+
+                                                    fontWeight: isMatched ? '800' : 'normal',
+                                                   // color: isMatched ? '#000' : 'inherit',
+                                                    //backgroundColor: isMatched ? '#e0f2fe' : 'transparent', // خلفية خفيفة للتأكيد (اختياري)
+                                                    //padding: isMatched ? '2px 8px' : '0',
+                                                   // borderRadius: '4px'
+                                                }}
+
+
+                                            >
+                                            {s}
                                             </li>
+
+
                                         );
+
+
                                     })
                                 ) : (
                                     <li className="empty-msg">Syllabus loading or not found.</li>
@@ -145,9 +179,49 @@ if (viewingDept) {
                         <div className="info-column skills-section">
                             <h3><i className="fa-solid fa-code"></i> Skills You'll Learn</h3>
                             <ul className="details-list">
-                                {skillsList.length > 0 ? skillsList.map((s, i) => <li key={i}>{s}</li>) : <li>Core Skills</li>}
+                                
+
+                        {/*تالت تعديل */}
+
+
+                        {/* 3. (تعديل جديد) عمود المهارات مع منطق الـ Show More */}
+                        
+                                {skillsList.length > 0 ? (
+                                    // نعرض إما القائمة كاملة أو أول 15 عنصر فقط بناءً على الحالة
+                                    (showAllSkills ? skillsList : skillsList.slice(0, 15)).map((s, i) => (
+                                        <li key={i}>{s}</li>
+                                    ))
+                                ) : (
+                                    <li>Core Skills</li>
+                                )}
                             </ul>
+
+                            {/* زرار Read More يظهر فقط لو فيه أكتر من 15 مهارة وإحنا مش عارضينهم كلهم */}
+                            {skillsList.length > 15 && !showAllSkills && (
+                                <button
+                                    onClick={() => setShowAllSkills(true)}
+                                    style={{
+                                        background: 'transparent',
+                                        border: 'none',
+                                        color: '#355d55', // نفس لون الثيم بتاعك
+                                        cursor: 'pointer',
+                                        fontSize: '0.9rem',
+                                        fontWeight: 'bold',
+                                        marginTop: '10px',
+                                        textDecoration: 'underline',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '5px'
+                                    }}
+                                >
+                                    Read More <i className="fa-solid fa-angle-down"></i>
+                                </button>
+                            )}
                         </div>
+
+
+
+                        {/*تالت تعديل نهاية */}
 
                         {/* عمود الوظائف */}
                         <div className="info-column jobs-section">

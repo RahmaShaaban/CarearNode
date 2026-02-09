@@ -1,10 +1,17 @@
-﻿import React from 'react';
+﻿import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from './photos/logo.png';
 import './Navbar.css';
 
+
 const Navbar = () => {
     const navigate = useNavigate();
+
+    // --- 1. الجزء الجديد: التحكم في القائمة ---
+    const [isOpen, setIsOpen] = useState(false);
+    const toggleMenu = () => setIsOpen(!isOpen);
+
+
 
     // 1. جلب البيانات من الذاكرة
     const userId = localStorage.getItem('userId');
@@ -42,12 +49,35 @@ const Navbar = () => {
                 <img src={logo} alt="CareerNode Logo" style={{ width: '60px', height: 'auto' }} />
             </Link>
 
+            {/* --- 3. زرار الموبايل (جديد) --- */}
+            <div className="menu-icon" onClick={toggleMenu}>
+                <i className={isOpen ? 'fas fa-times' : 'fas fa-bars'}></i>
+            </div>
+
+            {/* --- 4. القائمة (ضيفنا كلاس active و onClick للقفل) --- */}
+            <ul className={isOpen ? "nav-links active" : "nav-links"}>
+                <li><Link to="/" onClick={toggleMenu}>Home</Link></li>
+                <li><Link to="/Department" onClick={toggleMenu}>Department</Link></li>
+                <li><Link to="/roadmaps" onClick={toggleMenu}>Roadmaps</Link></li>
+                <li><Link to="/cv" onClick={toggleMenu}>CV Builder</Link></li>
+                <li><Link to="/interview" onClick={toggleMenu}>Interview</Link></li>
+
+
+
+
+
+
+                {/*
+
+
             <ul className="nav-links">
                 <li><Link to="/">Home</Link></li>
                 <li><Link to="/Department">Department</Link></li>
                 <li><Link to="/roadmaps">Roadmaps</Link></li>
                 <li><Link to="/cv">CV Builder</Link></li>
                 <li><Link to="/interview">Interview</Link></li>
+
+                */}
 
                 {/* استخدام الشرط الجديد isLoggedIn */}
                 {isLoggedIn ? (

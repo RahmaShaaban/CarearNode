@@ -166,6 +166,21 @@ function Profile() {
                         ? `http://localhost:5000${data.user.profile_image}`
                         : prev.profilePic
                 }));
+                // ---------------------------------------------------------
+                // 2. (الإضافة الجديدة) تحديث LocalStorage عشان النافبار يشوف الصورة
+                // ---------------------------------------------------------
+                if (data.user.profile_image) {
+                    localStorage.setItem('userImage', data.user.profile_image);
+
+                    // إجبار النافبار على التحديث بعمل ريفريش للصفحة
+                    window.location.reload();
+                }
+                // --------------------------------------------------------
+
+
+
+
+
                 setIsEditing(false);
                 alert("Changes saved successfully!");
             }
