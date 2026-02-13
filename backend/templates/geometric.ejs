@@ -1,17 +1,158 @@
-<style>
-    body { font-family: 'Ubuntu', sans-serif; margin: 0; padding: 40px; background: #fff; position: relative; overflow: hidden; }
-    .bg-shape { position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; background: <%= template_settings?.color || '#10ac84' %>; opacity: 0.1; border-radius: 50%; z-index: -1; }
-    .header { display: flex; align-items: center; gap: 20px; }
-    .name-box { background: #333; color: #fff; padding: 15px 30px; border-radius: 0 50px 50px 0; }
-    .skill-badge { display: inline-block; background: #e8f5e9; color: #10ac84; padding: 5px 15px; border-radius: 15px; margin: 5px; font-size: 12px; font-weight: bold; }
-</style>
-<div class="bg-shape"></div>
-<div class="header">
-    <div class="name-box"><h1><%= personal_info.full_name %></h1></div>
-</div>
-<div style="margin-top: 40px;">
-    <h3>Professional Summary</h3>
-    <p><%= summary %></p>
-    <h3>Skills & Tools</h3>
-    <% skills.forEach(s => { %><span class="skill-badge"><%= s %></span><% }) %>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        /* استيراد خط Ubuntu ليتماشى مع التصميم */
+        @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;700&display=swap');
+
+        /* تعريف متغيرات الألوان */
+        :root {
+            --main-color: <%= (typeof template_settings !== 'undefined' && template_settings.color) ? template_settings.color : '#10ac84' %>;
+        }
+
+        body { 
+            font-family: 'Ubuntu', sans-serif; 
+            margin: 0; 
+            padding: 40px; 
+            background: #fff; 
+            position: relative; 
+            overflow: hidden; 
+            color: #333;
+        }
+
+        /* الشكل الخلفي الدائري */
+        .bg-shape { 
+            position: absolute; 
+            top: -100px; 
+            right: -100px; 
+            width: 400px; 
+            height: 400px; 
+            background: var(--main-color); 
+            opacity: 0.1; 
+            border-radius: 50%; 
+            z-index: -1; 
+        }
+
+        .header { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            margin-bottom: 40px;
+        }
+
+        .name-box { 
+            background: #333; 
+            color: #fff; 
+            padding: 15px 40px 15px 30px; 
+            border-radius: 0 50px 50px 0; 
+            margin-left: -40px; /* لالتصاق البوكس بالحافة اليسرى */
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .name-box h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+        }
+
+        .contact-info {
+            text-align: right;
+            font-size: 0.9rem;
+        }
+        
+        .contact-info div {
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        h3 { 
+            color: var(--main-color); 
+            border-left: 5px solid var(--main-color); 
+            padding-left: 15px; 
+            margin-top: 30px; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        p { line-height: 1.6; color: #444; }
+
+        /* ستايل المهارات */
+        .skill-badge { 
+            display: inline-block; 
+            background: #e8f5e9; 
+            color: var(--main-color); 
+            padding: 8px 16px; 
+            border-radius: 20px; 
+            margin: 0 10px 10px 0; 
+            font-size: 0.9rem; 
+            font-weight: bold; 
+            border: 1px solid var(--main-color);
+        }
+
+        /* ستايل الخبرة والتعليم */
+        .item-card { margin-bottom: 25px; }
+        .item-header { display: flex; justify-content: space-between; align-items: baseline; }
+        .item-title { font-weight: bold; font-size: 1.1rem; color: #222; }
+        .item-subtitle { color: #666; font-style: italic; margin-bottom: 5px; }
+        .item-date { color: var(--main-color); font-weight: bold; font-size: 0.9rem; }
+        .item-desc { margin-top: 5px; font-size: 0.95rem; }
+
+    </style>
+</head>
+<body>
+    <div class="bg-shape"></div>
+    
+    <div class="header">
+        <div class="name-box">
+            <h1><%= personal_info.fullName %></h1>
+        </div>
+        
+        <div class="contact-info">
+            <div><%= personal_info.email %> 📧</div>
+            <div><%= personal_info.phone %> 📱</div>
+            <% if(personal_info.address) { %><div><%= personal_info.address %> 📍</div><% } %>
+            <% if(personal_info.linkedin) { %><div><%= personal_info.linkedin %> 🔗</div><% } %>
+        </div>
+    </div>
+
+    <div style="margin-top: 20px;">
+        <h3>Professional Summary</h3>
+        <p><%= summary %></p>
+
+        <% if(experience && experience.length > 0) { %>
+        <h3>Experience</h3>
+        <% experience.forEach(exp => { %>
+            <div class="item-card">
+                <div class="item-header">
+                    <span class="item-title"><%= exp.title %></span>
+                    <span class="item-date"><%= exp.startDate %> - <%= exp.endDate || 'Present' %></span>
+                </div>
+                <div class="item-subtitle"><%= exp.company %></div>
+                <div class="item-desc"><%= exp.role %></div>
+            </div>
+        <% }) %>
+        <% } %>
+
+        <% if(education && education.length > 0) { %>
+        <h3>Education</h3>
+        <% education.forEach(edu => { %>
+            <div class="item-card">
+                <div class="item-header">
+                    <span class="item-title"><%= edu.degree %></span>
+                    <span class="item-date"><%= edu.year %></span>
+                </div>
+                <div class="item-subtitle"><%= edu.school %></div>
+            </div>
+        <% }) %>
+        <% } %>
+
+        <h3>Skills & Tools</h3>
+        <div>
+            <% if(skills && skills.length > 0) { %>
+                <% skills.forEach(s => { %><span class="skill-badge"><%= s %></span><% }) %>
+            <% } %>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,20 +1,167 @@
-<style>
-    body { font-family: 'Lato', sans-serif; padding: 40px; color: #444; }
-    .timeline { position: relative; margin: 20px 0; padding-left: 40px; }
-    .timeline::before { content: ''; position: absolute; left: 10px; top: 0; width: 2px; height: 100%; background: #eee; }
-    .timeline-node { position: relative; margin-bottom: 30px; }
-    .timeline-node::after { content: ''; position: absolute; left: -36px; top: 5px; width: 14px; height: 14px; background: <%= template_settings?.color || '#00b894' %>; border-radius: 50%; border: 4px solid #fff; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
-    .date-tag { font-size: 12px; font-weight: bold; color: <%= template_settings?.color || '#00b894' %>; }
-    .company-name { font-weight: bold; color: #222; }
-</style>
-<h1><%= personal_info.full_name %></h1>
-<p><%= summary %></p>
-<div class="timeline">
-    <% experience.forEach(exp => { %>
-        <div class="timeline-node">
-            <div class="date-tag"><%= exp.start_date %> - <%= exp.end_date || 'Present' %></div>
-            <div class="company-name"><%= exp.company_name %></div>
-            <div class="role-text"><%= exp.role %></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
+
+        :root {
+            --main-color: <%= (typeof template_settings !== 'undefined' && template_settings.color) ? template_settings.color : '#00b894' %>;
+            --text-color: #444;
+            --bg-color: #ffffff;
+        }
+
+        body { 
+            font-family: 'Lato', sans-serif; 
+            padding: 40px; 
+            color: var(--text-color); 
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        header { margin-bottom: 40px; }
+        
+        h1 { 
+            margin: 0; 
+            font-size: 2.5em; 
+            color: #2d3436; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .contact-info {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #636e72;
+        }
+        
+        .contact-info span { margin-right: 15px; }
+
+        .summary { margin-top: 20px; color: #555; }
+
+        /* Timeline Styles */
+        h2 { 
+            color: var(--main-color); 
+            border-bottom: 2px solid #eee; 
+            padding-bottom: 10px; 
+            margin-top: 40px;
+            text-transform: uppercase;
+            font-size: 1.2em;
+        }
+
+        .timeline { 
+            position: relative; 
+            margin: 20px 0; 
+            padding-left: 30px; 
+            border-left: 2px solid #eee; 
+        }
+
+        .timeline-node { 
+            position: relative; 
+            margin-bottom: 30px; 
+            padding-left: 20px;
+        }
+
+        /* The Dot */
+        .timeline-node::before { 
+            content: ''; 
+            position: absolute; 
+            left: -38px; /* ضبط مكان النقطة على الخط */
+            top: 5px; 
+            width: 14px; 
+            height: 14px; 
+            background: var(--main-color); 
+            border-radius: 50%; 
+            border: 3px solid #fff; 
+            box-shadow: 0 0 0 1px #eee; 
+        }
+
+        .date-tag { 
+            font-size: 13px; 
+            font-weight: bold; 
+            color: var(--main-color); 
+            background: #f0fdf4;
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+
+        .item-title { font-weight: bold; font-size: 1.1em; color: #2d3436; }
+        .item-subtitle { font-style: italic; color: #636e72; margin-bottom: 8px; font-size: 0.95em; }
+        .item-desc { font-size: 0.95em; color: #555; }
+
+        /* Skills */
+        .skills-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+        .skill-tag { 
+            background: #eee; 
+            padding: 5px 12px; 
+            border-radius: 20px; 
+            font-size: 0.85em; 
+            font-weight: bold;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1><%= personal_info.fullName %></h1>
+        
+        <div class="contact-info">
+            <span>📧 <%= personal_info.email %></span>
+            <span>📱 <%= personal_info.phone %></span>
+            <% if(personal_info.address) { %><span>📍 <%= personal_info.address %></span><% } %>
+            <% if(personal_info.linkedin) { %><span>🔗 LinkedIn</span><% } %>
         </div>
-    <% }) %>
-</div>
+
+        <div class="summary">
+            <%= summary %>
+        </div>
+    </header>
+
+    <% if(experience && experience.length > 0) { %>
+    <h2>Experience</h2>
+    <div class="timeline">
+        <% experience.forEach(exp => { %>
+            <div class="timeline-node">
+                <div class="date-tag"><%= exp.startDate %> - <%= exp.endDate || 'Present' %></div>
+                
+                <div class="item-title"><%= exp.title %></div>
+                
+                <div class="item-subtitle">at <%= exp.company %></div>
+                
+                <div class="item-desc"><%= exp.role %></div>
+            </div>
+        <% }) %>
+    </div>
+    <% } %>
+
+    <% if(education && education.length > 0) { %>
+    <h2>Education</h2>
+    <div class="timeline">
+        <% education.forEach(edu => { %>
+            <div class="timeline-node">
+                <div class="date-tag"><%= edu.year %></div>
+                
+                <div class="item-title"><%= edu.degree %></div>
+                
+                <div class="item-subtitle"><%= edu.school %></div>
+            </div>
+        <% }) %>
+    </div>
+    <% } %>
+
+    <% if(skills && skills.length > 0) { %>
+    <h2>Skills</h2>
+    <div class="skills-container">
+        <% skills.forEach(s => { %>
+            <span class="skill-tag"><%= s %></span>
+        <% }) %>
+    </div>
+    <% } %>
+
+</body>
+</html>

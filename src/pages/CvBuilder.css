@@ -283,6 +283,7 @@ input:focus, textarea:focus {
     animation: fadeIn 0.4s ease-in-out;
 }
 
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -295,4 +296,51 @@ input:focus, textarea:focus {
     .action-buttons-final {
         flex-direction: column;
     }
+}
+/* رسالة الخطأ */
+.error-banner {
+    background-color: #fee2e2;
+    color: #ef4444;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 15px;
+    text-align: center;
+    font-weight: 600;
+    border: 1px solid #fecaca;
+    animation: shake 0.3s ease-in-out;
+}
+
+/* تمييز الحقل اللي فيه خطأ */
+.input-error {
+    border-color: #ef4444 !important;
+    background-color: #fef2f2;
+}
+
+/* تحسين شكل بطاقة القالب */
+.template-preview-img {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.select-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    color: #2F5D54; /* لون الأخضر الغامق بتاعك */
+    font-size: 1.2rem;
+}
+
+.template-card {
+    position: relative; /* عشان العلامة تظهر فوق */
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
 }

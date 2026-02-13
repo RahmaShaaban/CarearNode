@@ -1,17 +1,146 @@
-<style>
-    :root { --dark: #2d3436; --accent: <%= template_settings?.color || '#fab1a0' %>; }
-    body { font-family: 'Roboto', sans-serif; margin: 0; padding: 0; background: #fff; }
-    .side-bar { background: var(--dark); color: white; padding: 40px; text-align: left; }
-    .content { padding: 40px; }
-    .section-title { color: var(--accent); border-bottom: 1px solid var(--accent); text-transform: uppercase; }
-</style>
-<div class="side-bar">
-    <h1><%= personal_info.full_name %></h1>
-    <p><%= personal_info.email %> | <%= personal_info.location %></p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        /* تعريف الألوان والخطوط */
+        :root { 
+            --dark: #2d3436; 
+            --accent: <%= (typeof template_settings !== 'undefined' && template_settings.color) ? template_settings.color : '#fab1a0' %>; 
+            --text-light: #dfe6e9;
+        }
+        
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background: #fff; 
+            /* عشان نضمن إن الصفحة تاخد الطول والتقسيمة تفضل مظبوطة */
+            min-height: 100vh; 
+        }
+
+        /* الحاوية الرئيسية لعمل التقسيمة (يسار ويمين) */
+        .main-container {
+            display: flex;
+            flex-direction: row;
+            min-height: 100vh;
+        }
+
+        /* الشريط الجانبي */
+        .side-bar { 
+            background: var(--dark); 
+            color: white; 
+            padding: 40px; 
+            text-align: left; 
+            width: 30%; /* واخد 30% من العرض */
+            box-sizing: border-box;
+        }
+
+        /* المحتوى الرئيسي */
+        .content { 
+            padding: 40px; 
+            width: 70%; /* واخد 70% من العرض */
+            box-sizing: border-box;
+        }
+
+        /* تنسيق النصوص */
+        h1 { margin-top: 0; line-height: 1.2; text-transform: uppercase; font-size: 28px; }
+        
+        .contact-info { margin-top: 20px; font-size: 14px; color: var(--text-light); }
+        .contact-info div { margin-bottom: 8px; }
+
+        .section-title { 
+            color: var(--dark); 
+            border-bottom: 2px solid var(--accent); 
+            text-transform: uppercase; 
+            padding-bottom: 5px; 
+            margin-top: 30px; 
+            margin-bottom: 15px; 
+            letter-spacing: 1px;
+        }
+
+        .side-title {
+            color: var(--accent);
+            text-transform: uppercase;
+            font-size: 16px;
+            margin-top: 40px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #555;
+            padding-bottom: 5px;
+        }
+
+        /* عناصر الخبرة والتعليم */
+        .exp-item { margin-bottom: 25px; }
+        .role-title { font-weight: bold; font-size: 18px; color: #2d3436; }
+        .company-name { font-weight: bold; color: var(--accent); } 
+        .date-range { font-size: 14px; color: #636e72; float: right; }
+        .description { font-size: 14px; margin-top: 8px; color: #2d3436; line-height: 1.6; }
+
+        /* المهارات */
+        .skill-tag { 
+            display: block; 
+            margin-bottom: 8px; 
+            color: var(--text-light); 
+            border-bottom: 1px solid #444; 
+            padding-bottom: 2px; 
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    
+    <div class="side-bar">
+        <h1><%= personal_info.fullName %></h1>
+        
+        <div class="contact-info">
+            <div>📧 <%= personal_info.email %></div>
+            <div>📱 <%= personal_info.phone %></div>
+            <% if(personal_info.address) { %><div>📍 <%= personal_info.address %></div><% } %>
+            <% if(personal_info.linkedin) { %><div>🔗 <%= personal_info.linkedin %></div><% } %>
+            <% if(personal_info.website) { %><div>🌐 <%= personal_info.website %></div><% } %>
+        </div>
+
+        <% if(skills && skills.length > 0) { %>
+            <div class="side-title">Skills</div>
+            <% skills.forEach(s => { %>
+                <span class="skill-tag"><%= s %></span>
+            <% }) %>
+        <% } %>
+    </div>
+
+    <div class="content">
+        
+        <h3 class="section-title" style="margin-top: 0;">Profile</h3>
+        <p style="line-height: 1.6; color: #636e72;"><%= summary %></p>
+
+        <h3 class="section-title">Experience</h3>
+        <% if(experience && experience.length > 0) { %>
+            <% experience.forEach(exp => { %>
+                <div class="exp-item">
+                    <div class="date-range"><%= exp.startDate %> - <%= exp.endDate || 'Present' %></div>
+                    
+                    <div class="role-title"><%= exp.title %></div>
+                    <div style="margin-bottom: 5px;">at <span class="company-name"><%= exp.company %></span></div>
+                    
+                    <div class="description"><%= exp.role %></div>
+                </div>
+            <% }) %>
+        <% } %>
+
+        <% if(education && education.length > 0) { %>
+        <h3 class="section-title">Education</h3>
+        <% education.forEach(edu => { %>
+            <div class="exp-item">
+                <div class="date-range"><%= edu.year %></div>
+                <div class="role-title"><%= edu.degree %></div>
+                <div class="company-name" style="color: #636e72;"><%= edu.school %></div>
+            </div>
+        <% }) %>
+        <% } %>
+
+    </div>
 </div>
-<div class="content">
-    <h3 class="section-title">Experience</h3>
-    <% experience.forEach(exp => { %>
-        <div><strong><%= exp.role %></strong> at <%= exp.company_name %></div>
-    <% }) %>
-</div>
+
+</body>
+</html>

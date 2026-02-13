@@ -1,15 +1,164 @@
-<style>
-    body { display: flex; font-family: 'Source Code Pro', monospace; }
-    .left { width: 30%; background: #0984e3; color: white; padding: 20px; height: 100vh; }
-    .right { width: 70%; padding: 40px; }
-    .code-style { color: #ffeaa7; }
-</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        /* استيراد خط مخصص للكود */
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&display=swap');
+
+        :root {
+            --sidebar-bg: <%= (typeof template_settings !== 'undefined' && template_settings.color) ? template_settings.color : '#0984e3' %>;
+            --main-bg: #2d3436; /* خلفية داكنة للكود */
+            --text-color: #dfe6e9;
+            --keyword: #ff7675; /* لون الكلمات المحجوزة */
+            --string: #55efc4; /* لون النصوص */
+            --function: #74b9ff; /* لون الدوال */
+            --comment: #b2bec3; /* لون التعليقات */
+        }
+
+        body { 
+            display: flex; 
+            font-family: 'Fira Code', 'Source Code Pro', monospace; 
+            margin: 0;
+            padding: 0;
+            background: var(--main-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        /* Sidebar (Variables & Imports) */
+        .left { 
+            width: 30%; 
+            background: var(--sidebar-bg); 
+            color: white; 
+            padding: 30px; 
+            font-size: 13px;
+            border-right: 5px solid rgba(0,0,0,0.1);
+        }
+
+        /* Main Code Area */
+        .right { 
+            width: 70%; 
+            padding: 40px; 
+        }
+
+        h1, h2, h3 { margin: 0; font-weight: normal; }
+
+        /* Syntax Highlighting Classes */
+        .kw { color: var(--keyword); font-weight: bold; } /* Keywords: class, return, this */
+        .str { color: var(--string); } /* Strings */
+        .fn { color: var(--function); } /* Functions */
+        .com { color: var(--comment); font-style: italic; } /* Comments */
+        .num { color: #a29bfe; } /* Numbers/Dates */
+
+        .indent-1 { margin-left: 20px; }
+        .indent-2 { margin-left: 40px; }
+        .indent-3 { margin-left: 60px; }
+        
+        .block { margin-bottom: 25px; }
+        
+        a { color: white; text-decoration: none; border-bottom: 1px dotted white; }
+    </style>
+</head>
+<body>
+
 <div class="left">
-    <h3>// Contact</h3>
-    <p><%= personal_info.email %></p>
+    <div class="block">
+        <h3>// Contact Info</h3>
+        <div><span class="kw">const</span> email = <span class="str">"<%= personal_info.email %>"</span>;</div>
+        <div><span class="kw">const</span> phone = <span class="str">"<%= personal_info.phone %>"</span>;</div>
+        <% if(personal_info.address) { %>
+            <div><span class="kw">const</span> address = <span class="str">"<%= personal_info.address %>"</span>;</div>
+        <% } %>
+        <% if(personal_info.linkedin) { %>
+            <div><span class="kw">const</span> linkedIn = <span class="str">"<%= personal_info.linkedin %>"</span>;</div>
+        <% } %>
+    </div>
+
+    <% if(skills && skills.length > 0) { %>
+    <div class="block">
+        <h3>// Tech Stack</h3>
+        <div><span class="kw">const</span> skills = [</div>
+        <% skills.forEach((s, index) => { %>
+            <div class="indent-1">
+                <span class="str">"<%= s %>"</span><%= index < skills.length - 1 ? ',' : '' %>
+            </div>
+        <% }) %>
+        <div>];</div>
+    </div>
+    <% } %>
 </div>
+
 <div class="right">
-    <h2 class="code-style">class Candidate {</h2>
-    <p>constructor() { this.name = "<%= personal_info.full_name %>"; }</p>
-    <h2>}</h2>
-</div>
+    <div><span class="kw">class</span> <span class="fn">Candidate</span> <span class="kw">extends</span> <span class="fn">Developer</span> {</div>
+    
+    <div class="block indent-1">
+        <div class="com">// Constructor: Personal Information</div>
+        <div><span class="fn">constructor</span>() {</div>
+        <div class="indent-2"><span class="kw">super</span>();</div>
+        <div class="indent-2">
+            <span class="kw">this</span>.name = <span class="str">"<%= personal_info.fullName %>"</span>;
+        </div>
+        <div class="indent-2">
+            <span class="kw">this</span>.summary = <span class="str">`<%= summary %>`</span>;
+        </div>
+        <div class="indent-1">}</div>
+    </div>
+
+    <% if(experience && experience.length > 0) { %>
+    <div class="block indent-1">
+        <div class="com">// Professional Experience</div>
+        <div><span class="fn">getExperience</span>() {</div>
+        <div class="indent-2"><span class="kw">return</span> [</div>
+            
+            <% experience.forEach((exp, index) => { %>
+                <div class="indent-3">{</div>
+                <div class="indent-3">
+                    &nbsp;&nbsp;role: <span class="str">"<%= exp.title %>"</span>,
+                </div>
+                <div class="indent-3">
+                    &nbsp;&nbsp;company: <span class="str">"<%= exp.company %>"</span>,
+                </div>
+                <div class="indent-3">
+                    &nbsp;&nbsp;period: <span class="str">"<%= exp.startDate %> - <%= exp.endDate || 'Present' %>"</span>,
+                </div>
+                <div class="indent-3">
+                    &nbsp;&nbsp;desc: <span class="str">`<%= exp.role %>`</span>
+                </div>
+                <div class="indent-3">}<%= index < experience.length - 1 ? ',' : '' %></div>
+            <% }) %>
+
+        <div class="indent-2">];</div>
+        <div class="indent-1">}</div>
+    </div>
+    <% } %>
+
+    <% if(education && education.length > 0) { %>
+    <div class="block indent-1">
+        <div class="com">// Education History</div>
+        <div><span class="fn">getEducation</span>() {</div>
+        <div class="indent-2"><span class="kw">return</span> [</div>
+            
+            <% education.forEach((edu, index) => { %>
+                <div class="indent-3">{</div>
+                <div class="indent-3">
+                    &nbsp;&nbsp;degree: <span class="str">"<%= edu.degree %>"</span>,
+                </div>
+                <div class="indent-3">
+                    &nbsp;&nbsp;school: <span class="str">"<%= edu.school %>"</span>,
+                </div>
+                <div class="indent-3">
+                    &nbsp;&nbsp;year: <span class="num"><%= edu.year %></span>
+                </div>
+                <div class="indent-3">}<%= index < education.length - 1 ? ',' : '' %></div>
+            <% }) %>
+
+        <div class="indent-2">];</div>
+        <div class="indent-1">}</div>
+    </div>
+    <% } %>
+
+    <div>}</div> </div>
+
+</body>
+</html>

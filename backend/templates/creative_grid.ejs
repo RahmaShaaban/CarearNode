@@ -3,37 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        :root { --accent: <%= template_settings?.color || '#2e5bff' %>; }
-        body { font-family: 'Montserrat', sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; }
+        /* تأكدنا من وجود personal_info قبل استدعاء الألوان لتجنب الأخطاء */
+        :root { --accent: <%= template_settings && template_settings.color ? template_settings.color : '#2e5bff' %>; }
+        body { font-family: 'Montserrat', sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
         .grid-container { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; padding: 40px; }
         .header-box { grid-column: span 2; background: var(--accent); color: white; padding: 30px; border-radius: 15px; }
         .info-box { background: #f8f9fa; padding: 20px; border-radius: 12px; border-top: 5px solid var(--accent); }
         .skill-list { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
         .skill-item { background: white; border: 1px solid var(--accent); padding: 5px 12px; border-radius: 20px; font-size: 12px; }
+        .job-item { margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .job-desc { font-size: 0.9rem; color: #555; margin-top: 5px; }
     </style>
 </head>
 <body>
     <div class="grid-container">
         <div class="header-box">
-            <h1><%= personal_info.full_name %></h1>
+            <h1><%= personal_info.fullName %></h1>
             <p><%= summary %></p>
         </div>
+
         <div class="info-box">
             <h3>Contact & Skills</h3>
             <p><%= personal_info.email %></p>
-            <div class="skill-list">
-                <% skills.forEach(s => { %><span class="skill-item"><%= s %></span><% }) %>
+            <p><%= personal_info.phone %></p> <div class="skill-list">
+                <% if(skills && skills.length > 0) { %>
+                    <% skills.forEach(s => { %>
+                        <span class="skill-item"><%= s %></span>
+                    <% }) %>
+                <% } %>
             </div>
         </div>
+
         <div class="info-box">
             <h3>Experience</h3>
-            <% experience.forEach(exp => { %>
-                <div style="margin-bottom: 15px;">
-                    <strong><%= exp.role %></strong> @ <%= exp.company_name %><br>
-                    <small><%= exp.start_date %> - <%= exp.end_date || 'Present' %></small>
-                </div>
-            <% }) %>
+            <% if(experience && experience.length > 0) { %>
+                <% experience.forEach(exp => { %>
+                    <div class="job-item">
+                        <strong><%= exp.title %></strong> @ <%= exp.company %><br>
+                        
+                        <small style="color: var(--accent);">
+                            <%= exp.startDate %> - <%= exp.endDate || 'Present' %>
+                        </small>
+                        
+                        <div class="job-desc">
+                            <%= exp.role %>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p>No experience listed.</p>
+            <% } %>
         </div>
+        
+        <div class="info-box" style="grid-column: span 2;">
+            <h3>Education</h3>
+            <% if(education && education.length > 0) { %>
+                <% education.forEach(edu => { %>
+                    <div style="margin-bottom: 10px;">
+                        <strong><%= edu.degree %></strong>, <%= edu.school %> 
+                        <span style="float:right; color: #666;"><%= edu.year %></span>
+                    </div>
+                <% }) %>
+            <% } %>
+        </div>
+
     </div>
 </body>
 </html>

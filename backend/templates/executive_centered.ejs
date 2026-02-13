@@ -2,25 +2,113 @@
 <html>
 <head>
     <style>
-        body { text-align: center; font-family: 'Playfair Display', serif; padding: 50px; }
-        .name { font-size: 32px; letter-spacing: 2px; text-transform: uppercase; border-bottom: 1px solid #ccc; display: inline-block; padding-bottom: 10px; }
-        .contact { margin: 15px 0; font-style: italic; color: #555; }
-        .section { margin-top: 40px; text-align: left; max-width: 800px; margin-left: auto; margin-right: auto; }
-        .section-h { border-bottom: 2px solid #333; font-weight: bold; margin-bottom: 15px; }
+        /* استيراد خط كلاسيكي جميل */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+        
+        body { 
+            text-align: center; 
+            font-family: 'Playfair Display', serif; 
+            padding: 50px; 
+            color: #333;
+            line-height: 1.6;
+        }
+        .name { 
+            font-size: 36px; 
+            letter-spacing: 3px; 
+            text-transform: uppercase; 
+            border-bottom: 2px solid #ccc; 
+            display: inline-block; 
+            padding-bottom: 15px; 
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .contact { 
+            margin: 10px 0 40px 0; 
+            font-style: italic; 
+            color: #666; 
+            font-size: 14px;
+        }
+        .section { 
+            margin-top: 30px; 
+            text-align: left; 
+            max-width: 800px; 
+            margin-left: auto; 
+            margin-right: auto; 
+        }
+        .section-h { 
+            border-bottom: 1px solid #333; 
+            font-weight: bold; 
+            font-size: 20px;
+            margin-bottom: 20px; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding-bottom: 5px;
+        }
+        .job-entry, .edu-entry { margin-bottom: 25px; }
+        .job-title { font-weight: bold; font-size: 18px; color: #222; }
+        .job-company { font-style: italic; color: #555; }
+        .job-date { float: right; font-size: 14px; color: #777; }
+        .job-desc { margin-top: 5px; font-size: 15px; }
+        
+        /* Skills Style */
+        .skills-container { text-align: center; margin-top: 10px; }
+        .skill-badge { display: inline-block; margin: 0 10px; font-style: italic; }
     </style>
 </head>
 <body>
-    <div class="name"><%= personal_info.full_name %></div>
-    <div class="contact"><%= personal_info.email %> | <%= personal_info.phone %></div>
+    <div class="name"><%= personal_info.fullName %></div>
+    
+    <div class="contact">
+        <%= personal_info.email %> | <%= personal_info.phone %>
+        <% if(personal_info.address) { %> | <%= personal_info.address %> <% } %>
+        <% if(personal_info.linkedin) { %> | <%= personal_info.linkedin %> <% } %>
+    </div>
+
     <div class="section">
         <div class="section-h">Professional Summary</div>
         <p><%= summary %></p>
     </div>
+
     <div class="section">
         <div class="section-h">Experience</div>
-        <% experience.forEach(exp => { %>
-            <p><strong><%= exp.company_name %></strong> - <%= exp.role %> (<%= exp.start_date %>)</p>
+        <% if(experience && experience.length > 0) { %>
+            <% experience.forEach(exp => { %>
+                <div class="job-entry">
+                    <div class="job-date"><%= exp.startDate %> - <%= exp.endDate || 'Present' %></div>
+                    
+                    <div class="job-title">
+                        <%= exp.title %> <span class="job-company">at <%= exp.company %></span>
+                    </div>
+                    
+                    <div class="job-desc"><%= exp.role %></div>
+                </div>
+            <% }) %>
+        <% } %>
+    </div>
+
+    <% if(education && education.length > 0) { %>
+    <div class="section">
+        <div class="section-h">Education</div>
+        <% education.forEach(edu => { %>
+            <div class="edu-entry">
+                <div class="job-date"><%= edu.year %></div>
+                <div class="job-title"><%= edu.degree %></div>
+                <div class="job-company"><%= edu.school %></div>
+            </div>
         <% }) %>
     </div>
+    <% } %>
+
+    <% if(skills && skills.length > 0) { %>
+    <div class="section">
+        <div class="section-h" style="text-align: center; border-bottom: none; margin-bottom: 10px;">Core Competencies</div>
+        <div class="skills-container">
+            <% skills.forEach(s => { %>
+                <span class="skill-badge">• <%= s %></span>
+            <% }) %>
+        </div>
+    </div>
+    <% } %>
+
 </body>
 </html>

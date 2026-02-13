@@ -1,9 +1,162 @@
-<style>
-    body { background: #fdfbfb; font-family: 'Lora', serif; padding: 60px; }
-    .card { background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 40px; }
-    h1 { color: #6c5ce7; border-bottom: 2px solid #efecff; }
-</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        /* استيراد خط Lora الجميل */
+        @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&display=swap');
+
+        :root {
+            --primary-color: <%= (typeof template_settings !== 'undefined' && template_settings.color) ? template_settings.color : '#6c5ce7' %>;
+            --bg-color: #fdfbfb;
+            --text-color: #555;
+        }
+
+        body { 
+            background: var(--bg-color); 
+            font-family: 'Lora', serif; 
+            padding: 40px; 
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        .card { 
+            background: white; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            padding: 50px; 
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Header Styles */
+        h1 { 
+            color: var(--primary-color); 
+            border-bottom: 2px solid #efecff; 
+            padding-bottom: 15px; 
+            margin-top: 0;
+            font-size: 2.5em;
+        }
+
+        .contact-row {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #888;
+            font-style: italic;
+        }
+        
+        .contact-row span { margin-right: 15px; }
+
+        /* Section Styles */
+        h2 {
+            color: #333;
+            font-size: 1.2em;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        p { line-height: 1.8; text-align: justify; }
+
+        /* Experience & Education Items */
+        .item { margin-bottom: 25px; }
+        
+        .item-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: baseline; 
+            margin-bottom: 5px;
+        }
+        
+        .item-title { 
+            font-weight: bold; 
+            font-size: 1.1em; 
+            color: #333; 
+        }
+        
+        .item-date { 
+            color: var(--primary-color); 
+            font-weight: bold; 
+            font-size: 0.9em; 
+        }
+        
+        .item-subtitle { 
+            font-style: italic; 
+            color: #777; 
+            margin-bottom: 10px; 
+        }
+
+        /* Skills Tags */
+        .skills-wrapper { margin-top: 10px; }
+        .skill-tag {
+            display: inline-block;
+            background: #efecff;
+            color: var(--primary-color);
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
 <div class="card">
-    <h1><%= personal_info.full_name %></h1>
+    <h1><%= personal_info.fullName %></h1>
+    
+    <div class="contact-row">
+        <span><%= personal_info.email %></span>
+        <span><%= personal_info.phone %></span>
+        <% if(personal_info.address) { %><span><%= personal_info.address %></span><% } %>
+        <% if(personal_info.linkedin) { %><span>LinkedIn</span><% } %>
+    </div>
+
+    <% if(summary) { %>
     <p><%= summary %></p>
+    <% } %>
+
+    <% if(experience && experience.length > 0) { %>
+    <h2>Experience</h2>
+    <% experience.forEach(exp => { %>
+        <div class="item">
+            <div class="item-header">
+                <span class="item-title"><%= exp.title %></span>
+                <span class="item-date"><%= exp.startDate %> - <%= exp.endDate || 'Present' %></span>
+            </div>
+            
+            <div class="item-subtitle"><%= exp.company %></div>
+            
+            <p style="margin-top: 5px;"><%= exp.role %></p>
+        </div>
+    <% }) %>
+    <% } %>
+
+    <% if(education && education.length > 0) { %>
+    <h2>Education</h2>
+    <% education.forEach(edu => { %>
+        <div class="item">
+            <div class="item-header">
+                <span class="item-title"><%= edu.degree %></span>
+                <span class="item-date"><%= edu.year %></span>
+            </div>
+            <div class="item-subtitle"><%= edu.school %></div>
+        </div>
+    <% }) %>
+    <% } %>
+
+    <% if(skills && skills.length > 0) { %>
+    <h2>Skills</h2>
+    <div class="skills-wrapper">
+        <% skills.forEach(s => { %>
+            <span class="skill-tag"><%= s %></span>
+        <% }) %>
+    </div>
+    <% } %>
+
 </div>
+
+</body>
+</html>

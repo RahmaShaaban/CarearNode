@@ -1,12 +1,70 @@
 <style>
-    .bold-header { background: <%= template_settings?.color || '#e74c3c' %>; color: white; padding: 50px; }
+    /* تأمين الكود في حالة عدم وجود إعدادات ألوان */
+    .bold-header { 
+        background: <%= (typeof template_settings !== 'undefined' && template_settings.color) ? template_settings.color : '#e74c3c' %>; 
+        color: white; 
+        padding: 50px; 
+    }
     .main-body { padding: 40px; display: grid; grid-template-columns: 1fr 2fr; gap: 30px; }
+    h1 { margin: 0; font-size: 2.5em; text-transform: uppercase; }
+    h2 { margin: 5px 0 0; opacity: 0.9; font-weight: normal; }
+    h3 { border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 0; color: #333; }
+    ul { padding-left: 20px; }
+    li { margin-bottom: 5px; }
 </style>
+
 <div class="bold-header">
-    <h1><%= personal_info.full_name %></h1>
-    <h2><%= experience[0]?.role %></h2>
+    <h1><%= personal_info.fullName %></h1>
+    
+    <h2><%= (experience && experience.length > 0) ? experience[0].title : '' %></h2>
 </div>
+
 <div class="main-body">
-    <div><h3>Skills</h3><ul><% skills.forEach(s => { %><li><%= s %></li><% }) %></ul></div>
-    <div><h3>Summary</h3><p><%= summary %></p></div>
+    <div>
+        <h3>Contact</h3>
+        <p>📧 <%= personal_info.email %></p>
+        <p>📱 <%= personal_info.phone %></p>
+
+        <h3>Skills</h3>
+        <ul>
+            <% if (skills && skills.length > 0) { %>
+                <% skills.forEach(s => { %><li><%= s %></li><% }) %>
+            <% } %>
+        </ul>
+        
+        <h3>Education</h3>
+        <% if (education && education.length > 0) { %>
+            <% education.forEach(edu => { %>
+                <div style="margin-bottom: 10px;">
+                    <strong><%= edu.degree %></strong><br>
+                    <%= edu.school %> <br>
+                    <small><%= edu.year %></small>
+                </div>
+            <% }) %>
+        <% } %>
+    </div>
+
+    <div>
+        <h3>Summary</h3>
+        <p><%= summary %></p>
+
+        <h3>Experience</h3>
+        <% if (experience && experience.length > 0) { %>
+            <% experience.forEach(exp => { %>
+                <div style="margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 5px; color: #2c3e50;">
+                        <%= exp.title %> <span style="font-weight: normal; color: #7f8c8d;">at <%= exp.company %></span>
+                    </h4>
+                    
+                    <small style="color: #e74c3c; font-weight: bold;">
+                        <%= exp.startDate %> - <%= exp.endDate || 'Present' %>
+                    </small>
+                    
+                    <p style="margin-top: 5px;"><%= exp.role %></p>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <p>No experience added.</p>
+        <% } %>
+    </div>
 </div>
