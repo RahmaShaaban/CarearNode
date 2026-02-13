@@ -54,7 +54,7 @@ const Home = () => {
                     <div className="icon-container">
                         <img src={cvIcon} alt="CV Builder" />
                     </div>
-                    <h3>CV Builder</h3>
+                    <h3>CV</h3>
                 </Link>
 
             </div>
