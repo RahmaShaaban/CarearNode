@@ -29,7 +29,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/uploads/cvs', express.static(path.join(__dirname, 'uploads/cvs')));
 
-// // 5. راوت التجربة (Test Route لـ CV)
+/////////////////////////////////////// للتأكد من أن القوالب (Templates) متاحة للعرض
+app.use('/templates', express.static(path.join(__dirname, 'backend', 'templates')));
+
+
+/* // 5. راوت التجربة (Test Route لـ CV)
 // app.get('/test-sidebar-cv', (req, res) => {
 //     const dummyData = {
 //         personal_info: {
@@ -71,7 +75,7 @@ app.use('/uploads/cvs', express.static(path.join(__dirname, 'uploads/cvs')));
 //     // سيقوم بالبحث عن ملف backend/templates/professional_classic.ejs
 //     res.render('sidebar_professional', dummyData);
 // });
-
+*/
 // 6. ربط المسارات (Routes)
 const cvRoutes = require('./backend/routes/cvRoutes');
 const cvBuilderRoutes = require('./backend/routes/cvBuilderRoutes');

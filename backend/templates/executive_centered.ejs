@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { text-align: center; font-family: 'Playfair Display', serif; padding: 50px; }
+        .name { font-size: 32px; letter-spacing: 2px; text-transform: uppercase; border-bottom: 1px solid #ccc; display: inline-block; padding-bottom: 10px; }
+        .contact { margin: 15px 0; font-style: italic; color: #555; }
+        .section { margin-top: 40px; text-align: left; max-width: 800px; margin-left: auto; margin-right: auto; }
+        .section-h { border-bottom: 2px solid #333; font-weight: bold; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="name"><%= personal_info.full_name %></div>
+    <div class="contact"><%= personal_info.email %> | <%= personal_info.phone %></div>
+    <div class="section">
+        <div class="section-h">Professional Summary</div>
+        <p><%= summary %></p>
+    </div>
+    <div class="section">
+        <div class="section-h">Experience</div>
+        <% experience.forEach(exp => { %>
+            <p><strong><%= exp.company_name %></strong> - <%= exp.role %> (<%= exp.start_date %>)</p>
+        <% }) %>
+    </div>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<style>
+    :root { --dark: #2d3436; --accent: <%= template_settings?.color || '#fab1a0' %>; }
+    body { font-family: 'Roboto', sans-serif; margin: 0; padding: 0; background: #fff; }
+    .side-bar { background: var(--dark); color: white; padding: 40px; text-align: left; }
+    .content { padding: 40px; }
+    .section-title { color: var(--accent); border-bottom: 1px solid var(--accent); text-transform: uppercase; }
+</style>
+<div class="side-bar">
+    <h1><%= personal_info.full_name %></h1>
+    <p><%= personal_info.email %> | <%= personal_info.location %></p>
+</div>
+<div class="content">
+    <h3 class="section-title">Experience</h3>
+    <% experience.forEach(exp => { %>
+        <div><strong><%= exp.role %></strong> at <%= exp.company_name %></div>
+    <% }) %>
+</div>

@@ -1,4 +1,4 @@
-### اختبار رفع وتحليل السي في
+### اختبار رفع وتحليل ملف
 POST http://localhost:5000/api/cv/upload
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
 
@@ -6,10 +6,9 @@ Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
 Content-Disposition: form-data; name="userId"
 
 1
-
 ------WebKitFormBoundary
-Content-Disposition: form-data; name="cvFile"; filename="cv.pdf"
+Content-Disposition: form-data; name="cvFile"; filename="HCI_Lecture.pdf"
 Content-Type: application/pdf
 
-< D:/Rahma-Shaaban-Resume-2025.pdf
+< D:/Materials/4t/HCI/Lectures/HCI_Lecture 4.pdf
 ------WebKitFormBoundary--

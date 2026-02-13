@@ -1,0 +1,15 @@
+<style>
+    body { display: flex; font-family: 'Source Code Pro', monospace; }
+    .left { width: 30%; background: #0984e3; color: white; padding: 20px; height: 100vh; }
+    .right { width: 70%; padding: 40px; }
+    .code-style { color: #ffeaa7; }
+</style>
+<div class="left">
+    <h3>// Contact</h3>
+    <p><%= personal_info.email %></p>
+</div>
+<div class="right">
+    <h2 class="code-style">class Candidate {</h2>
+    <p>constructor() { this.name = "<%= personal_info.full_name %>"; }</p>
+    <h2>}</h2>
+</div>
