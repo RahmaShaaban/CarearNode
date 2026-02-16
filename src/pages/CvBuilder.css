@@ -209,7 +209,7 @@ input:focus, textarea:focus {
     margin-top: 30px;
 }
 
-.btn-next, .btn-submit, .btn-download, .btn-preview {
+.btn-next, .btn-submit, .btn-download, .btn-preview , .btn-save-profile {
     background: #58A492; /* اللون الأساسي للأزرار (النعناع) */
     color: white;
     border: none;
@@ -225,8 +225,8 @@ input:focus, textarea:focus {
     gap: 8px;
 }
 
-.btn-next:hover, .btn-submit:hover, .btn-download:hover {
-    background: #2F5D54; /* الأخضر الغامق عند التحويم */
+.btn-next:hover, .btn-submit:hover, .btn-download:hover , .btn-preview:hover , .btn-save-profile:hover {
+    background: #2F5D54; 
 }
 
 .btn-back {
@@ -260,14 +260,6 @@ input:focus, textarea:focus {
     justify-content: center;
     gap: 15px;
     margin: 30px 0;
-}
-
-.btn-preview {
-    background: #2F5D54; /* زر المعاينة بالأخضر الغامق للتمييز */
-}
-
-.btn-preview:hover {
-    background: #1f4039; /* درجة أغمق قليلاً عند التحويم */
 }
 
 .btn-home {

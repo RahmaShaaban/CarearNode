@@ -481,12 +481,12 @@
     margin-top: 2px;
 }
 
-.btn-view-resume {
+.btn-view-resume , .btn-Download-resume{
     width: 100%;
     padding: 10px;
     border-radius: 8px;
     background: white;
-    border: 1px solid #e2e8f0;
+    border: 1.2px solid #8f8f8f;
     color: #2d3748;
     font-weight: 600;
     cursor: pointer;
@@ -494,10 +494,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 9px;
+    text-decoration: none;
+    margin: 3px;
 }
 
-    .btn-view-resume:hover {
+    .btn-view-resume:hover , .btn-Download-resume:hover {
         background-color: #f6fcfb;
         border-color: #43766C;
     }

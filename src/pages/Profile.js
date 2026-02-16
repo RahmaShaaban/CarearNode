@@ -209,8 +209,8 @@ function Profile() {
                                 </div>
                                 <div className="resume-footer-actions">
                                     {/* روابط الـ Preview والـ Download الحقيقية */}
-                                    <a href={`http://localhost:5000/api/cv-builder/preview/${userData.builtCvId}`} target="_blank" rel="noreferrer" className="btn-view-resume">View Online</a>
-                                    <a href={`http://localhost:5000/api/cv-builder/download/${userData.builtCvId}`} target="_blank" rel="noreferrer" className="btn-replace-resume">Download PDF</a>
+                                    <a href={`http://localhost:5000/api/cv-builder/preview/${userData.builtCvId}`} target="_blank" rel="noreferrer" className="btn-view-resume">View</a>
+                                    <a href={`http://localhost:5000/api/cv-builder/download/${userData.builtCvId}`} target="_blank" rel="noreferrer" className="btn-Download-resume">Download PDF</a>
                                 </div>
                             </div>
                         )}
