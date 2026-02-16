@@ -1,6 +1,6 @@
 const fs = require('fs');
 const PDFParser = require("pdf2json");
-const { CV, User } = require('../models/index');
+const { CV , User} = require('../models/index');
 const axios = require('axios');
 
 function parsePDF(filePath) {
@@ -27,12 +27,25 @@ exports.processCV = async (req, res) => {
                 messages: [
                     {
                         role: "system",
-                        content: `You are a Strict Recruiter. Analyze CV gaps.
+                        content: `You are an Elite Technical Recruiter. Your task is to perform a FULL AUDIT of the CV text.
+                        
+                        AUDIT SCOPE (Check EVERYTHING):
+                        1. Personal Info: Professionalism of email, LinkedIn presence (if mentioned), and location clarity.
+                        2. Summary: Is it generic or tailored?
+                        3. Technical Skills: Depth and variety.
+                        4. Projects: Complexity, tools used, and impact. (Crucial: Differentiate between basic student projects and advanced ones).
+                        5. Format: Organization and readability.
+
+                        SCORING RULES:
+                        - If the file is NOT a CV (e.g. book, exam, notes), set is_cv to false and overall_score to 0.0.
+                        - If it is a CV, score it from 1.0 to 10.0. 
+                        - Be STRICT: If there are missing skills or basic projects, the score MUST reflect that (no automatic 10s).
+                        
                         Return ONLY JSON: { "overall_score": float, "is_cv": boolean, "strengths": [], "missing_skills": [], "recommendations": [] }`
                     },
                     {
                         role: "user",
-                        content: `CV Text: ${extractedText}`
+                        content: `Perform a deep audit on this text. Evaluate project complexity and professional details: ${extractedText}`
                     }
                 ],
                 response_format: { type: "json_object" }
@@ -42,27 +55,29 @@ exports.processCV = async (req, res) => {
 
         let parsedData = JSON.parse(response.data.choices[0].message.content);
 
-        // 🆕 --- منطق تعديل السكور الحسابي (عشان الرقم يتغير غصب عن الـ AI) ---
-        if (parsedData.missing_skills && parsedData.missing_skills.length > 0) {
-            const gapsCount = parsedData.missing_skills.length;
+        // 🆕 --- منطق المعالجة الحسابية (لضمان الفروقات والمصداقية) ---
+        
+        // 1. تصفير أي ملف مش سي في فوراً
+        if (parsedData.is_cv === false || parsedData.overall_score < 2.0) {
+            parsedData.overall_score = 0.0;
+            parsedData.is_cv = false;
+            parsedData.recommendations = ["The uploaded file is not recognized as a professional CV. Please upload a PDF resume."];
+        } 
+        // 2. تطبيق خصم حقيقي على النواقص عشان يحس بالفرق بين السنتين
+        else if (parsedData.missing_skills && parsedData.missing_skills.length > 0) {
+            const gaps = parsedData.missing_skills.length;
+            let currentScore = parseFloat(parsedData.overall_score);
             
-            // 1. نبدأ بسكور افتراضي عالي لو الـ AI باعت 10
-            let rawScore = parseFloat(parsedData.overall_score);
-            
-            // 2. خصم إجباري: 0.7 درجة عن كل مهارة ناقصة (Cloud, DevOps, etc.)
-            let deduction = gapsCount * 0.7; 
-            
-            // 3. حساب السكور الجديد
-            let newScore = Math.max(1.5, rawScore - deduction);
+            // خصم تصاعدي: كل ما زادت النواقص زاد الخصم
+            let penalty = gaps * 0.6; 
+            let finalScore = currentScore - penalty;
 
-            // 4. تأمين: لو فيه مهارات ناقصة مستحيل الدرجة تزيد عن 8.0
-            if (gapsCount >= 2 && newScore > 8.0) newScore = 7.8;
-            if (gapsCount >= 4 && newScore > 7.0) newScore = 6.5;
+            // سقف للدرجة: لو فيه نواقص مستحيل ياخد 10 أو حتى 9
+            if (finalScore > 8.8) finalScore = 8.5;
+            if (gaps > 3 && finalScore > 7.5) finalScore = 7.2;
 
-            // تحديث الرقم النهائي
-            parsedData.overall_score = parseFloat(newScore.toFixed(1));
+            parsedData.overall_score = parseFloat(Math.max(1.0, finalScore).toFixed(1));
         }
-        // ----------------------------------------------------------------------
 
         const newCV = await CV.create({
             file_path: filePath,
@@ -73,10 +88,9 @@ exports.processCV = async (req, res) => {
 
         await User.update({ cv_id_analysis: newCV.id }, { where: { id: userId } });
 
-        res.status(200).json({ success: true, message: "CV Analyzed", data: newCV });
+        res.status(200).json({ success: true, message: "CV Deep Audit Complete", data: newCV });
 
     } catch (error) {
-        console.error("Error:", error);
         res.status(500).json({ success: false, error: "فشل التحليل" });
     }
 };
