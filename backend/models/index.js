@@ -48,5 +48,6 @@ module.exports = {
     TechSkill,
     Template, // 🆕 لازم يكون موجود هنا عشان الـ Controller يشوفه
     UserCVData,
+  
     CV
 };

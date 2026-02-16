@@ -1,4 +1,3 @@
-// 1. التعديل المهم هنا: استدعاء الموديلات من ملف الاندكس المجمع
 const { UserCVData, Template, User } = require('../models'); 
 const axios = require('axios');
 const puppeteer = require('puppeteer');
@@ -21,7 +20,6 @@ async function optimizeWithGroq(text, type) {
         });
         return response.data.choices[0].message.content.trim();
     } catch (err) {
-        console.error(`⚠️ Groq ${type} Error:`, err.message);
         return text;
     }
 }
@@ -49,15 +47,22 @@ exports.createCVFromScratch = async (req, res) => {
             template_settings: templateSettings
         });
 
-        // ربط الـ CV الجديد ببروفايل اليوزر
-        if (User) {
-            await User.update(
-                { cv_id: newCVData.id }, 
-                { where: { id: userId } }
-            );
-        }
-
+        // 🆕 تم إزالة التحديث التلقائي من هنا بناءً على طلبك
         res.status(201).json({ success: true, data: newCVData });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// 🆕 الفانكشن الجديدة (حفظ يدوي في البروفايل) تبدأ من سطر 58
+exports.saveCVToProfile = async (req, res) => {
+    try {
+        const { userId, cvId } = req.body;
+        await User.update(
+            { cv_id: cvId }, 
+            { where: { id: userId } }
+        );
+        res.status(200).json({ success: true, message: "CV saved successfully!" });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
@@ -66,16 +71,9 @@ exports.createCVFromScratch = async (req, res) => {
 exports.previewCV = async (req, res) => {
     try {
         const { id } = req.params;
-        // التأكد من استخدام include صحيح مع الـ Alias المعرف في index.js
-        const cvData = await UserCVData.findByPk(id, { 
-            include: [{ model: Template, as: 'template' }] 
-        });
-
-        if (!cvData) return res.status(404).send('الـ CV مش موجود');
-
-        const templateName = cvData.template?.layout_type || 'modern_ats';
-
-        res.render(templateName, { 
+        const cvData = await UserCVData.findByPk(id, { include: [{ model: Template, as: 'template' }] });
+        if (!cvData) return res.status(404).send('CV Not Found');
+        res.render(cvData.template?.layout_type || 'modern_ats', { 
             personal_info: cvData.personal_info,
             summary: cvData.summary,
             experience: cvData.experience,
@@ -85,24 +83,16 @@ exports.previewCV = async (req, res) => {
             template_settings: cvData.template_settings
         });
     } catch (error) {
-        console.error("Preview Error:", error);
-        res.status(500).send("خطأ في العرض");
+        res.status(500).send("Render Error");
     }
 };
 
 exports.downloadCVAsPDF = async (req, res) => {
     try {
         const { id } = req.params;
-        const cvData = await UserCVData.findByPk(id, { 
-            include: [{ model: Template, as: 'template' }] 
-        });
-
-        if (!cvData) return res.status(404).send('الـ CV مش موجود');
-
+        const cvData = await UserCVData.findByPk(id, { include: [{ model: Template, as: 'template' }] });
         const templateName = cvData.template?.layout_type || 'modern_ats';
-        const templatePath = path.join(__dirname, `../templates/${templateName}.ejs`);
-
-        const html = await ejs.renderFile(templatePath, {
+        const html = await ejs.renderFile(path.join(__dirname, `../templates/${templateName}.ejs`), {
             personal_info: cvData.personal_info,
             summary: cvData.summary,
             experience: cvData.experience,
@@ -111,33 +101,20 @@ exports.downloadCVAsPDF = async (req, res) => {
             projects: cvData.custom_sections,
             template_settings: cvData.template_settings
         });
-
-        const browser = await puppeteer.launch({ 
-            headless: "new",
-            args: ['--no-sandbox', '--disable-setuid-sandbox'] 
-        });
+        const browser = await puppeteer.launch({ headless: "new", args: ['--no-sandbox'] });
         const page = await browser.newPage();
         await page.setContent(html, { waitUntil: 'networkidle0' });
-        
-        const pdfBuffer = await page.pdf({
-            format: 'A4',
-            printBackground: true,
-            margin: { top: '10mm', right: '10mm', bottom: '10mm', left: '10mm' }
-        });
-
+        const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
         await browser.close();
         res.contentType("application/pdf");
-        res.setHeader("Content-Disposition", `attachment; filename=CareerNode_CV_${id}.pdf`);
         res.send(pdfBuffer);
     } catch (error) {
-        console.error("PDF Error:", error);
-        res.status(500).send("خطأ أثناء استخراج الـ PDF");
+        res.status(500).send("PDF Error");
     }
 };
 
 exports.getTemplates = async (req, res) => {
     try {
-        // سحب جميع القوالب المفعلة من الداتابيز
         const allTemplates = await Template.findAll({ where: { is_active: true } });
         res.status(200).json({ success: true, data: allTemplates });
     } catch (error) {

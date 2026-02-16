@@ -10,16 +10,9 @@ function Profile() {
     const [isEditing, setIsEditing] = useState(false);
     const [previewImage, setPreviewImage] = useState(null);
     const [imageFile, setImageFile] = useState(null);
-
-    // State لتخزين الوظائف
     const [jobOptions, setJobOptions] = useState([]);
 
-    const [editForm, setEditForm] = useState({
-        fullName: "",
-        email: "",
-        role: "",
-        bio: ""
-    });
+    const [editForm, setEditForm] = useState({ fullName: "", email: "", role: "", bio: "" });
 
     const [userData, setUserData] = useState({
         fullName: "Loading...",
@@ -27,13 +20,13 @@ function Profile() {
         bio: "...",
         profilePic: "https://via.placeholder.com/150",
         role: "Student",
-        averageScore: 0, // هنجيبها من البروجرس الحقيقي
+        averageScore: 0,
         interviewsDone: 0,
         resumeUploaded: false, 
         resumeName: "",        
         resumeDate: "",        
-        // هنا هنخزن الرودمابس الحقيقية
-        enrolledRoadmaps: []
+        enrolledRoadmaps: [],
+        builtCvId: null
     });
 
     useEffect(() => {
@@ -45,46 +38,41 @@ function Profile() {
             }
 
             try {
-                // أ. جلب بيانات البروفايل (عدلنا الباك إند عشان يجيب UserRoadmaps)
                 const profileRes = await fetch(`http://localhost:5000/api/auth/profile/${userId}`);
-                
                 if (profileRes.ok) {
-                    const profileData = await profileRes.json();
+                    const data = await profileRes.json();
                     
-                    // حساب متوسط الدرجات من الرودمابس
-                    const roadmaps = profileData.UserRoadmaps || [];
+                    const roadmaps = data.UserRoadmaps || [];
                     let totalProgress = 0;
                     roadmaps.forEach(r => totalProgress += (r.progress || 0));
                     const avgScore = roadmaps.length > 0 ? Math.round(totalProgress / roadmaps.length) : 0;
 
                     setUserData(prevState => ({
                         ...prevState,
-                        fullName: profileData.full_name,
-                        email: profileData.email,
-                        bio: profileData.about_me || "No bio added yet.",
-                        role: profileData.role || "Student",
-                        profilePic: profileData.profile_image
-                            ? `http://localhost:5000${profileData.profile_image}`
-                            : "https://via.placeholder.com/150",
-                        // تخزين الرودمابس الحقيقية
+                        fullName: data.full_name,
+                        email: data.email,
+                        bio: data.about_me || "No bio added yet.",
+                        role: data.role || "Student",
+                        profilePic: data.profile_image ? `http://localhost:5000${data.profile_image}` : "https://via.placeholder.com/150",
                         enrolledRoadmaps: roadmaps,
                         averageScore: avgScore,
-                        interviewsDone: roadmaps.filter(r => r.status === 'completed').length // مثال: عدد المسارات المكتملة
+                        // الربط مع بيانات الـ CV الحقيقية
+                        resumeUploaded: !!data.builtCV,
+                        resumeName: data.builtCV ? "AI Generated CV" : "",
+                        resumeDate: data.builtCV ? new Date(data.builtCV.createdAt).toLocaleDateString() : "",
+                        builtCvId: data.builtCV ? data.builtCV.id : null
                     }));
                 }
 
-                // ب. جلب قائمة الوظائف
                 const jobsRes = await fetch('http://localhost:5000/api/jobs');
                 if (jobsRes.ok) {
                     const jobsData = await jobsRes.json();
                     setJobOptions(jobsData);
                 }
-
             } catch (error) {
-                console.error("Connection Error:", error);
+                console.error("Error:", error);
             }
         };
-
         fetchData();
     }, [navigate]);
 
@@ -112,29 +100,6 @@ function Profile() {
         }
     };
 
-    const handleResumeChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const today = new Date().toLocaleDateString('en-US');
-            setUserData(prev => ({
-                ...prev,
-                resumeUploaded: true,
-                resumeName: file.name,
-                resumeDate: today
-            }));
-        }
-    };
-
-    const handleRemoveResume = () => {
-        setUserData(prev => ({
-            ...prev,
-            resumeUploaded: false,
-            resumeName: "",
-            resumeDate: ""
-        }));
-        if(resumeInputRef.current) resumeInputRef.current.value = "";
-    };
-
     const handleSaveChanges = async () => {
         const userId = localStorage.getItem('userId');
         const formData = new FormData();
@@ -142,56 +107,23 @@ function Profile() {
         formData.append('email', editForm.email);
         formData.append('role', editForm.role);
         formData.append('bio', editForm.bio);
-
-        if (imageFile) {
-            formData.append('profileImage', imageFile);
-        }
+        if (imageFile) formData.append('profileImage', imageFile);
 
         try {
             const response = await fetch(`http://localhost:5000/api/auth/profile/${userId}`, {
                 method: 'PUT',
                 body: formData,
             });
-
             const data = await response.json();
-
             if (response.ok) {
-                setUserData(prev => ({
-                    ...prev,
-                    fullName: data.user.full_name,
-                    email: data.user.email,
-                    role: data.user.role,
-                    bio: data.user.about_me,
-                    profilePic: data.user.profile_image
-                        ? `http://localhost:5000${data.user.profile_image}`
-                        : prev.profilePic
-                }));
-                // ---------------------------------------------------------
-                // 2. (الإضافة الجديدة) تحديث LocalStorage عشان النافبار يشوف الصورة
-                // ---------------------------------------------------------
-                if (data.user.profile_image) {
-                    localStorage.setItem('userImage', data.user.profile_image);
-
-                    // إجبار النافبار على التحديث بعمل ريفريش للصفحة
-                    window.location.reload();
-                }
-                // --------------------------------------------------------
-
-
-
-
-
-                setIsEditing(false);
-                alert("Changes saved successfully!");
+                if (data.user.profile_image) localStorage.setItem('userImage', data.user.profile_image);
+                window.location.reload();
             }
-        } catch (error) {
-            console.error("Save Error:", error);
-            alert("Failed to connect to server");
-        }
+        } catch (error) { console.error(error); }
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('userId');
+        localStorage.clear();
         navigate('/Sign_In');
     };
 
@@ -205,41 +137,16 @@ function Profile() {
                 </div>
 
                 <div className="avatar-section">
-                    <div className="avatar-wrapper" style={{ position: 'relative' }}>
-                        <img
-                            src={isEditing ? previewImage : userData.profilePic}
-                            className="avatar-img"
-                            alt="Profile"
-                            style={{ opacity: isEditing ? 0.7 : 1 }}
-                        />
+                    <div className="avatar-wrapper">
+                        <img src={isEditing ? previewImage : userData.profilePic} className="avatar-img" alt="Profile" />
                         {isEditing && (
-                            <div
-                                className="camera-overlay"
-                                onClick={() => profileImageInputRef.current.click()}
-                                style={{
-                                    position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-                                    cursor: 'pointer', color: 'white', background: 'rgba(0,0,0,0.5)', padding: '10px', borderRadius: '50%'
-                                }}
-                            >
+                            <div className="camera-overlay" onClick={() => profileImageInputRef.current.click()}>
                                 <i className="fa-solid fa-camera fa-xl"></i>
                             </div>
                         )}
-                        <input
-                            type="file"
-                            ref={profileImageInputRef}
-                            onChange={handleImageChange}
-                            style={{ display: 'none' }}
-                            accept="image/*"
-                        />
+                        <input type="file" ref={profileImageInputRef} onChange={handleImageChange} style={{ display: 'none' }} accept="image/*" />
                     </div>
-
-                    {!isEditing && (
-                        <div className="action-buttons">
-                            <button className="btn-edit" onClick={handleEditClick}>
-                                <i className="fa-solid fa-pen-to-square"></i> Edit Profile
-                            </button>
-                        </div>
-                    )}
+                    {!isEditing && <button className="btn-edit" onClick={handleEditClick}><i className="fa-solid fa-pen-to-square"></i> Edit Profile</button>}
                 </div>
 
                 {!isEditing ? (
@@ -252,153 +159,58 @@ function Profile() {
                         </div>
                     </div>
                 ) : (
-                    <div className="edit-form-container" style={{ padding: '20px 30px', boxSizing: 'border-box' }}>
-                        <div className="form-group" style={{ marginBottom: '15px' }}>
-                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Full Name</label>
-                            <input type="text" name="fullName" value={editForm.fullName} onChange={handleInputChange} className="form-input" style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }} />
-                        </div>
-                        
-                        <div className="form-group" style={{ marginBottom: '15px' }}>
-                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Current Role</label>
-                            <select 
-                                name="role" 
-                                value={editForm.role} 
-                                onChange={handleInputChange} 
-                                className="form-select" 
-                                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }}
-                            >
+                    <div className="edit-form-container" style={{ padding: '20px 30px' }}>
+                        <div className="form-group"><label>Full Name</label><input type="text" name="fullName" value={editForm.fullName} onChange={handleInputChange} className="form-input" /></div>
+                        <div className="form-group"><label>Current Role</label>
+                            <select name="role" value={editForm.role} onChange={handleInputChange} className="form-select">
                                 <option value="Student">Student</option>
-                                {jobOptions.length > 0 && jobOptions.map((job) => (
-                                    <option key={job.id} value={job.title}>
-                                        {job.title}
-                                    </option>
-                                ))}
+                                {jobOptions.map(job => <option key={job.id} value={job.title}>{job.title}</option>)}
                             </select>
                         </div>
-
-                        <div className="form-group" style={{ marginBottom: '15px' }}>
-                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Email</label>
-                            <input type="email" name="email" value={editForm.email} onChange={handleInputChange} className="form-input" style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }} />
-                        </div>
-                        <div className="form-group" style={{ marginBottom: '20px' }}>
-                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Bio</label>
-                            <textarea name="bio" value={editForm.bio} onChange={handleInputChange} rows="4" className="form-textarea" style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }} />
-                        </div>
+                        <div className="form-group"><label>Email</label><input type="email" name="email" value={editForm.email} onChange={handleInputChange} className="form-input" /></div>
+                        <div className="form-group"><label>Bio</label><textarea name="bio" value={editForm.bio} onChange={handleInputChange} rows="4" className="form-textarea" /></div>
                         <div className="edit-actions">
-                            <button className="edit-btn btn-cancel" onClick={() => setIsEditing(false)}>
-                                Cancel
-                            </button>
-                            <button className="edit-btn btn-save" onClick={handleSaveChanges}>
-                                Save Changes
-                            </button>
+                            <button className="edit-btn btn-cancel" onClick={() => setIsEditing(false)}>Cancel</button>
+                            <button className="edit-btn btn-save" onClick={handleSaveChanges}>Save Changes</button>
                         </div>
                     </div>
                 )}
 
                 <div className="stats-container">
-                    <div className="stat-card score-card">
-                        <div className="stat-icon-wrapper blue-bg"><i className="fa-solid fa-trophy"></i></div>
-                        <div className="stat-content">
-                            <span className="stat-value">{userData.averageScore}%</span>
-                            <span className="stat-label">Avg. Progress</span>
-                        </div>
-                    </div>
-                    <div className="stat-card completed-card">
-                        <div className="stat-icon-wrapper green-bg"><i className="fa-solid fa-graduation-cap"></i></div>
-                        <div className="stat-content">
-                            <span className="stat-value">{userData.enrolledRoadmaps.length}</span>
-                            <span className="stat-label">Active Paths</span>
-                        </div>
-                    </div>
+                    <div className="stat-card score-card"><span className="stat-value">{userData.averageScore}%</span><span className="stat-label">Avg. Progress</span></div>
+                    <div className="stat-card completed-card"><span className="stat-value">{userData.enrolledRoadmaps.length}</span><span className="stat-label">Active Paths</span></div>
                 </div>
 
                 <div className="dashboard-grid">
-                    {/* قسم عرض الـ Roadmaps الحقيقية */}
                     <div className="dashboard-card">
                         <h4 className="card-title"><i className="fa-solid fa-chart-line"></i> My Learning Paths</h4>
-                        
-                        {userData.enrolledRoadmaps && userData.enrolledRoadmaps.length > 0 ? (
-                            <div className="courses-list">
-                                {userData.enrolledRoadmaps.map((enrollment) => {
-                                    // التأكد من وجود بيانات الرودماب
-                                    const roadmapInfo = enrollment.Roadmap || {};
-                                    
-                                    return (
-                                        <div className="course-item" key={enrollment.id} onClick={() => navigate(`/roadmap/${enrollment.roadmapId}`)} style={{cursor: 'pointer'}}>
-                                            <div className="course-info">
-                                                <span className="course-name">{roadmapInfo.title || "Unknown Roadmap"}</span>
-                                                <span className="course-count">{enrollment.progress}%</span>
-                                            </div>
-                                            <div className="progress-bar-container">
-                                                <div 
-                                                    className="progress-bar-fill" 
-                                                    style={{ width: `${enrollment.progress}%` }}
-                                                ></div>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        ) : (
-                            <div className="empty-state-profile">
-                                <p>No active roadmaps yet.</p>
-                                <button className="btn-browse-small" onClick={() => navigate('/roadmaps')}>
-                                    Start Learning
-                                </button>
-                            </div>
-                        )}
+                        <div className="courses-list">
+                            {userData.enrolledRoadmaps.map(enrollment => (
+                                <div className="course-item" key={enrollment.id} onClick={() => navigate(`/roadmap/${enrollment.roadmapId}`)} style={{cursor: 'pointer'}}>
+                                    <div className="course-info"><span className="course-name">{enrollment.Roadmap?.title}</span><span className="course-count">{enrollment.progress}%</span></div>
+                                    <div className="progress-bar-container"><div className="progress-bar-fill" style={{ width: `${enrollment.progress}%` }}></div></div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
-                    {/* قسم السيرة الذاتية (زي ما هو) */}
                     <div className="dashboard-card">
-                        <input
-                            type="file"
-                            ref={resumeInputRef}
-                            style={{ display: 'none' }}
-                            accept=".pdf,.doc,.docx"
-                            onChange={handleResumeChange}
-                        />
-
+                        <h4 className="card-title purple-text"><i className="fa-solid fa-file-invoice"></i> Resume</h4>
                         {!userData.resumeUploaded ? (
-                            <>
-                                <h4 className="card-title purple-text"><i className="fa-solid fa-file-invoice"></i> Resume</h4>
-                                <div className="resume-upload-zone">
-                                    <div className="upload-icon-wrapper">
-                                        <i className="fa-solid fa-cloud-arrow-up"></i>
-                                    </div>
-                                    <p className="upload-text">No resume uploaded</p>
-                                    <p className="upload-subtext">Upload your CV to get AI insights</p>
-                                    <button className="btn-upload-outline" onClick={() => resumeInputRef.current.click()}>Upload PDF</button>
-                                </div>
-                            </>
+                            <div className="resume-upload-zone">
+                                <p className="upload-text">No resume uploaded</p>
+                                <button className="btn-upload-outline" onClick={() => navigate('/cv-builder')}>Create One Now</button>
+                            </div>
                         ) : (
                             <div className="resume-active-container">
-                                <div className="resume-header-row">
-                                    <h4 className="card-title purple-text" style={{ margin: 0 }}><i className="fa-solid fa-file-invoice"></i> My Resume</h4>
-                                    <span className="badge-active">Active</span>
-                                </div>
-
                                 <div className="resume-file-card">
-                                    <div className="file-icon-box">
-                                        <i className="fa-solid fa-file-pdf"></i>
-                                    </div>
-                                    <div className="file-info">
-                                        <span className="file-name">{userData.resumeName}</span>
-                                        <span className="file-date">Uploaded: {userData.resumeDate}</span>
-                                    </div>
+                                    <div className="file-icon-box"><i className="fa-solid fa-file-pdf"></i></div>
+                                    <div className="file-info"><span className="file-name">{userData.resumeName}</span><span className="file-date">Saved on: {userData.resumeDate}</span></div>
                                 </div>
-
-                                <button className="btn-view-resume">
-                                    <i className="fa-regular fa-eye"></i> View
-                                </button>
-
                                 <div className="resume-footer-actions">
-                                    <button className="btn-remove-resume" onClick={handleRemoveResume}>
-                                        <i className="fa-regular fa-trash-can"></i> Remove
-                                    </button>
-                                    <button className="btn-replace-resume" onClick={() => resumeInputRef.current.click()}>
-                                        Replace File
-                                    </button>
+                                    {/* روابط الـ Preview والـ Download الحقيقية */}
+                                    <a href={`http://localhost:5000/api/cv-builder/preview/${userData.builtCvId}`} target="_blank" rel="noreferrer" className="btn-view-resume">View Online</a>
+                                    <a href={`http://localhost:5000/api/cv-builder/download/${userData.builtCvId}`} target="_blank" rel="noreferrer" className="btn-replace-resume">Download PDF</a>
                                 </div>
                             </div>
                         )}
@@ -408,5 +220,4 @@ function Profile() {
         </div>
     );
 }
-
 export default Profile;
