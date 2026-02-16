@@ -1,6 +1,6 @@
 const fs = require('fs');
 const PDFParser = require("pdf2json");
-const { CV } = require('../models/index');
+const { CV , User} = require('../models/index');
 const axios = require('axios');
 
 /**
@@ -79,6 +79,18 @@ exports.processCV = async (req, res) => {
             user_id: userId
         });
 
+
+        /////////////////////////////////////////////////////////////////
+
+        // 🆕 التعديل هنا (سطر 85 تقريباً): تحديث الـ FK الخاص بالتحليل في جدول اليوزر
+        await User.update(
+            { cv_id_analysis: newCV.id }, 
+            { where: { id: userId } }
+        );
+
+        /////////////////////////////////////////////////////////////////
+
+        
         // 6. إرسال الرد للـ Frontend
         res.status(200).json({ 
             success: true, 

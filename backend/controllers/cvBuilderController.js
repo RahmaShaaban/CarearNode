@@ -1,11 +1,9 @@
-
-
-const { UserCVData, Template } = require('../models'); 
+// 1. التعديل المهم هنا: استدعاء الموديلات من ملف الاندكس المجمع
+const { UserCVData, Template, User } = require('../models'); 
 const axios = require('axios');
 const puppeteer = require('puppeteer');
 const ejs = require('ejs');
 const path = require('path');
-
 
 async function optimizeWithGroq(text, type) {
     if (!text || text.trim() === "") return text;
@@ -50,24 +48,31 @@ exports.createCVFromScratch = async (req, res) => {
             selected_template_id: templateId,
             template_settings: templateSettings
         });
+
+        // ربط الـ CV الجديد ببروفايل اليوزر
+        if (User) {
+            await User.update(
+                { cv_id: newCVData.id }, 
+                { where: { id: userId } }
+            );
+        }
+
         res.status(201).json({ success: true, data: newCVData });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
 };
 
-// 2. عرض السي في (Preview)
 exports.previewCV = async (req, res) => {
     try {
         const { id } = req.params;
-        // نستخدم as: 'template' عشان يطابق التعريف في index.js
+        // التأكد من استخدام include صحيح مع الـ Alias المعرف في index.js
         const cvData = await UserCVData.findByPk(id, { 
             include: [{ model: Template, as: 'template' }] 
         });
 
         if (!cvData) return res.status(404).send('الـ CV مش موجود');
 
-        // سحب اسم القالب من الداتابيز
         const templateName = cvData.template?.layout_type || 'modern_ats';
 
         res.render(templateName, { 
@@ -85,7 +90,6 @@ exports.previewCV = async (req, res) => {
     }
 };
 
-// 3. تحميل السي في كـ PDF
 exports.downloadCVAsPDF = async (req, res) => {
     try {
         const { id } = req.params;
@@ -96,7 +100,6 @@ exports.downloadCVAsPDF = async (req, res) => {
         if (!cvData) return res.status(404).send('الـ CV مش موجود');
 
         const templateName = cvData.template?.layout_type || 'modern_ats';
-        // تعديل المسار ليكون داخل فولدر templates كما في صور المشروع
         const templatePath = path.join(__dirname, `../templates/${templateName}.ejs`);
 
         const html = await ejs.renderFile(templatePath, {
@@ -134,6 +137,7 @@ exports.downloadCVAsPDF = async (req, res) => {
 
 exports.getTemplates = async (req, res) => {
     try {
+        // سحب جميع القوالب المفعلة من الداتابيز
         const allTemplates = await Template.findAll({ where: { is_active: true } });
         res.status(200).json({ success: true, data: allTemplates });
     } catch (error) {

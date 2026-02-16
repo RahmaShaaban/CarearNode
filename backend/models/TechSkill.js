@@ -7,7 +7,7 @@ const TechSkill = sequelize.define('TechSkill', {
         primaryKey: true, 
         autoIncrement: true },
 
-    name: { 
+    skill_name: { 
         type: DataTypes.STRING, 
         allowNull: false } // في الداتابيز العمود اسمه name
          }, 

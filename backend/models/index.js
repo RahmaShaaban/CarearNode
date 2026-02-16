@@ -1,135 +1,52 @@
 const sequelize = require('../config/database');
 const { DataTypes } = require('sequelize');
-// ============================================================
-// 1. استدعاء الموديلات (Import Models)
-// ============================================================
-const Subject = require('./Subject'); 
-const TechSkill = require('./TechSkill');
+
+// 1. استدعاء الموديلات
 const User = require('./User'); 
+const Roadmap = require('./Roadmap');
+const Steps = require('./Steps');
+const StepResources = require('./StepResources');
+const Roadmap_steps = require('./Roadmap_steps');
+const UserRoadmap = require('./UserRoadmap');
+const TechSkill = require('./TechSkill');
+const Template = require('./Template'); // 🆕 أضيفي السطر ده هنا (تأكدي من اسم الملف)
 
+// 2. الموديلات المعرفة كدوال (Functions)
+const UserCVData = require('./UserCVData')(sequelize); 
+const CV = require('./CV')(sequelize); 
 
+// 3. تعريف العلاقات (Associations)
 
-///////////////// CV BUILDER (التعديل هنا) //////////////
-const UserCVData = require('./UserCVData')(sequelize, DataTypes);
+// ربط الـ User بالـ CV Builder والـ Analysis
+User.belongsTo(UserCVData, { foreignKey: 'cv_id', as: 'builtCV' });
+UserCVData.hasOne(User, { foreignKey: 'cv_id' });
 
-// الربط بين المستخدم والـ CV Builder
-User.hasMany(UserCVData, { foreignKey: 'user_id', as: 'cvBuilderData' });
-UserCVData.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+User.belongsTo(CV, { foreignKey: 'cv_id_analysis', as: 'analyzedCV' });
+CV.hasOne(User, { foreignKey: 'cv_id_analysis' });
 
+// ربط الـ UserCVData بالـ Template (عشان الـ View & Download يشتغلوا)
+UserCVData.belongsTo(Template, { foreignKey: 'selected_template_id', as: 'template' });
+Template.hasMany(UserCVData, { foreignKey: 'selected_template_id' });
 
+// علاقات الـ Roadmap (كما هي)
+User.hasMany(UserRoadmap, { foreignKey: 'userId' });
+UserRoadmap.belongsTo(User, { foreignKey: 'userId' });
+Roadmap.hasMany(UserRoadmap, { foreignKey: 'roadmapId' });
+UserRoadmap.belongsTo(Roadmap, { foreignKey: 'roadmapId' });
+Roadmap.belongsToMany(Steps, { through: Roadmap_steps, foreignKey: 'roadmap_id', otherKey: 'step_id' });
+Steps.belongsToMany(Roadmap, { through: Roadmap_steps, foreignKey: 'step_id', otherKey: 'roadmap_id' });
 
-// --- الإضافات الجديدة (The New Part) ---
-const DepartmentName = require('./DepartmentName');
-const Job = require('./Job');
-const DepartmentSubject = require('./DepartmentSubject'); // مهم للـ Controller
-
-//////////////// CV Analysis Model //////////////
-const CV = require('./CV')(sequelize, DataTypes); //
-
-
-// ============================================================
-// 2. تعريف الجداول الوسيطة (Intermediate Tables)
-// ============================================================
-
-// أ. جدول ربط المواد بالمهارات (SubjectSkill) - الكود القديم كما هو
-const SubjectSkill = sequelize.define('SubjectSkill', {
-  subject_id: {
-    type: DataTypes.INTEGER,
-    references: { model: Subject, key: 'id' }
-  },
-  skill_id: {
-    type: DataTypes.INTEGER,
-    references: { model: TechSkill, key: 'id' }
-  }
-}, { 
-  tableName: 'subject_skills', 
-  timestamps: false 
-});
-
-////////////////// CV Analysis ////////
-User.hasOne(CV, { foreignKey: 'user_id', as: 'cvAnalysis' }); //
-CV.belongsTo(User, { foreignKey: 'user_id', as: 'user' }); //
-//////////////// CV & Templates/////////////////
-const Template = require('./Template');
-UserCVData.belongsTo(Template, {
-  foreignKey: 'selected_template_id',
-  as: 'template'
-});
-
-Template.hasMany(UserCVData, {
-  foreignKey: 'selected_template_id',
-  as: 'user_cvs'
-});
-
-// تصدير الموديلز والـ sequelize instance
-
-// ============================================================
-// 3. بناء العلاقات (Associations)
-// ============================================================
-
-// --- الجزء القديم (Old Part - Subject & Skills) ---
-Subject.belongsToMany(TechSkill, { 
-  through: SubjectSkill, 
-  as: 'skills', 
-  foreignKey: 'subject_id'
-});
-
-TechSkill.belongsToMany(Subject, { 
-  through: SubjectSkill, 
-  as: 'subjects', 
-  foreignKey: 'skill_id'
-});
-
-// --- الجزء الجديد (New Part - Department, Jobs, & Skills) ---
-
-// 1. علاقة القسم بالوظائف (Many-to-Many)
-// الجدول الوسيط: job_departments
-DepartmentName.belongsToMany(Job, { 
-    through: 'job_departments', // اسم الجدول في الداتابيز
-    foreignKey: 'department_name', // العمود اللي بيربط بالقسم
-    otherKey: 'job_id',            // العمود اللي بيربط بالوظيفة
-    as: 'relatedJobs'              // الاسم اللي هنستخدمه في الكنترولر (include)
-});
-
-// (اختياري) العكس: الوظيفة تتبع لأقسام ايه؟
-Job.belongsToMany(DepartmentName, {
-    through: 'job_departments',
-    foreignKey: 'job_id',
-    otherKey: 'department_name',
-    as: 'departments'
-});
-
-// 2. علاقة القسم بالمهارات (Many-to-Many)
-// الجدول الوسيط: skills_for_department
-DepartmentName.belongsToMany(TechSkill, { 
-    through: 'skills_for_department', // اسم الجدول في الداتابيز
-    foreignKey: 'department_name',
-    otherKey: 'skill_id',
-    as: 'deptSkills'               // الاسم اللي هنستخدمه في الكنترولر (include)
-});
-
-// (اختياري) العكس: المهارة موجودة في أقسام ايه؟
-TechSkill.belongsToMany(DepartmentName, {
-    through: 'skills_for_department',
-    foreignKey: 'skill_id',
-    otherKey: 'department_name',
-    as: 'departments'
-});
-
-// ============================================================
-// 4. التصدير (Exports)
-// ============================================================
-module.exports = { 
-  sequelize, 
-  Subject, 
-  TechSkill,
-  SubjectSkill, 
-  User,
-  CV,
-  UserCVData,
-  Template,
-  // تأكدي من وجود هؤلاء:
-  DepartmentName,
-  Job,
-  DepartmentSubject
+// 4. التصدير (Export)
+module.exports = {
+    sequelize,
+    User,
+    Roadmap,
+    Step: Steps,
+    StepResources,
+    RoadmapSteps: Roadmap_steps,
+    UserRoadmap,
+    TechSkill,
+    Template, // 🆕 لازم يكون موجود هنا عشان الـ Controller يشوفه
+    UserCVData,
+    CV
 };
