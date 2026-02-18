@@ -6,18 +6,22 @@ const RoadmapDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   
-  // --- States ---
   const [roadmap, setRoadmap] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // --- User States ---
-  const [userId, setUserId] = useState(localStorage.getItem('userId')); 
+  const [userId] = useState(localStorage.getItem('userId')); 
   const [isEnrolled, setIsEnrolled] = useState(false); 
   const [completedSteps, setCompletedSteps] = useState([]); 
   const [progress, setProgress] = useState(0); 
 
-  // 1. Fetch Data
+  const [quizData, setQuizData] = useState(null);
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [currentStepId, setCurrentStepId] = useState(null);
+  const [userAnswers, setUserAnswers] = useState({});
+  const [quizResult, setQuizResult] = useState(null);
+  const [quizLoading, setQuizLoading] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -26,7 +30,6 @@ const RoadmapDetails = () => {
 
         if (data.success) {
           setRoadmap(data.data);
-          
           const stepsList = data.data.Steps || data.data.TechSkills || [];
 
           if (userId) {
@@ -48,17 +51,14 @@ const RoadmapDetails = () => {
           setError("Roadmap not found");
         }
       } catch (err) {
-        console.error(err);
         setError("Connection error");
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
   }, [id, userId]);
 
-  // 2. Start Roadmap
   const handleStartRoadmap = async () => {
     try {
       const response = await fetch('http://localhost:5000/api/roadmaps/enroll', {
@@ -66,68 +66,44 @@ const RoadmapDetails = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, roadmapId: id })
       });
-
       if (response.ok) {
         setIsEnrolled(true);
         setCompletedSteps([]);
         setProgress(0);
-      } else {
-          alert("Failed to enroll. Please try again.");
       }
     } catch (error) {
       console.error("Enrollment failed", error);
     }
   };
 
-  // 3. Unenroll Roadmap (New Function) ⚠️
   const handleUnenroll = async () => {
-      // لو فيه تقدم، طلع رسالة تحذير
-      if (progress > 0 || completedSteps.length > 0) {
-          const confirmDelete = window.confirm(
-              "Are you sure you want to unenroll? All your progress in this roadmap will be lost permanently!"
-          );
-          if (!confirmDelete) return; // لو داس Cancel نوقف الدالة
-      }
-
+      if (!window.confirm("Are you sure? All progress will be lost!")) return;
       try {
           const response = await fetch('http://localhost:5000/api/roadmaps/enroll', {
-              method: 'DELETE', // تأكدي إن الراوت في الباك إند مربوط بـ DELETE
+              method: 'DELETE',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ userId, roadmapId: id })
           });
-
           if (response.ok) {
               setIsEnrolled(false);
               setCompletedSteps([]);
               setProgress(0);
-          } else {
-              alert("Failed to unenroll.");
           }
       } catch (error) {
           console.error("Unenroll failed", error);
       }
   };
 
-  // 4. Toggle Checkbox
-  const handleStepToggle = async (stepId) => {
-    if (!isEnrolled) return; 
-
+  const markStepAsComplete = async (stepId) => {
     const stepIdInt = Number(stepId);
-    let newCompletedSteps;
+    if (completedSteps.includes(stepIdInt)) return;
 
-    if (completedSteps.includes(stepIdInt)) {
-      newCompletedSteps = completedSteps.filter(id => id !== stepIdInt);
-    } else {
-      newCompletedSteps = [...completedSteps, stepIdInt];
-    }
-
+    const newCompletedSteps = [...completedSteps, stepIdInt];
     setCompletedSteps(newCompletedSteps);
 
     const stepsList = roadmap.Steps || roadmap.TechSkills || [];
-    if (stepsList.length > 0) {
-        const percent = Math.round((newCompletedSteps.length / stepsList.length) * 100);
-        setProgress(percent);
-    }
+    const percent = Math.round((newCompletedSteps.length / stepsList.length) * 100);
+    setProgress(percent);
 
     await fetch('http://localhost:5000/api/roadmaps/progress', {
         method: 'PUT',
@@ -136,138 +112,178 @@ const RoadmapDetails = () => {
     });
   };
 
+  const handleOpenQuiz = async (stepId) => {
+    setQuizLoading(true);
+    setCurrentStepId(stepId);
+    try {
+        const response = await fetch(`http://localhost:5000/api/roadmaps/step/${stepId}/quiz`);
+        const data = await response.json();
+        if (data.success) {
+            setQuizData(data.quiz);
+            setUserAnswers({});
+            setQuizResult(null);
+            setShowQuiz(true);
+        }
+    } catch (err) {
+        alert("Failed to generate quiz.");
+    } finally {
+        setQuizLoading(false);
+    }
+  };
 
-  if (loading) return <div className="loading-center"><i className="fa-solid fa-circle-notch fa-spin"></i> Loading Details...</div>;
-  if (error) return <div className="error-center">{error}</div>;
-  if (!roadmap) return <div className="error-center">Roadmap not found</div>;
+  const handleSubmitQuiz = () => {
+    let score = 0;
+    quizData.forEach((q, index) => {
+        if (userAnswers[index] === q.correct_answer) score++;
+    });
+    const passed = score >= 3;
+    setQuizResult({ score, total: quizData.length, passed });
+    if (passed) markStepAsComplete(currentStepId);
+  };
+
+  if (loading) return <div className="loading-center"><i className="fa-solid fa-circle-notch fa-spin"></i> Loading...</div>;
 
   const stepsToRender = roadmap.Steps || roadmap.TechSkills || [];
 
   return (
     <div className="details-page">
       <div className="details-header">
-        <Link to="/roadmaps" className="back-btn">
-            <button className="btn-back">
-                <i className="fa-solid fa-arrow-left"></i> Back to Roadmaps
-            </button>
+        <Link to="/roadmaps">
+            <button className="btn-back"><i className="fa-solid fa-arrow-left"></i> Back</button>
         </Link>
-        
         <div className="header-content-wrapper">
           <div className="header-text">
-            <div className="title-icon-wrapper">
-                <div className="icon-large">
-                    <i className="fa-solid fa-layer-group"></i> 
-                </div>
+            <div style={{display: 'flex', gap: '20px', alignItems: 'center'}}>
+                <div className="icon-large"><i className="fa-solid fa-layer-group"></i></div>
                 <div>
                     <h1>{roadmap.title}</h1>
-                    <p className="DescribRoadmapTrack">{roadmap.description || "Master the skills needed for this path"}</p>
+                    <p className="DescribRoadmapTrack">{roadmap.description}</p>
                 </div>
             </div>
-
             {isEnrolled && (
                 <div className="main-progress-container">
                     <div className="progress-info">
-                        <span className={`status-badge ${progress === 100 ? 'completed' : 'in-progress'}`}>
-                            {progress === 100 ? 'Completed' : 'In Progress'}
-                        </span>
+                        <span className="status-badge">{progress === 100 ? 'Completed' : 'In Progress'}</span>
                         <span className="percentage-text">{progress}%</span>
                     </div>
                     <div className="progress-bar-bg">
                         <div className="progress-bar-fill" style={{ width: `${progress}%` }}></div>
                     </div>
-
-                    {/* زرار الحذف الجديد 👇 */}
-                    <button className="btn-unenroll" onClick={handleUnenroll}>
-                        <i className="fa-regular fa-trash-can"></i> Unenroll
-                    </button>
+                    <button className="btn-unenroll" onClick={handleUnenroll}>Unenroll</button>
                 </div>
             )}
           </div>
-
           <div className="header-actions">
-                {!userId ? (
-                    <button className="btn-signin-action" onClick={() => navigate('/Sign_In')}>
-                        Sign in to start tracking
-                    </button>
-                ) : !isEnrolled ? (
-                    <button className="btn-start-roadmap" onClick={handleStartRoadmap}>
-                        <i className="fa-solid fa-play"></i> Start this Roadmap
-                    </button>
-                ) : progress === 100 ? (
-                    /* --- الحالة الجديدة: لما يخلص 100% --- */
-                    <button className="btn-completed-roadmap" disabled>
-                        <i className="fa-solid fa-trophy"></i> Roadmap Completed
-                    </button>
-                ) : (
-                    /* --- الحالة العادية: لسه شغال --- */
-                    <button className="btn-continue-roadmap" disabled>
-                        <i className="fa-solid fa-bars-progress"></i> Tracking Active
-                    </button>
-                )}
+                {!userId ? <button className="btn-signin-action" onClick={() => navigate('/Sign_In')}>Sign In</button>
+                : !isEnrolled ? <button className="btn-start-roadmap" onClick={handleStartRoadmap}>Start Roadmap</button>
+                : <button className="btn-continue-roadmap" disabled>Tracking Active</button>}
           </div>
         </div>
       </div>
 
       <div className="timeline-container">
-        {stepsToRender.length > 0 ? (
-          stepsToRender.map((skill, index) => {
-            const junction = skill.Roadmap_steps || skill.RoadmapSkill; 
-            const stepOrder = junction ? junction.step_order : index + 1;
-            const isChecked = completedSteps.includes(Number(skill.id));
-            const resources = skill.StepResources || skill.SkillResources || [];
+        {stepsToRender.map((skill, index) => {
+          const isChecked = completedSteps.includes(Number(skill.id));
+          const isFirstStep = index === 0;
+          const prevStepId = index > 0 ? Number(stepsToRender[index-1].id) : null;
+          const isLocked = !isFirstStep && !completedSteps.includes(prevStepId);
+          const resources = skill.StepResources || skill.SkillResources || [];
 
-            return (
-                <div className={`timeline-step ${isChecked ? 'step-completed' : ''}`} key={skill.id}>
-                
-                <div className="step-header-row">
-                    <div className="step-meta">
-                        <span className="step-badge">Step {stepOrder}</span>
-                    </div>
-
-                    {isEnrolled && (
-                        <div className="checkbox-wrapper" onClick={() => handleStepToggle(skill.id)}>
-                            <div className={`custom-checkbox ${isChecked ? 'checked' : ''}`}>
-                                {isChecked && <i className="fa-solid fa-check"></i>}
-                            </div>
-                            <span className="mark-text">{isChecked ? 'Completed' : 'Mark as done'}</span>
-                        </div>
+          return (
+            <div className={`timeline-step ${isChecked ? 'step-completed' : ''} ${isLocked ? 'step-is-locked' : ''}`} key={skill.id}>
+              {isLocked && <div className="lock-label"><i className="fa-solid fa-lock"></i> Locked</div>}
+              
+              <div className="step-actions-row">
+                <span className="step-badge">Step {index + 1}</span>
+                {isEnrolled && !isLocked && (
+                  <div style={{display: 'flex', gap: '15px'}}>
+                    {!isChecked && (
+                      <button className="btn-quiz" onClick={() => handleOpenQuiz(skill.id)} disabled={quizLoading}>
+                        {quizLoading && currentStepId === skill.id ? 'AI Thinking...' : 'Take Quiz to Unlock'}
+                      </button>
                     )}
-                </div>
-
-                <h2 className="step-title">{skill.step_name || skill.name}</h2>
-                <p className="step-desc">{skill.description}</p>
-
-                <div className="resources-section">
-                    <h4><i className="fa-solid fa-book-open"></i> Recommended Resources:</h4>
-                    <div className="resources-list">
-                        {resources.length > 0 ? (
-                            resources.map((res) => {
-                                const linkUrl = res.url || res.link;
-                                if (!linkUrl) return null; 
-                                return (
-                                    <a href={linkUrl} target="_blank" rel="noopener noreferrer" className="resource-card" key={res.id}>
-                                    <div className="res-info">
-                                            <span className="res-title">{res.resource_name || res.title || "External Resource"}</span>
-                                            <i className="fa-solid fa-arrow-up-right-from-square"></i>
-                                    </div>
-                                    <span className={`res-badge ${res.resource_type === 'Paid' ? 'paid' : 'free'}`}>
-                                            {res.resource_type || res.type || 'Free'}
-                                    </span>
-                                    </a>
-                                );
-                            })
-                        ) : (
-                            <p className="no-res">No resources added yet.</p>
-                        )}
+                    <div className="checkbox-wrapper readonly">
+                      <div className={`custom-checkbox ${isChecked ? 'checked' : ''}`}>
+                        {isChecked && <i className="fa-solid fa-check"></i>}
+                      </div>
+                      <span className="mark-text">{isChecked ? 'Done' : 'Quiz Required'}</span>
                     </div>
+                  </div>
+                )}
+              </div>
+
+              <h2 className="step-title">{skill.step_name || skill.name}</h2>
+              <p className="step-desc">{skill.description}</p>
+
+              <div className="resources-section">
+                <h4>Resources:</h4>
+                <div className="resources-list">
+                  {resources.map((res) => (
+                    <a href={res.url || res.link} target="_blank" rel="noopener noreferrer" className="resource-card" key={res.id}>
+                      <div className="res-info">
+                        <span className="res-title">{res.resource_name || res.title}</span>
+                        <i className="fa-solid fa-external-link"></i>
+                      </div>
+                      <span className={`res-badge ${res.resource_type === 'Paid' ? 'paid' : 'free'}`}>{res.resource_type || 'Free'}</span>
+                    </a>
+                  ))}
                 </div>
-                </div>
-            );
-          })
-        ) : (
-          <div className="empty-state">No steps defined for this roadmap yet.</div>
-        )}
+              </div>
+            </div>
+          );
+        })}
       </div>
+
+      {showQuiz && quizData && (
+        <div className="quiz-modal-overlay">
+            <div className="quiz-modal">
+                <button className="close-quiz" onClick={() => setShowQuiz(false)}>×</button>
+                <div className="modal-header">
+                    <h2><i className="fa-solid fa-lightbulb"></i> AI Knowledge Check</h2>
+                </div>
+                
+                {!quizResult ? (
+                    <>
+                        <div className="quiz-content">
+                            {quizData.map((q, qIdx) => (
+                                <div key={qIdx} className="quiz-question-box">
+                                    <p><strong>{qIdx + 1}.</strong> {q.question}</p>
+                                    <div className="options-grid">
+                                        {q.options.map((opt, optIdx) => (
+                                            <button 
+                                                key={optIdx} 
+                                                className={`option-btn ${userAnswers[qIdx] === optIdx ? 'selected' : ''}`}
+                                                onClick={() => setUserAnswers({...userAnswers, [qIdx]: optIdx})}
+                                            >
+                                                {opt}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <button className="btn-submit-quiz" onClick={handleSubmitQuiz} disabled={Object.keys(userAnswers).length < quizData.length}>
+                            Submit Answers
+                        </button>
+                    </>
+                ) : (
+                    <div className={`quiz-feedback ${quizResult.passed ? 'success' : 'fail'}`}>
+                        <div className="result-icon">
+                            {quizResult.passed ? <i className="fa-solid fa-circle-check fa-3x"></i> : <i className="fa-solid fa-circle-xmark fa-3x"></i>}
+                        </div>
+                        <h3>{quizResult.passed ? '🎉 Passed!' : '❌ Keep Practicing'}</h3>
+                        <div className="score-display">
+                            Your Score: <strong>{quizResult.score}</strong> / {quizResult.total}
+                        </div>
+                        <p className="result-msg">{quizResult.passed ? 'Excellent! Step unlocked.' : 'You need 3/5 to pass.'}</p>
+                        <button className="btn-submit-quiz" onClick={() => setShowQuiz(false)}>
+                            {quizResult.passed ? 'Continue Learning' : 'Try Again Later'}
+                        </button>
+                    </div>
+                )}
+            </div>
+        </div>
+      )}
     </div>
   );
 };

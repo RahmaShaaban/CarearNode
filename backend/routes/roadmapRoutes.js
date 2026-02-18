@@ -2,6 +2,15 @@ const express = require('express');
 const router = express.Router();
 const roadmapController = require('../controllers/roadmapController');
 
+// 1. مسار طلب الكويز (GET)
+// بنبعت رقم الـ Step في الرابط
+router.get('/step/:stepId/quiz', roadmapController.generateStepQuiz);
+
+// 2. مسار تسليم الإجابات (POST)
+// بنبعت البيانات في الـ Body
+router.post('/step/quiz/submit', roadmapController.submitStepQuiz);
+
+
 // الروابط الأساسية (عرض الرودماب)
 router.get('/', roadmapController.getAllRoadmaps);
 router.get('/:id', roadmapController.getRoadmapData);

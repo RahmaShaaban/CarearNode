@@ -10,7 +10,118 @@ const {
 // ---------------------------------------------------------
 // دوال التتبع والاشتراك (الجزء الجديد)
 // ---------------------------------------------------------
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+exports.generateStepQuiz = async (req, res) => {
+    try {
+        const { stepId } = req.params;
+
+        // 1. جلب "step_name" بدلاً من "title"
+        const step = await Step.findByPk(stepId, {
+            attributes: ['step_name'] // ✅ عدلنا الاسم هنا
+        });
+
+        if (!step) return res.status(404).json({ success: false, message: "Step not found" });
+
+        // 2. إعداد الموديل
+        const model = genAI.getGenerativeModel({ 
+            model: "gemini-2.5-flash",
+            generationConfig: { responseMimeType: "application/json" }
+        });
+        
+        // 3. نستخدم step.step_name في الـ Prompt
+        const prompt = `You are an educational expert. Create a beginner-level quiz with 5 multiple-choice questions (MCQs) in English about the topic: "${step.step_name}".
+        Return ONLY a JSON array with this exact structure:
+        [
+          {
+            "question": "string",
+            "options": ["string", "string", "string", "string"],
+            "correct_answer": index (0-3)
+          }
+        ]`;
+
+        const result = await model.generateContent(prompt);
+        const responseText = result.response.text();
+        
+        // 4. تحويل النص لـ JSON
+        const quizData = JSON.parse(responseText);
+
+        res.status(200).json({
+            success: true,
+            topic: step.step_name,
+            quiz: quizData
+        });
+
+    } catch (error) {
+        console.error("Gemini Quiz Error:", error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+exports.submitStepQuiz = async (req, res) => {
+    try {
+        const { userId, roadmapId, stepId, score } = req.body; 
+
+        // 1. تحديد حالة النجاح
+        const isPassed = score >= 50;
+
+        // 2. تحديث أو إنشاء سجل التقدم (استخدام findOne + create/update أضمن في حالتك)
+        let progress = await UserStepProgress.findOne({
+            where: { userId, roadmapId, stepId }
+        });
+
+        if (progress) {
+            await progress.update({ quizScore: score, isCompleted: isPassed });
+        } else {
+            await UserStepProgress.create({
+                userId, roadmapId, stepId, quizScore: score, isCompleted: isPassed
+            });
+        }
+
+        // 3. تحديث جدول UserRoadmap القديم لضمان توافق البيانات
+        if (isPassed) {
+            const enrollment = await UserRoadmap.findOne({ where: { userId, roadmapId } });
+            
+            if (enrollment) {
+                // التأكد من أن completedSteps عبارة عن مصفوفة
+                let completed = Array.isArray(enrollment.completedSteps) ? enrollment.completedSteps : [];
+                
+                const stepIdNum = Number(stepId);
+                if (!completed.includes(stepIdNum)) {
+                    completed.push(stepIdNum);
+                    
+                    // نحدث المصفوفة (Sequelize يحتاج أحياناً إعلامه بتغيير الـ JSON)
+                    enrollment.completedSteps = completed;
+                    enrollment.changed('completedSteps', true); 
+
+                    // حساب النسبة الجديدة بناءً على عدد الخطوات الكلي
+                    const roadmap = await Roadmap.findByPk(roadmapId, { 
+                        include: [{ model: Step, as: 'Steps' }] // تأكدي من الـ alias 'Steps'
+                    });
+
+                    if (roadmap && roadmap.Steps) {
+                        const totalSteps = roadmap.Steps.length;
+                        enrollment.progress = Math.round((completed.length / totalSteps) * 100);
+                    }
+                    
+                    await enrollment.save();
+                }
+            }
+        }
+
+        res.status(200).json({ 
+            success: true, 
+            passed: isPassed, 
+            score,
+            message: isPassed ? "Excellent! You passed the step successfully ✅" : "You need to review the step and try again ❌" 
+        });
+
+    } catch (error) {
+        console.error("Submit Quiz Error:", error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
 // 1. دالة الاشتراك (Enroll)
 exports.enrollRoadmap = async (req, res) => {
     try {
