@@ -1,14 +1,27 @@
-### اختبار رفع وتحليل ملف
-POST http://localhost:5000/api/cv/upload
-Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+# ### اختبار رفع وتحليل ملف
+# POST http://localhost:5000/api/cv/upload
+# Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
 
-------WebKitFormBoundary
-Content-Disposition: form-data; name="userId"
+# ------WebKitFormBoundary
+# Content-Disposition: form-data; name="userId"
 
-1
-------WebKitFormBoundary
-Content-Disposition: form-data; name="cvFile"; filename="HCI_Lecture.pdf"
-Content-Type: application/pdf
+# 1
+# ------WebKitFormBoundary
+# Content-Disposition: form-data; name="cvFile"; filename="HCI_Lecture.pdf"
+# Content-Type: application/pdf
 
-< D:/Materials/4t/HCI/Lectures/HCI_Lecture 4.pdf
-------WebKitFormBoundary--
+# < D:/Materials/4t/HCI/Lectures/HCI_Lecture 4.pdf
+# ------WebKitFormBoundary--
+### تجربة توليد الكويز
+GET http://localhost:5000/api/roadmaps/step/1/quiz
+
+### تجربة تسليم الكويز
+POST http://localhost:5000/api/roadmap/step/quiz/submit
+Content-Type: application/json
+
+{
+    "userId": 1,
+    "roadmapId": 1,
+    "stepId": 1,
+    "score": 80
+}
