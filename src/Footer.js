@@ -29,13 +29,20 @@ const Footer = () => {
                 
                 <div className="footer-section">
                     <h4>Get in Touch</h4>
-                    <p>Email: support@careernode.com</p>
+
+                    
+                    <p>
+                        Email: <a href="mailto:support@careernode.com" style={{ color: 'inherit', textDecoration: 'none' }}>
+                            support@careernode.com
+                        </a>
+                    </p>
+
                     <p>Location: Cairo, Egypt</p>
 
                     <div className="social-links">
-                        
-                        <a href="https://linkedin.com" target="_blank" rel="noreferrer">LinkedIn</a>
-                        <a href="https://github.com" target="_blank" rel="noreferrer">GitHub</a>
+                       
+                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                        <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
                     </div>
                 </div>
             </div>
