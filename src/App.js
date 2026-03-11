@@ -7,8 +7,6 @@ import Home from './pages/Home';
 import AboutUs from './pages/AboutUs';
 import Services from './pages/Services';
 import Contact from './pages/Contact';
-
-import Interview from './pages/Interview';
 import Department from './pages/Department';
 import Roadmaps from './pages/Roadmaps';
 import CV from './pages/CV';
@@ -20,7 +18,7 @@ import RoadmapDetails from './pages/RoadmapDetails';
 import ScrollToTop from './ScrollToTop';
 
 import CvBuilder from './pages/CvBuilder';
-
+import AppIntrview from'./pages/INTERVIEW/AppIntrview'
 
 
 
@@ -43,7 +41,7 @@ function App() {
 
 
 
-                        <Route path="/interview" element={<Interview />} />
+                        <Route path="/interview" element={<AppIntrview />} />
                         <Route path="/department" element={<Department />} />
                         
                         <Route path="/Roadmaps" element={<Roadmaps />} />
