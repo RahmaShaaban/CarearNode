@@ -56,7 +56,7 @@ const AnalyzeCV = () => {
             formData.append('userId', userId);
 
             // 2. ????? ????? ????? ???
-            const response = await fetch('http://localhost:5000/api/cv/upload', {
+            const response = await fetch('http://localhost:5001/api/cv/upload', {
                 method: 'POST',
                 body: formData,
             });

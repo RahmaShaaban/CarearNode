@@ -1,5 +1,5 @@
 # ### اختبار رفع وتحليل ملف
-# POST http://localhost:5000/api/cv/upload
+# POST http://localhost:5001/api/cv/upload
 # Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
 
 # ------WebKitFormBoundary
@@ -13,10 +13,10 @@
 # < D:/Materials/4t/HCI/Lectures/HCI_Lecture 4.pdf
 # ------WebKitFormBoundary--
 ### تجربة توليد الكويز
-GET http://localhost:5000/api/roadmaps/step/1/quiz
+GET http://localhost:5001/api/roadmaps/step/1/quiz
 
 ### تجربة تسليم الكويز
-POST http://localhost:5000/api/roadmap/step/quiz/submit
+POST http://localhost:5001/api/roadmap/step/quiz/submit
 Content-Type: application/json
 
 {

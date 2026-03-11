@@ -38,7 +38,7 @@ function Profile() {
             }
 
             try {
-                const profileRes = await fetch(`http://localhost:5000/api/auth/profile/${userId}`);
+                const profileRes = await fetch(`http://localhost:5001/api/auth/profile/${userId}`);
                 if (profileRes.ok) {
                     const data = await profileRes.json();
                     
@@ -53,7 +53,7 @@ function Profile() {
                         email: data.email,
                         bio: data.about_me || "No bio added yet.",
                         role: data.role || "Student",
-                        profilePic: data.profile_image ? `http://localhost:5000${data.profile_image}` : "https://via.placeholder.com/150",
+                        profilePic: data.profile_image ? `http://localhost:5001${data.profile_image}` : "https://via.placeholder.com/150",
                         enrolledRoadmaps: roadmaps,
                         averageScore: avgScore,
                         // الربط مع بيانات الـ CV الحقيقية
@@ -64,7 +64,7 @@ function Profile() {
                     }));
                 }
 
-                const jobsRes = await fetch('http://localhost:5000/api/jobs');
+                const jobsRes = await fetch('http://localhost:5001/api/jobs');
                 if (jobsRes.ok) {
                     const jobsData = await jobsRes.json();
                     setJobOptions(jobsData);
@@ -110,7 +110,7 @@ function Profile() {
         if (imageFile) formData.append('profileImage', imageFile);
 
         try {
-            const response = await fetch(`http://localhost:5000/api/auth/profile/${userId}`, {
+            const response = await fetch(`http://localhost:5001/api/auth/profile/${userId}`, {
                 method: 'PUT',
                 body: formData,
             });
@@ -209,8 +209,8 @@ function Profile() {
                                 </div>
                                 <div className="resume-footer-actions">
                                     {/* روابط الـ Preview والـ Download الحقيقية */}
-                                    <a href={`http://localhost:5000/api/cv-builder/preview/${userData.builtCvId}`} target="_blank" rel="noreferrer" className="btn-view-resume">View</a>
-                                    <a href={`http://localhost:5000/api/cv-builder/download/${userData.builtCvId}`} target="_blank" rel="noreferrer" className="btn-Download-resume">Download PDF</a>
+                                    <a href={`http://localhost:5001/api/cv-builder/preview/${userData.builtCvId}`} target="_blank" rel="noreferrer" className="btn-view-resume">View</a>
+                                    <a href={`http://localhost:5001/api/cv-builder/download/${userData.builtCvId}`} target="_blank" rel="noreferrer" className="btn-Download-resume">Download PDF</a>
                                 </div>
                             </div>
                         )}

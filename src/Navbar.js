@@ -33,7 +33,7 @@ const Navbar = () => {
         else {
             // تنظيف المسار لضمان عدم تكرار السلاش
             const cleanPath = storedImage.startsWith('/') ? storedImage : `/${storedImage}`;
-            profilePicUrl = `http://localhost:5000${cleanPath}`;
+            profilePicUrl = `http://localhost:5001${cleanPath}`;
         }
     }
 

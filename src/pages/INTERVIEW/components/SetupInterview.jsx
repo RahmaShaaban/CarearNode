@@ -26,7 +26,7 @@ const SetupInterview = ({ formData, setFormData, setQuestions, setStep, isArabic
         form.append('num_questions', formData.numQuestions);
 
         try {
-            const res = await axios.post('http://localhost:5000/generate-question', form);
+            const res = await axios.post('http://localhost:5001/generate-question', form);
             let fetchedQuestions = [];
             if (res.data.questions && Array.isArray(res.data.questions)) {
                 fetchedQuestions = res.data.questions;
