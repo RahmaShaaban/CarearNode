@@ -50,7 +50,7 @@
 //               console.log(`🚀 Sending Question ${i+1} to MASTER Endpoint...`);
               
 //               // 🔥 طلب واحد فقط للباك إند بدلاً من 6 طلبات 🔥
-//               const response = await axios.post('http://localhost:5001/analyze/all', form);
+//               const response = await axios.post('http://localhost:5000/analyze/all', form);
 //               const finalData = response.data;
 
 //               // التأكد من عدم وجود خطأ قادم من السيرفر
@@ -390,7 +390,7 @@ function App() {
 
           try {
               console.log(`🚀 Sending Question ${i+1} to MASTER Endpoint...`);
-              const response = await axios.post('http://localhost:5001/analyze/all', form);
+              const response = await axios.post('http://localhost:5000/analyze/all', form);
               
               if (response.data.error) throw new Error(response.data.error);
 
@@ -423,7 +423,7 @@ function App() {
           });
 
           console.log(`📨 Sending all data to backend for background processing for email: ${userEmail}`);
-          await axios.post('http://localhost:5001/api/analyze/background', bulkForm);
+          await axios.post('http://localhost:5000/api/analyze/background', bulkForm);
           
       } catch (err) {
           console.error("❌ Error sending background task to backend:", err);
