@@ -15,7 +15,7 @@ function Department() {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/subjects');
+                const response = await fetch('http://localhost:5001/api/subjects');
                 const data = await response.json();
 
                 if (data.success) {
@@ -61,7 +61,7 @@ function Department() {
         setError(null);
 
         try {
-            const response = await fetch('http://localhost:5000/api/dept/recommend', {
+            const response = await fetch('http://localhost:5001/api/dept/recommend', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ selectedCourses })

@@ -25,7 +25,7 @@ const RoadmapDetails = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/roadmaps/${id}`);
+        const response = await fetch(`http://localhost:5001/api/roadmaps/${id}`);
         const data = await response.json();
 
         if (data.success) {
@@ -33,7 +33,7 @@ const RoadmapDetails = () => {
           const stepsList = data.data.Steps || data.data.TechSkills || [];
 
           if (userId) {
-            const statusRes = await fetch(`http://localhost:5000/api/roadmaps/status/${id}/${userId}`);
+            const statusRes = await fetch(`http://localhost:5001/api/roadmaps/status/${id}/${userId}`);
             if (statusRes.ok) {
               const statusData = await statusRes.json();
               if (statusData.enrolled) {
@@ -61,7 +61,7 @@ const RoadmapDetails = () => {
 
   const handleStartRoadmap = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/roadmaps/enroll', {
+      const response = await fetch('http://localhost:5001/api/roadmaps/enroll', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, roadmapId: id })
@@ -79,7 +79,7 @@ const RoadmapDetails = () => {
   const handleUnenroll = async () => {
       if (!window.confirm("Are you sure? All progress will be lost!")) return;
       try {
-          const response = await fetch('http://localhost:5000/api/roadmaps/enroll', {
+          const response = await fetch('http://localhost:5001/api/roadmaps/enroll', {
               method: 'DELETE',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ userId, roadmapId: id })
@@ -105,7 +105,7 @@ const RoadmapDetails = () => {
     const percent = Math.round((newCompletedSteps.length / stepsList.length) * 100);
     setProgress(percent);
 
-    await fetch('http://localhost:5000/api/roadmaps/progress', {
+    await fetch('http://localhost:5001/api/roadmaps/progress', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, roadmapId: id, completedSteps: newCompletedSteps })
@@ -116,7 +116,7 @@ const RoadmapDetails = () => {
     setQuizLoading(true);
     setCurrentStepId(stepId);
     try {
-        const response = await fetch(`http://localhost:5000/api/roadmaps/step/${stepId}/quiz`);
+        const response = await fetch(`http://localhost:5001/api/roadmaps/step/${stepId}/quiz`);
         const data = await response.json();
         if (data.success) {
             setQuizData(data.quiz);

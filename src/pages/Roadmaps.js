@@ -13,7 +13,7 @@ const Roadmaps = () => {
     const fetchData = async () => {
       try {
         // 1. جلب كل الرودمابس
-        const roadmapsRes = await fetch('http://localhost:5000/api/roadmaps');
+        const roadmapsRes = await fetch('http://localhost:5001/api/roadmaps');
         const roadmapsData = await roadmapsRes.json();
 
         if (roadmapsData.success) {
@@ -25,7 +25,7 @@ const Roadmaps = () => {
         // 2. جلب اشتراكات اليوزر
         const userId = localStorage.getItem('userId');
         if (userId) {
-          const profileRes = await fetch(`http://localhost:5000/api/auth/profile/${userId}`);
+          const profileRes = await fetch(`http://localhost:5001/api/auth/profile/${userId}`);
           if (profileRes.ok) {
             const profileData = await profileRes.json();
             

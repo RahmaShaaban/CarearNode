@@ -26,7 +26,7 @@ const CvBuilder = () => {
     useEffect(() => {
         const fetchTemplates = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/cv-builder/templates');
+                const response = await fetch('http://localhost:5001/api/cv-builder/templates');
                 const data = await response.json();
                 if (data.success) {
                     setAvailableTemplates(data.data);
@@ -129,7 +129,7 @@ const CvBuilder = () => {
         };
 
         try {
-            const response = await fetch('http://localhost:5000/api/cv-builder/save', {
+            const response = await fetch('http://localhost:5001/api/cv-builder/save', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -157,7 +157,7 @@ const CvBuilder = () => {
         if (!userId || !generatedId) return;
 
         try {
-            const response = await fetch('http://localhost:5000/api/cv-builder/save-to-profile', {
+            const response = await fetch('http://localhost:5001/api/cv-builder/save-to-profile', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId, cvId: generatedId })
@@ -316,10 +316,10 @@ const CvBuilder = () => {
                                 )}
                             </button>
 
-                            <a href={`http://localhost:5000/api/cv-builder/download/${generatedId}`} className="btn-download" target="_blank" rel="noopener noreferrer">
+                            <a href={`http://localhost:5001/api/cv-builder/download/${generatedId}`} className="btn-download" target="_blank" rel="noopener noreferrer">
                                 <i className="fa-solid fa-download"></i> Download PDF
                             </a>
-                            <a href={`http://localhost:5000/api/cv-builder/preview/${generatedId}`} className="btn-preview" target="_blank" rel="noopener noreferrer">
+                            <a href={`http://localhost:5001/api/cv-builder/preview/${generatedId}`} className="btn-preview" target="_blank" rel="noopener noreferrer">
                                 <i className="fa-solid fa-eye"></i> Live Preview
                             </a>
                         </div>

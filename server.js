@@ -84,6 +84,7 @@ const subjectRoutes = require('./backend/routes/subjectRoutes');
 const authRoutes = require('./backend/routes/authRoutes');
 const jobRoutes = require('./backend/routes/jobRoutes');
 const roadmapRoutes = require('./backend/routes/roadmapRoutes');
+const interviewRoutes = require('./backend/routes/interviewRoutes');
 
 app.use('/api/cv-builder', cvBuilderRoutes);
 app.use('/api/dept', deptRoutes);
@@ -92,13 +93,15 @@ app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/roadmaps', roadmapRoutes);
 app.use('/api/cv', cvRoutes);
+app.use('/api/interview', interviewRoutes);
+
 
 app.get('/', (req, res) => {
     res.send('✅ CarearNode Server is Running Perfectly!');
 });
 
 // 7. تشغيل السيرفر
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 sequelize.sync().then(() => {
     console.log('✅ Database Connected & Synced');
