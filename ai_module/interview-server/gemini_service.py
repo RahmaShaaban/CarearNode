@@ -1,3 +1,5 @@
+#ai_module\interview-server\gemini_service.py
+
 import google.generativeai as genai
 import json
 
@@ -8,7 +10,7 @@ from dotenv import load_dotenv # 👈 ضيفي ده
 load_dotenv() # 👈 ضيفي ده
 
 # 🔑 تأكدي من مفتاحك
-GENAI_API_KEY = os.getenv("GENAI_API_KEY")
+GENAI_API_KEY =  "AIzaSyBoP6r0aeACTRyXJ5YRaowSxdR61VSCWb4"
 genai.configure(api_key=GENAI_API_KEY)
 
 model = genai.GenerativeModel('gemini-2.5-flash')

@@ -1,0 +1,46 @@
+// backend/models/Interview.js
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+
+const Interview = sequelize.define('Interview', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true
+    },
+    user_id: {
+        type: DataTypes.UUID,
+        allowNull: true, // سيبيه true لو لسه معملتيش Auth
+    },
+    target_role: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    experience_level: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    language: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    overall_score: {
+        type: DataTypes.FLOAT,
+        defaultValue: 0
+    },
+    overall_feedback: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
+    summary_data: {
+        type: DataTypes.JSONB,
+        allowNull: true
+    }
+}, {
+    tableName: 'interviews', // تأكدي إنه نفس اسم الجدول في سابابيز
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: false // لو مش محتاجة عمود التحديث
+});
+
+module.exports = Interview;

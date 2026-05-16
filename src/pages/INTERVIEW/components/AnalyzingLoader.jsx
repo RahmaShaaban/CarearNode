@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+//************************* */
 // ✨ [Menna & Roqia: Smart Loading Screen with Professional SVG Icons]
 const AnalyzingLoader = ({ isArabic, onSendToEmail }) => {
     // 🎨 باليت الألوان

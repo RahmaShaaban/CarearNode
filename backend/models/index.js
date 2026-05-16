@@ -12,34 +12,32 @@ const TechSkill = require('./TechSkill');
 const Template = require('./Template'); 
 const Job = require('./Job');
 
-// 🆕 استدعاء الموديل الجديد (تأكدي من صحة المسار واسم الدالة)
-const UserStepProgress = require('./UserStepProgress')(sequelize, DataTypes);
+// 🆕 استدعاء موديلات المقابلة الشخصية
+const Interview = require('./Interview');
+const InterviewQuestion = require('./InterviewQuestion');
 
+// استدعاء الموديلات اللي بتحتاج (sequelize, DataTypes) بشكل مباشر
+const UserStepProgress = require('./UserStepProgress')(sequelize, DataTypes);
 const UserCVData = require('./UserCVData')(sequelize); 
 const CV = require('./CV')(sequelize); 
 
 // 2. تعريف العلاقات (Associations)
 
-// علاقة الـ User بالـ Progress (بتاع الكويزات)
+// --- علاقات اليوزر والـ Roadmap والـ CV (اللي كانت عندك) ---
 User.hasMany(UserStepProgress, { foreignKey: 'userId', as: 'stepProgress' });
 UserStepProgress.belongsTo(User, { foreignKey: 'userId', as: 'user' });
-
-// علاقة الـ UserStepProgress بالـ Roadmap والـ Step
 UserStepProgress.belongsTo(Roadmap, { foreignKey: 'roadmapId' });
 UserStepProgress.belongsTo(Steps, { foreignKey: 'stepId' });
 
-// ربط الـ User بالـ CV Builder والـ Analysis
 User.belongsTo(UserCVData, { foreignKey: 'cv_id', as: 'builtCV' });
 UserCVData.hasOne(User, { foreignKey: 'cv_id' });
 
 User.belongsTo(CV, { foreignKey: 'cv_id_analysis', as: 'analyzedCV' });
 CV.hasOne(User, { foreignKey: 'cv_id_analysis' });
 
-// ربط الـ UserCVData بالـ Template
 UserCVData.belongsTo(Template, { foreignKey: 'selected_template_id', as: 'template' });
 Template.hasMany(UserCVData, { foreignKey: 'selected_template_id' });
 
-// علاقات الـ Roadmap الأساسية
 User.hasMany(UserRoadmap, { foreignKey: 'userId' });
 UserRoadmap.belongsTo(User, { foreignKey: 'userId' });
 
@@ -52,7 +50,17 @@ Steps.belongsToMany(Roadmap, { through: Roadmap_steps, foreignKey: 'step_id', ot
 Steps.hasMany(StepResources, { foreignKey: 'step_id' });
 StepResources.belongsTo(Steps, { foreignKey: 'step_id' });
 
-// 3. التصدير (Export) - واحد فقط لكل الموديلات
+// 🆕 3. تعريف علاقات المقابلة الشخصية (Interview)
+// ربط اليوزر بالمقابلات (اليوزر الواحد له مقابلات كتير)
+User.hasMany(Interview, { foreignKey: 'user_id' });
+Interview.belongsTo(User, { foreignKey: 'user_id' });
+
+// ربط المقابلة بالأسئلة (المقابلة الواحدة ليها أسئلة كتير)
+Interview.hasMany(InterviewQuestion, { foreignKey: 'interview_id', as: 'questions' });
+InterviewQuestion.belongsTo(Interview, { foreignKey: 'interview_id' });
+
+
+// 4. التصدير (Export)
 module.exports = {
     sequelize,
     User,
@@ -66,5 +74,7 @@ module.exports = {
     UserCVData,
     CV,
     Job,
-    UserStepProgress 
+    UserStepProgress,
+    Interview,        // 🆕 تصدير موديل المقابلة
+    InterviewQuestion // 🆕 تصدير موديل الأسئلة
 };

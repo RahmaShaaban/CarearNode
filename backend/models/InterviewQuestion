@@ -1,0 +1,48 @@
+// backend/models/InterviewQuestion
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+const Interview = require('./Interview'); // استيراد موديل الأنترفيو لعمل الربط
+
+const Question = sequelize.define('Question', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true
+    },
+    interview_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+            model: Interview,
+            key: 'id'
+        }
+    },
+    question_text: {
+        type: DataTypes.TEXT,
+        allowNull: false
+    },
+    video_url: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    // الـ JSONB هنا مهم جداً عشان يستوعب داتا الـ AI المتغيرة
+    analysis_data: {
+        type: DataTypes.JSONB, 
+        allowNull: false
+    },
+    score: {
+        type: DataTypes.FLOAT,
+        defaultValue: 0
+    }
+}, {
+    tableName: 'interview_questions',
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: false
+});
+
+// تعريف العلاقة (اختياري بس مفيد للـ Queries)
+Interview.hasMany(Question, { foreignKey: 'interview_id' });
+Question.belongsTo(Interview, { foreignKey: 'interview_id' });
+
+module.exports = Question;
