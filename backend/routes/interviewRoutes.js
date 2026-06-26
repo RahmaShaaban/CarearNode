@@ -77,7 +77,8 @@ const router = express.Router();
 const interviewController = require('../controllers/interviewController');
 const Question = require('../models/InterviewQuestion'); 
 const { sendInterviewReport } = require('../emailService'); 
-
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
 // 1️⃣ راوت بدء الأنترفيو (للحصول على interviewId)
 router.post('/start', interviewController.startInterview);
 
@@ -288,13 +289,11 @@ router.post('/send-report', async (req, res) => {
         let questionsHtml = '';
         if (questionsData && questionsData.length > 0) {
             questionsData.forEach((q, index) => {
-                // سحب حقل analysis_data والتعامل معه سواء كان Object أو String
                 let analysis = q.analysis_data || {};
                 if (typeof analysis === 'string') {
                     try { analysis = JSON.parse(analysis); } catch(e) { console.error("Parsing analysis_data failed", e); }
                 }
 
-                // تفكيك البيانات من الـ JSON الشامل بتاعك بأمان
                 const speech = analysis.speech || {};
                 const vision = analysis.vision || {};
                 const body = vision.body || {};
@@ -305,13 +304,12 @@ router.post('/send-report', async (req, res) => {
                 const content = analysis.content || {};
                 const tips = content.tips || [];
 
-                // تحويل مصفوفة الـ Tips إلى عناصر HTML List
                 let tipsHtml = '';
                 tips.forEach(tip => { tipsHtml += `<li style="margin-bottom: 6px;">${tip}</li>`; });
 
-                // بناء كارت السؤال الشامل لكل تفاصيل الـ JSON
+                // 🚨 إضافة (page-break-inside: avoid) لحماية الكارت من التقطيع بين الصفحات
                 questionsHtml += `
-                    <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; margin-bottom: 30px; direction: ltr; text-align: left; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+                    <div style="page-break-inside: avoid; break-inside: avoid; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; margin-bottom: 30px; direction: ltr; text-align: left; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
                         <h4 style="color: #2F5D54; margin-top: 0; font-size: 18px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">
                             Question ${index + 1}: ${q.question_text || 'Technical Question'}
                         </h4>
@@ -325,7 +323,7 @@ router.post('/send-report', async (req, res) => {
 
                         <div style="margin-top: 20px; border-top: 1px dashed #e2e8f0; padding-top: 15px;">
                             <h5 style="color: #58a492; margin: 0 0 10px 0; font-size: 14px;">🗣️ Verbal & Speech Analysis</h5>
-                            <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
+                            <table style="page-break-inside: avoid; break-inside: avoid; width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
                                 <tr>
                                     <td style="padding: 6px 0; width: 50%;"><strong>Words Per Minute (WPM):</strong> ${speech.wpm || 0} (${speech.wpm_feedback || 'N/A'})</td>
                                     <td style="padding: 6px 0;"><strong>Voice Tone:</strong> ${speech.tone || 'N/A'}</td>
@@ -342,7 +340,7 @@ router.post('/send-report', async (req, res) => {
 
                         <div style="margin-top: 20px; border-top: 1px dashed #e2e8f0; padding-top: 15px;">
                             <h5 style="color: #58a492; margin: 0 0 10px 0; font-size: 14px;">👁️ Non-Verbal & Visual Analysis</h5>
-                            <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
+                            <table style="page-break-inside: avoid; break-inside: avoid; width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
                                 <tr>
                                     <td style="padding: 6px 0; width: 50%;"><strong>Eye Contact Score:</strong> ${eyeContact.score || 0}/100 (${eyeContact.grade || 'N/A'})</td>
                                     <td style="padding: 6px 0;"><strong>Head Focus Score:</strong> ${headFocus.score || 0}/100</td>
@@ -368,7 +366,7 @@ router.post('/send-report', async (req, res) => {
             questionsHtml = '<p style="color: #64748b; text-align: center;">No detailed questions found.</p>';
         }
 
-        // 2️⃣ جلب البيانات الشاملة من جدول الـ interviews (الـ summary_data)
+        // 2️⃣ جلب البيانات الشاملة وبيانات صفحة الغلاف
         let finalOverall = "0.0";
         let finalKnowledge = "0.0";
         let finalVerbal = "0.0";
@@ -376,11 +374,22 @@ router.post('/send-report', async (req, res) => {
         let finalOverview = "Interview Completed.";
 
         const InterviewModel = require('../models/Interview'); 
-        const generalInterview = await InterviewModel.findOne({ where: { id: interviewId } });
+        const User = require('../models/User'); // لو عندك موديل اليوزر مربوط
+        const generalInterview = await InterviewModel.findOne({ 
+            where: { id: interviewId },
+            include: User ? [User] : [] 
+        });
         
+        let candidateName = "Nesreen Ahmed";
+        let targetRole = "Not Specified";
+        let expLevel = "Not Specified";
+        let intLang = "Not Specified";
+        let interviewDate = new Date().toLocaleDateString('en-US', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+
         if (generalInterview) {
             let summary = generalInterview.summary_data || generalInterview.summaryData;
-            
             if (typeof summary === 'string') {
                 try { summary = JSON.parse(summary); } catch(e) {}
             }
@@ -394,52 +403,104 @@ router.post('/send-report', async (req, res) => {
             if (summary && summary.overviewText) {
                 finalOverview = summary.overviewText;
             }
+
+            // 🕒 استخراج بيانات الغلاف بشكل آمن
+            candidateName = generalInterview.User?.name || "Nesreen Ahmed"; 
+            targetRole = generalInterview.target_role || "Not Specified";
+            expLevel = generalInterview.experience_level || "Not Specified";
+            intLang = generalInterview.language || "Not Specified";
+            
+            const rawDate = generalInterview.createdAt || generalInterview.created_at || new Date();
+            interviewDate = new Date(rawDate).toLocaleDateString('en-US', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            });
         }
 
-        // 3️⃣ قالب الإيميل الشامل والفاخر النهائي
+        const questionsCount = questionsData ? questionsData.length : 0;
+
+        // 3️⃣ قالب الـ HTML الشامل (مع الغلاف والفواصل بين الصفحات)
         const reportContent = `
-            <div style="direction: ltr; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 700px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; padding: 30px; background-color: #f8fafc; color: #334155;">
-                <div style="text-align: center; margin-bottom: 25px;">
-                    <h2 style="color: #2F5D54; margin-bottom: 5px; font-size: 26px;">Career AI Guide Report</h2>
-                    <p style="color: #64748b; margin-top: 0; font-size: 14px;">Comprehensive Interview Performance & Analytics</p>
+            <div style="direction: ltr; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 700px; margin: 0 auto; background-color: #f8fafc; color: #334155;">
+                
+                <div style="page-break-after: always; break-after: page; padding: 40px; text-align: center; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #ffffff; min-height: 800px; display: flex; flex-direction: column; justify-content: center; margin-bottom: 20px;">
+                    <div style="margin-top: 50px;">
+                        <h1 style="color: #2F5D54; font-size: 38px; margin-bottom: 10px; letter-spacing: 1px;">Career AI Guide</h1>
+                        <h2 style="color: #58A492; font-size: 22px; margin-top: 0; font-weight: 500;">Official Interview Assessment Report</h2>
+                    </div>
+                    
+                    <div style="margin: 60px auto; background-color: #f0f7f5; border-left: 5px solid #2F5D54; border-radius: 8px; padding: 30px; text-align: left; width: 85%; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                        <h3 style="color: #2F5D54; border-bottom: 2px solid #dbece8; padding-bottom: 12px; margin-top: 0; font-size: 20px;">📋 Interview Details</h3>
+                        <table style="width: 100%; font-size: 16px; color: #475569; line-height: 2.2;">
+                            <tr>
+                                <td style="font-weight: 700; width: 45%; color: #2F5D54;">Candidate Name:</td>
+                                <td style="font-weight: 600;">${candidateName}</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 700; color: #2F5D54;">Target Role:</td>
+                                <td>${targetRole}</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 700; color: #2F5D54;">Experience Level:</td>
+                                <td>${expLevel}</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 700; color: #2F5D54;">Language:</td>
+                                <td>${intLang}</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 700; color: #2F5D54;">Total Questions:</td>
+                                <td>${questionsCount}</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 700; color: #2F5D54;">Date:</td>
+                                <td>${interviewDate}</td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
-                
-                <div style="background-color: #ffffff; border-left: 4px solid #58a492; padding: 20px; margin: 20px 0; border-radius: 8px; font-size: 15px; line-height: 1.6; box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-                    <strong style="color: #2F5D54; font-size: 16px;">🎯 Executive Performance Summary:</strong><br/>
-                    <span style="color: #475569; display: inline-block; margin-top: 5px;">${finalOverview}</span>
-                </div>
-                
-                <table style="width: 100%; border-collapse: collapse; margin: 25px 0; text-align: center; font-size: 14px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
-                    <thead>
-                        <tr style="background-color: #2F5D54; color: #ffffff;">
-                            <th style="padding: 15px;">Overall Index</th>
-                            <th style="padding: 15px;">Technical Knowledge</th>
-                            <th style="padding: 15px;">Verbal Skills</th>
-                            <th style="padding: 15px;">Non-Verbal Cues</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr style="font-weight: bold; color: #1e293b;">
-                            <td style="padding: 20px; border-bottom: 1px solid #e2e8f0; color: #58a492; font-size: 20px;">${parseFloat(finalOverall).toFixed(1)}%</td>
-                            <td style="padding: 20px; border-bottom: 1px solid #e2e8f0; font-size: 16px;">${parseFloat(finalKnowledge).toFixed(1)}%</td>
-                            <td style="padding: 20px; border-bottom: 1px solid #e2e8f0; font-size: 16px;">${parseFloat(finalVerbal).toFixed(1)}%</td>
-                            <td style="padding: 20px; border-bottom: 1px solid #e2e8f0; font-size: 16px;">${parseFloat(finalNonVerbal).toFixed(1)}%</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <h3 style="color: #2F5D54; margin-top: 40px; margin-bottom: 20px; font-size: 20px; border-bottom: 2px solid #cbd5e1; padding-bottom: 8px;">📊 Detailed Question-by-Question Metrics</h3>
-                <div>
-                    ${questionsHtml}
-                </div>
-                
-                <div style="text-align: center; margin-top: 40px; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-                    This comprehensive analytics report was securely generated by the Career AI Guide Engine.
+
+                <div style="border: 1px solid #e2e8f0; border-radius: 16px; padding: 30px; background-color: #ffffff;">
+                    <div style="text-align: center; margin-bottom: 25px;">
+                        <h2 style="color: #2F5D54; margin-bottom: 5px; font-size: 26px;">Performance Overview</h2>
+                    </div>
+                    
+                    <div style="background-color: #ffffff; border-left: 4px solid #58a492; padding: 20px; margin: 20px 0; border-radius: 8px; font-size: 15px; line-height: 1.6; box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+                        <strong style="color: #2F5D54; font-size: 16px;">🎯 Executive Summary:</strong><br/>
+                        <span style="color: #475569; display: inline-block; margin-top: 5px;">${finalOverview}</span>
+                    </div>
+                    
+                    <table style="page-break-inside: avoid; break-inside: avoid; width: 100%; border-collapse: collapse; margin: 25px 0; text-align: center; font-size: 14px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.01);">
+                        <thead>
+                            <tr style="background-color: #2F5D54; color: #ffffff;">
+                                <th style="padding: 15px;">Overall Index</th>
+                                <th style="padding: 15px;">Technical Knowledge</th>
+                                <th style="padding: 15px;">Verbal Skills</th>
+                                <th style="padding: 15px;">Non-Verbal Cues</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="font-weight: bold; color: #1e293b;">
+                                <td style="padding: 20px; border-bottom: 1px solid #e2e8f0; color: #58a492; font-size: 20px;">${parseFloat(finalOverall).toFixed(1)}%</td>
+                                <td style="padding: 20px; border-bottom: 1px solid #e2e8f0; font-size: 16px;">${parseFloat(finalKnowledge).toFixed(1)}%</td>
+                                <td style="padding: 20px; border-bottom: 1px solid #e2e8f0; font-size: 16px;">${parseFloat(finalVerbal).toFixed(1)}%</td>
+                                <td style="padding: 20px; border-bottom: 1px solid #e2e8f0; font-size: 16px;">${parseFloat(finalNonVerbal).toFixed(1)}%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h3 style="page-break-before: always; break-before: page; color: #2F5D54; margin-top: 0; margin-bottom: 20px; font-size: 20px; border-bottom: 2px solid #cbd5e1; padding-bottom: 8px;">📊 Detailed Question-by-Question Metrics</h3>
+                    <div>
+                        ${questionsHtml}
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 40px; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+                        This comprehensive analytics report was securely generated by the Career AI Guide Engine.
+                    </div>
                 </div>
             </div>`;
 
-        // 4️⃣ إرسال الإيميل
-        await sendInterviewReport(email, reportContent);
+        // 4️⃣ إرسال الإيميل مع الـ PDF المرفق والرسالة الترحيبية
+        await sendInterviewReport(email, interviewId, finalOverall, reportContent);
         return res.json({ success: true, message: "Sent successfully!" });
 
     } catch (error) {
@@ -448,6 +509,6 @@ router.post('/send-report', async (req, res) => {
     }
 });
 
+router.post('/analyze-background', upload.array('files'), interviewController.analyzeInBackground);
 router.post('/finish', interviewController.finishInterview);
-
 module.exports = router;

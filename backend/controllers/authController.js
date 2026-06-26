@@ -1,6 +1,6 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
-const { UserRoadmap, Roadmap, UserCVData, CV } = require('../models/index'); 
+const { UserRoadmap, Roadmap, UserCVData, CV,Interview } = require('../models/index'); 
 
 // --- 1. Signup ---
 exports.signup = async (req, res) => {
@@ -85,6 +85,7 @@ exports.getUserProfile = async (req, res) => {
                 // الربط مع موديلات الـ CV والتحليل
                 { model: UserCVData, as: 'builtCV' },
                 { model: CV, as: 'analyzedCV' }
+              
             ]
         });
 

@@ -1,0 +1,157 @@
+.signin-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--bg-color); 
+    padding: 20px;
+}
+
+.back-link-container {
+    width: 100%;
+    max-width: 450px;
+    margin-bottom: 20px;
+}
+
+.btn-back {
+    background: transparent;
+    border: 1px solid #d1dbd9; /* Border خفيف يماشي الأعمدة */
+    font-size: 0.85rem;
+    color: #475569;
+    display: inline-flex; /* عشان ياخد مساحة المحتوى بس */
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    padding: 7px 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-back i {
+    font-size: 0.85rem;
+    transition: transform 0.3s ease;
+}
+
+.btn-back:hover {
+    background-color: #f1f6f5; /* نفس لون الأعمدة في الـ hover */
+    color: #355d55;
+    border-color: #355d55;
+}
+
+.btn-back:hover i {
+    transform: translateX(-5px); /* حركة سهم الرجوع لورا بتدي UX هايل */
+}
+
+.signin-card {
+    background:white;
+    width: 100%;
+    max-width: 450px;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.03);
+    text-align: center;
+    border: 1px solid #e5e7eb;
+}
+
+.signin-logo {
+    height: 70px;
+    width: auto;
+    margin-bottom: 20px;
+}
+
+.signin-card h2 {
+    margin: 0 0 10px 0;
+    color: var(--primary-dark); 
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.subtitle {
+    color: #6b7280;
+    font-size: 15px;
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--primary-dark); 
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+.signin-form input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.2s;
+    box-sizing: border-box;
+}
+
+    .signin-form input:focus {
+        border-color: var(--primary-medium); 
+        box-shadow: 0 0 0 3px rgba(88, 164, 146, 0.2); 
+    }
+
+.password-wrapper {
+    position: relative;
+}
+
+.eye-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+}
+
+    .eye-icon:hover {
+        color: var(--primary-dark);
+    }
+
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--primary-medium); 
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.2s;
+}
+
+    .btn-primary:hover {
+        background-color: var(--primary-dark); 
+    }
+
+.footer-text {
+    margin-top: 25px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.link-highlight {
+    color: var(--primary-medium); 
+    font-weight: 600;
+    text-decoration: none;
+}
+
+    .link-highlight:hover {
+        text-decoration: underline;
+        color: var(--primary-dark);
+    }

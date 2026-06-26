@@ -1,0 +1,20 @@
+### تجربة حفظ بيانات الـ CV Builder من الفورم
+POST http://localhost:5001/api/cv-builder/save
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "personalInfo": { "fullName": "Rahma Shaaban" },
+  "experience": [
+    {
+      "company": "Nucery",
+      "role": "i was leading a small team" 
+    }
+  ],
+  "education": [
+    { "university": "Ain Shams", "major": "CS" }
+  ],
+  "skills": ["Coding"],
+  "summary": "i want a job",
+  "templateId": "ats-002"
+}

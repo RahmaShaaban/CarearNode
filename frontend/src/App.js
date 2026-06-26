@@ -1,0 +1,69 @@
+import React from 'react';
+import AnalyzeCV from './pages/AnalyzeCV';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Navbar from './Navbar'; 
+import './App.css';
+import Home from './pages/Home';
+import AboutUs from './pages/AboutUs';
+import Services from './pages/Services';
+import Contact from './pages/Contact';
+import Department from './pages/Department';
+import Roadmaps from './pages/Roadmaps';
+import CV from './pages/CV';
+import Sign_In from './pages/Sign_In';
+import Profile from './pages/Profile';
+import Sign_up from'./pages/Sign_up';
+import Footer from './Footer'; 
+import RoadmapDetails from './pages/RoadmapDetails';
+import ScrollToTop from './ScrollToTop';
+
+import CvBuilder from './pages/CvBuilder';
+import AppIntrview from'./pages/INTERVIEW/AppIntrview'
+
+
+
+function App() {
+    return (
+        <BrowserRouter>
+           
+            <div className="app-container">
+
+                <Navbar />
+                <ScrollToTop />
+
+               
+                <div className="main-content">
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/about" element={<AboutUs />} />
+                        <Route path="/services" element={<Services />} />
+                        <Route path="/contact" element={<Contact />} />
+
+
+
+                        <Route path="/interview" element={<AppIntrview />} />
+                        <Route path="/department" element={<Department />} />
+                        
+                        <Route path="/Roadmaps" element={<Roadmaps />} />
+                        <Route path="/cv" element={<CV />} />
+                        <Route path="/Sign_In" element={<Sign_In />} />
+                        <Route path="/signup" element={<Sign_up />} />
+                        <Route path="/Profile" element={<Profile />} />
+
+                        <Route path="/cv/analyze" element={<AnalyzeCV />} />
+                        <Route path="/roadmap/:id" element={<RoadmapDetails />} />
+                        
+                        <Route path="/cv-builder" element={<CvBuilder />} />
+
+                    </Routes>
+                </div>
+
+                
+                <Footer />
+
+            </div>
+        </BrowserRouter>
+    );
+}
+
+export default App;
